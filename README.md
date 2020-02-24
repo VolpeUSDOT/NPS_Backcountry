@@ -10,3 +10,12 @@ Goals:
 - Include necessary data files
 - Eliminate redundant or unnecessary code chunks
 - Write how-to guide for running locally
+
+
+# Data
+- ATMP2011_CompleteDose_Vars_dprime.csv
+This is a compilation of
+
+# Scripts
+
+# How 
