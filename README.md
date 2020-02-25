@@ -14,7 +14,7 @@ Goals:
 
 # Data
 - ATMP2011_CompleteDose_Vars_dprime.csv
-This is a compilation of
+This is a compilation of the 
 
 # Scripts
 

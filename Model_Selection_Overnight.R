@@ -1,8 +1,5 @@
 # Find the best model
 
-setwd("X:/Overnight")
-
-
 aicfiles <- dir()[grep("CoeffAIC.csv", dir())]
 
 # compile in one file for each set of compatible models
