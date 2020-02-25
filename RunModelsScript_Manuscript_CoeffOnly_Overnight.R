@@ -7,7 +7,6 @@
 
 #2) Test binary mediators (coded as 0 or 1). Add individually and in combination. Accept new mediator if average of AIC values for the three Annoy or Interfer models (SorMore, MoreMore, VorMore) drops and the regression coefficient for the mediator is significant in one more or of the models.  
 
-
 #####################################################
 # Axis labels for figures for each dose variable
 # SELAllAC = LAE (dBA)
@@ -44,16 +43,16 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 2 - Interfere Dayhike final model
 
 rm(list = ls())        	### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.R")
+source("Model_Setup_Overnight.R")
 
 STypeList=c("BCOvernight")
 dose.name= "LAE (dBA)"
@@ -64,13 +63,13 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "WatchBirds") #Use "none" if additio
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
+# TODO: add nosurvey scripts
+
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly-nosurvey.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly-nosurvey.r")
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly-nosurvey.r")
-
-
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly-nosurvey.r")
 
 # Now alterative models, but all keeping core four variables
 
@@ -79,7 +78,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly-n
 # SELAllAC = LAE (dBA)
 
   rm(list = ls())          ### Clears all variables
-  source("X:/Overnight/ModelSetup_Overnight.R")
+  source("Model_Setup_Overnight.R")
   
    dose.name= "LAE (dBA)"
    dose.var = "SELAllAC"
@@ -90,17 +89,17 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 2b
 # SELAllAC = LAE (dBA)
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "none" 
@@ -111,17 +110,17 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 14
 # SELAllAC = LAE (dBA)
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "none" 
@@ -133,17 +132,17 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 14b
 # SELAllAC = LAE (dBA)
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "none" 
@@ -153,17 +152,17 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 22
 # SELAllAC = LAE (dBA)
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "lg10.PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -173,17 +172,17 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response 
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")  
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")  
 
 #Process data for Interfere response 
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 22b
 # SELAllAC = LAE (dBA)
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "lg10.PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -193,10 +192,10 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response 
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")  
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")  
 
 #Process data for Interfere response 
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r")
 
 
 ####################################################################################
@@ -220,7 +219,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.r
 # Model 31: interfere only
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -229,13 +228,13 @@ vars.mit = c("ImpNQ_VorMore")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ####################################################################################
 # Model 31b: interfere only
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -244,7 +243,7 @@ vars.mit = c("ImpCP_VorMore")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ####################################################################################
 ####################################################################################
@@ -254,7 +253,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 #Annoy only
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -263,13 +262,13 @@ vars.mit = c("Survey", "ImpVS_VorMore")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 33: interfere only
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -278,7 +277,7 @@ vars.mit = c("ImpVS_VorMore")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ####################################################################################
 #Reject ImpVS - AIC values are higher for all responses compared to ImpNQ and ImpCP.
@@ -286,7 +285,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 ####################################################################################
 #Test EarlyStart
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -295,10 +294,10 @@ vars.mit = c("Survey", "ImpNQ_VorMore", "EarlyStart")    ###For OnlyPrior: "Site
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -307,10 +306,10 @@ vars.mit = c("ImpNQ_VorMore", "EarlyStart")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -319,7 +318,7 @@ vars.mit = c("ImpCP_VorMore", "EarlyStart")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##REJECT EarlyStart: AIC only in/decreases by 1 for all and the regression coefficients are not significant for any response.
 
@@ -336,7 +335,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 #Add SiteVisit?
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -345,7 +344,7 @@ vars.mit = c("Survey", "ImpNQ_VorMore","SiteVisitBefore")    ###For OnlyPrior: "
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 34b: Annoy only
@@ -354,7 +353,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 #Add SiteVisit?
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -363,7 +362,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore")    ###For OnlyPrior: "
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ####################################################################################
 # Model 35: interfere only
@@ -372,7 +371,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 #Add SiteVisit?
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -381,7 +380,7 @@ vars.mit = c("ImpNQ_VorMore", "SiteVisitBefore")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ####################################################################################
 # Model 35b: interfere only
@@ -390,7 +389,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 #Add SiteVisit?
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -399,7 +398,7 @@ vars.mit = c("ImpCP_VorMore", "SiteVisitBefore")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ####################################################################################
 #For Annoy: ACCEPT SiteVisitBefore AND Use ImpCP for remainder of models: AIC value is the same for SorMore but 5-6 units lower for MoreMore and VorMore.
@@ -412,7 +411,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 # Model 36: Annoy only
 #Test AdultsOnly
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -421,7 +420,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly")    ###Fo
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##Accept AdultsOnly: AIC drops by 9 for SorMore, Increases by 2 for Mm and Vm and the regression coefficient is significant for SorMore.
 
@@ -429,7 +428,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 # Model 36: Annoy only
 #Test AirTour
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -438,7 +437,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly", "AirTour
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##Accept AirTour: AIC increases by 2 for Sm, drops by 10 for Mm and by 5 for Vm. The regression coefficients are significant for Mm and Vm.
 
@@ -446,7 +445,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 # Model 37: Annoy only
 #Test WatchBirds
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -455,7 +454,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly", "AirTour
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##Accept WatchBirds: AIC drops by 6 for Sm, stays same for Mm and Vm and the regression coefficient is significant for SorMore.
 
@@ -463,7 +462,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 # Model 38: Annoy only
 #Test ViewSunRiseSet
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -472,7 +471,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly", "AirTour
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##REJECT ViewSunRiseSet: AIC increases by 1-2 for all.
 
@@ -480,7 +479,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 # Model 39: Annoy only
 #Test PicnicMeal
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -489,7 +488,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly", "AirTour
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##REJECT PicnicMeal: AIC only decreases by 1 for all and the regression coefficients are not significant for any response.
 
@@ -497,7 +496,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 # Model 40: Annoy only
 #Test Talk
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -506,7 +505,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly", "AirTour
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##REJECT Talk: AIC only decreases or increases by 1 for all and the regression coefficients are not significant for any response.
 
@@ -514,7 +513,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 # Model 41: Annoy only
 #Test ViewWildlife
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -523,7 +522,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly", "AirTour
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##REJECT ViewWildlife: AIC only decreases or increases by 1 for all and the regression coefficients are not significant for any response.
 
@@ -531,7 +530,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 # Model 41: Annoy only
 #Test log10(DurVisitMinutes)
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -540,7 +539,7 @@ vars.mit = c("Survey", "ImpCP_VorMore","SiteVisitBefore", "AdultsOnly", "AirTour
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2_CoeffOnly.r")
 
 ##REJECT lg10.DurVisitMinutes: AIC decreases by 1-4 but the regression coefficients are not significant for any response.
 
@@ -591,14 +590,14 @@ for (i in 1:length(DesiredPlotYListAnnoy)){
   Title="Annoy:"
   source("ATMP_2011Overnight_LogRegPEn_ImpCP_Annoy_ACHR1HR2.r")
   
-  #source("X:/Overnight/ATMP_LogRegPEn_ImpCP_Plot3ModsScript_Annoy_Survey_mit.r")
+  #source("ATMP_LogRegPEn_ImpCP_Plot3ModsScript_Annoy_Survey_mit.r")
 }
 dev.off()
 
 #In terms of PTaud
 #Plot Annoy final model
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "TAud (%)"
 dose.var = "PTAudAllAC"
 AddDose = "SELAllAC" #Use "none" if additional doses are not included in the model.
@@ -609,12 +608,12 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2.r")
+source("ATMP_2011Overnight_LogRegPEn_Annoy_ACHR1HR2.r")
 
 
 #3 model plots: save to pdf file
 #The file name includes the dose variables included in the model above 
-pdf(file = paste("X:/Overnight/ATMP_2011Overnight_LogRegPEn_",paste(vars.dos,collapse="_"),paste(vars.mit,collapse="_"),"_Annoy.pdf",sep=""), width = 18, height = 8, onefile = TRUE, family = "Helvetica")
+pdf(file = paste("ATMP_2011Overnight_LogRegPEn_",paste(vars.dos,collapse="_"),paste(vars.mit,collapse="_"),"_Annoy.pdf",sep=""), width = 18, height = 8, onefile = TRUE, family = "Helvetica")
 
 #Adjust the margins
 par(mfrow=c(1,2))
@@ -632,7 +631,7 @@ for (i in 1:length(DesiredPlotYListAnnoy)){
   xlabel=dose.name
   ylabel="Percent Annoy"
   Title="Annoy:"
-  source("X:/Overnight/ATMP_LogRegPEn_Plot3ModsScript_Annoy_Survey_mit.r")
+  source("ATMP_LogRegPEn_Plot3ModsScript_Annoy_Survey_mit.r")
 }
 dev.off()
 
@@ -689,7 +688,7 @@ dev.off()
 
 # Model 42: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -698,11 +697,11 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 42b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -711,7 +710,7 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly")    ###For OnlyPrior: "SiteType"
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##Accept AdultsOnly: AIC drops by 2-3 for SorMore, Increases by 1 for Mm and Vm and the regression coefficient is significant for SorMore.
 
@@ -723,7 +722,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 43: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -732,11 +731,11 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour")    ###For OnlyPrior: "Sit
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 43b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -745,7 +744,7 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour")    ###For OnlyPrior: "Sit
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##Accept AirTour: AIC drops by 1 for all responses and the regression coefficient is significant for VorMore (and close to significant for other responses.
 ####################################################################################
@@ -753,7 +752,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 44: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -762,11 +761,11 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour", "WatchBirds")    ###For O
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 44b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -775,7 +774,7 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour", "WatchBirds")    ###For O
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##Reject WatchBirds: AIC drops by ~2 for Sm but increases for Mm and Vm. The regression coefficient is significant for SorMore, but significance of other coefficients is reduced.
 ####################################################################################
@@ -783,7 +782,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 45: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -792,11 +791,11 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour", "ViewSunRiseSet")    ###F
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 45b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -805,7 +804,7 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour", "ViewSunRiseSet")    ###F
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##Reject ViewSunRiseSet: AIC increases by ~2 for Sm and Vm, decreases for Mm. The regression coefficients not significant.
 ####################################################################################
@@ -813,7 +812,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 46: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -822,11 +821,11 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour", "PicnicMeal")    ###For O
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 46b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -835,7 +834,7 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour", "PicnicMeal")    ###For O
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##Reject PicnicMeal: AIC increases by ~2 for all.
 ####################################################################################
@@ -843,7 +842,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 47: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -852,12 +851,12 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour", "Talk")    ###For OnlyPri
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 
 # Model 47b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -866,20 +865,20 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour", "Talk")    ###For OnlyPri
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##KEEP Talk: AIC decreases by ~5 for Vm and 1-2 for Sm and Mm. Regression coefficients significant for Vm and close for Sm.
 
 #Make plots for the best models
 
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ####################################################################################
 #Test ViewWildlife
 
 # Model 48: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -888,11 +887,11 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour", "Talk", "ViewWildlife")  
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 48b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -901,7 +900,7 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour", "Talk", "ViewWildlife")  
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##REJECT ViewWildlife: AIC increases by ~2 for all. 
 ####################################################################################
@@ -910,7 +909,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 49: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -919,11 +918,11 @@ vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour", "Talk", "lg10.DurVisitMin
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 # Model 49b: interfere only
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -932,9 +931,10 @@ vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour", "Talk", "lg10.DurVisitMin
 vars.interact =  NULL #c("I(PEnHelos * PEnProps)")  ###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 ##REJECT lg10.DurVisitMinutes: AIC increases for all
+
 ####################################################################################
 ####################################################################################
 ####################################################################################
@@ -944,7 +944,7 @@ source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere_CoeffOnly.r")
 
 #Plot interfere ImpNQ_VorMore final model
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
@@ -955,11 +955,11 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere.r")
 
 #3 model plots: save to pdf file
 #The file name includes the dose variables included in the model above 
-pdf(file = paste("X:/Overnight/ATMP_2011Overnight_LogRegPEn_",paste(vars.dos,collapse="_"),paste(vars.mit,collapse="_"),"_Interfere.pdf",sep=""), width = 18, height = 8, onefile = TRUE, family = "Helvetica")
+pdf(file = paste("ATMP_2011Overnight_LogRegPEn_",paste(vars.dos,collapse="_"),paste(vars.mit,collapse="_"),"_Interfere.pdf",sep=""), width = 18, height = 8, onefile = TRUE, family = "Helvetica")
 
 #Adjust the margins
 par(mfrow=c(1,2))
@@ -974,7 +974,7 @@ for (i in 1:length(DesiredPlotYListIntNQ)){
   xlabel=dose.name
   ylabel="Percent Interfere with Natural Quiet"
   Title="Interfere With Natural Quiet:" 
-  source("X:/Overnight/ATMP_LogRegPEn_ImpCP_Plot3ModsScript_Interfere_mit.r")
+  source("ATMP_LogRegPEn_ImpCP_Plot3ModsScript_Interfere_mit.r")
 }
 
 dev.off()
@@ -1025,7 +1025,7 @@ dev.off()
 #Plot interfere ImpNQ_VorMore final model with PTAudAllAC visualized on x-axis
 
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 dose.name= "TAud (%)"
 dose.var = "PTAudAllAC"
 AddDose = "SELAllAC" #Use "none" if additional doses are not included in the model.
@@ -1036,11 +1036,11 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Interfere response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_Interfere.r")
+source("ATMP_2011Overnight_LogRegPEn_Interfere.r")
 
 #3 model plots: save to pdf file
 #The file name includes the dose variables included in the model above 
-pdf(file = paste("X:/Overnight/ATMP_2011Overnight_LogRegPEn_",paste(vars.dos,collapse="_"),paste(vars.mit,collapse="_"),"_Interfere_PtAud.pdf",sep=""), width = 18, height = 8, onefile = TRUE, family = "Helvetica")
+pdf(file = paste("ATMP_2011Overnight_LogRegPEn_",paste(vars.dos,collapse="_"),paste(vars.mit,collapse="_"),"_Interfere_PtAud.pdf",sep=""), width = 18, height = 8, onefile = TRUE, family = "Helvetica")
 
 #Adjust the margins
 par(mfrow=c(1,2))
@@ -1055,7 +1055,7 @@ for (i in 1:length(DesiredPlotYListIntNQ)){
   xlabel=dose.name
   ylabel="Percent Interfere with Natural Quiet"
   Title="Interfere With Natural Quiet:" 
-  source("X:/Overnight/ATMP_LogRegPEn_ImpCP_Plot3ModsScript_Interfere_mit.r")
+  source("ATMP_LogRegPEn_ImpCP_Plot3ModsScript_Interfere_mit.r")
 }
 dev.off()
 
@@ -1066,7 +1066,7 @@ dev.off()
 #Plot Survey Type Comparisons (Leq)
 # Model from frontcountry analysis (with Survey type mediator added)
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 
 STypeList=c("BCOvernight")
 dose.name= "LAeq,Tresp (dBA)"
@@ -1079,10 +1079,10 @@ PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_ImpCP_Annoy_ACHR1HR2.r")
+source("ATMP_2011Overnight_LogRegPEn_ImpCP_Annoy_ACHR1HR2.r")
 
 
-pdf(file = paste("X:/Overnight/ATMP_Plot3Mods_SurveyType_",paste(vars.dos,collapse="_"),"DayhikeSurveyAnnoy.pdf",sep=""), width = 12, height = 8, onefile = TRUE, family = "Helvetica")
+pdf(file = paste("ATMP_Plot3Mods_SurveyType_",paste(vars.dos,collapse="_"),"DayhikeSurveyAnnoy.pdf",sep=""), width = 12, height = 8, onefile = TRUE, family = "Helvetica")
 
 DesiredPlotYListAnnoy = c("Annoy_SorMore","Annoy_MorMore","Annoy_VorMore")
 #DesiredPlotYListIntNQ = c("IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")
@@ -1102,7 +1102,7 @@ for (l in 1:length(DesiredPlotYListAnnoy)){
     xlabel=dose.name
     ylabel="Prob(Annoyed)"
     Title="Annoy:"
-    source("X:/Overnight/ATMP_LogRegPEn_PlotScript_Annoy_SurveyCompare_mit_V2.r")
+    source("ATMP_LogRegPEn_PlotScript_Annoy_SurveyCompare_mit_V2.r")
   }
 }
 
@@ -1115,7 +1115,7 @@ dev.off()
 
 # Model from backcountry analysis
 rm(list = ls())          ### Clears all variables
-source("X:/Overnight/ModelSetup_Overnight.r")
+source("ModelSetup_Overnight.r")
 
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
@@ -1128,10 +1128,10 @@ DesiredPlotX = vars.dos[1]
 
 
 #Process data for Annoy response
-source("X:/Overnight/ATMP_2011Overnight_LogRegPEn_ImpCP_Annoy_ACHR1HR2.r")
+source("ATMP_2011Overnight_LogRegPEn_ImpCP_Annoy_ACHR1HR2.r")
 
 
-pdf(file = paste("X:/Overnight/ATMP_BC_",paste(vars.dos,collapse="_"),"DayhikeSurveyAnnoy.pdf",sep=""), width = 12, height = 8, onefile = TRUE, family = "Helvetica")
+pdf(file = paste("ATMP_BC_",paste(vars.dos,collapse="_"),"DayhikeSurveyAnnoy.pdf",sep=""), width = 12, height = 8, onefile = TRUE, family = "Helvetica")
 
 DesiredPlotYListAnnoy = c("Annoy_SorMore","Annoy_MorMore","Annoy_VorMore")
 #DesiredPlotYListIntNQ = c("IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")
@@ -1151,7 +1151,7 @@ for (l in 1:length(DesiredPlotYListAnnoy)){
     xlabel=dose.name
     ylabel="Prob(Annoyed)"
     Title="Annoy:"
-    source("X:/Overnight/ATMP_LogRegPEn_PlotScript_Annoy_SurveyCompare_mit_V2.r")
+    source("ATMP_LogRegPEn_PlotScript_Annoy_SurveyCompare_mit_V2.r")
     
   }
 }
