@@ -26,6 +26,10 @@
 
 # Dayhike models applied to overnight
 
+# Ensure required packaged are present
+
+source("get_packages.R")
+
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Model 1 - Annoy Dayhike final model ----
 rm(list = ls())        	### Clears all variables
