@@ -511,7 +511,7 @@ table(DRMerged2011sub$Survey,DRMerged2011sub$HearAircraft)
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Subset to complete cases ----
 
-complete.dose <- c("Site", "LmaxAllAC", "SELAllAC", "PTAudAllAC", "LeqTresp", "LeqTAC", "L50NatQuiet", "PEnHelos", "PEnProps", "SiteType", "ImpNQ_VorMore", "ImpHC_VorMore", "ImpVS_VorMore", "ImpCP_VorMore",  "SiteVisitBefore", "AdultsOnly", "Survey", "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore", "EarlyStart", "Talk")
+complete.dose <- c("Site", "LmaxAllAC", "SELAllAC", "PTAudAllAC", "LeqTresp", "LeqTAC", "L50NatQuiet", "PEnHelos", "PEnProps", "SiteType", "ImpNQ_VorMore", "ImpHC_VorMore", "ImpVS_VorMore", "ImpCP_VorMore",  "SiteVisitBefore", "AdultsOnly", "Survey", "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore", "EarlyStart", "Talk", "HikeBeginMinAfterMidnt")
 
 dose.cols <- DRMerged2011sub[,complete.dose]
 dose.rows <- complete.cases(dose.cols)

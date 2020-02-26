@@ -53,4 +53,4 @@ This script generates the descriptive tables and figures in the report.
 
 - `Plot_Run_Final_Overnight_Models.R`
 This script generates the logisitic curves from the best fit models for dayhike and overnight.
-It also produces the inputs for the final model fit tables, tables 4 and 5 in the report. 
+It also produces the inputs for the final model fit tables, tables 4 and 5 in the report. These are generated in the `tab_model()` commands for each of the six final models.
