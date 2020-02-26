@@ -1,6 +1,7 @@
 # Find the best model
+rm(list=ls())
 
-aicfiles <- dir()[grep("CoeffAIC.csv", dir())]
+aicfiles <- dir("Output")[grep("CoeffAIC.csv", dir("Output"))]
 
 # compile in one file for each set of compatible models
 
@@ -9,7 +10,7 @@ annoy <- aicfiles[grep("Annoy", aicfiles)]
 res.annoy <- vector()
 
 for(i in 1:length(annoy)){
-  d <- read.csv(annoy[i])
+  d <- read.csv(file.path("Output", annoy[i]))
   d$filename = annoy[i]
   d<-d[c("X","Response","AIC","BIC","logLike","Deviance","n.obs","filename")]
   res.annoy <- rbind(res.annoy, d)
@@ -76,7 +77,7 @@ interfere <- aicfiles[grep("Interfere", aicfiles)]
 res.interfere <- vector()
 
 for(i in 1:length(interfere)){
-  d <- read.csv(interfere[i])
+  d <- read.csv(file.path("Output", interfere[i]))
   d$filename = interfere[i]
   d<-d[c("X","Response","AIC","BIC","logLike","Deviance","n.obs","filename")]
   res.interfere <- rbind(res.interfere, d)
@@ -142,9 +143,9 @@ daymodelV$rank = grep("SELAllACPTAudAllACPEnHelosPEnPropsImpCP_VorMoreAdultsOnly
 
 daymodel = rbind(daymodelA, daymodelS, daymodelM, daymodelV)
 
-write.csv(data.frame(response, bestmodel), file = "Best Fit Models.csv", row.names=FALSE)
+write.csv(data.frame(response, bestmodel), file = "Output/Best Fit Models.csv", row.names=FALSE)
 
 
-write.csv(daymodel, file = "Best Fit Models - From Dayhike.csv", row.names=FALSE)
+write.csv(daymodel, file = "Output/Best Fit Models - From Dayhike.csv", row.names=FALSE)
 
 

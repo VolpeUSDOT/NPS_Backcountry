@@ -1,9 +1,8 @@
 # Dose-response work 2016
 # Fitting models of response to aviation noise for overnight, backcountry visitors to 4 national parks
-# Dan Flynn | daniel.flynn.ctr@dot.gov
+# Dan Flynn | daniel.flynn@dot.gov
 
 # Using both dayhike and vernight together in single model, with additional random effect
-
 
 library(lme4)   # for glmer() generalized linear mixed effects models
 library(sjPlot) # for summary tables using tab_model
@@ -73,8 +72,8 @@ annS.curve = glm(Annoy_SorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps +
 summary(annS) # copy in to final resultsfile
 
 tab_model(annS,
-          string.est = "Estimate",
-          digits.ci = 1)
+          string.est = "Estimate")
+
 # Annoy M
 varnames.na = c("Annoy_MorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
 vars.all.data = Data[varnames.na]
@@ -98,8 +97,7 @@ annM.curve = glm(Annoy_MorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps +
 summary(annM) # copy in to final resultsfile
 
 tab_model(annM,
-          string.est = "Estimate",
-          digits.ci = 1)
+          string.est = "Estimate")
 
 # Annoy v
 varnames.na = c("Annoy_VorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
@@ -124,8 +122,7 @@ annV.curve = glm(Annoy_VorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps +
 summary(annV) # copy in to final resultsfile
 
 tab_model(annV,
-          string.est = "Estimate",
-          digits.ci = 1)
+          string.est = "Estimate")
 
 ########### Interfere
 
@@ -156,7 +153,7 @@ intS.curve = glm(IntWithNQ_SorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProp
 summary(intS) # copy in to final resultsfile
 
 tab_model(intS,
-          string.est = "Estimate", digits.ci = 1)
+          string.est = "Estimate")
 
 # Interfere M
 
@@ -182,7 +179,7 @@ intM.curve = glm(IntWithNQ_MorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProp
 summary(intM) # copy in to final resultsfile
 
 tab_model(intM,
-          string.est = "Estimate", digits.ci = 1)
+          string.est = "Estimate")
 
 # Interfere V
 
@@ -206,8 +203,7 @@ intV.curve = glm(IntWithNQ_VorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProp
 summary(intV) # copy in to final resultsfile
 
 tab_model(intV,
-          string.est = "Estimate", digits.ci = 1)
-
+          string.est = "Estimate")
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Plot ----
