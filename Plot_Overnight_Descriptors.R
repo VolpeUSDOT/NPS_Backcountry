@@ -108,7 +108,7 @@ legend("topright",
        legend = c("Dayhike", "Overnight")
 )
 
-dev.print(pdf, width = 8.5, height = 5, file = "Histograms.pdf")
+dev.print(pdf, width = 8.5, height = 5, file = "Output/Histograms.pdf")
 
 # Figure 2 SiteType by Day/Overnight ----
 
@@ -131,7 +131,7 @@ colzbar = alpha(c("deepskyblue","deepskyblue4",
                   "dodgerblue","dodgerblue4",
                   "violet","violetred4"), 0.8)
 
-pdf("Percent responses Xtab SEL SiteType.pdf", width = 10, height = 6)
+pdf("Output/Percent responses Xtab SEL SiteType.pdf", width = 10, height = 6)
 
 par(xpd=T, mar = c(4, 4, 4, 4), mfrow = c(1,1))
 
@@ -196,7 +196,7 @@ dev.off()
 colzbar4 = alpha(c("deepskyblue4", "dodgerblue4", "violet","seagreen"), 0.8)
 
 
-pdf("Percent responses Xtab SEL Site.pdf", width = 10, height = 6)
+pdf("Output/Percent responses Xtab SEL Site.pdf", width = 10, height = 6)
 
 par(xpd=T, mar = c(4, 4, 4, 4))
 
@@ -277,7 +277,7 @@ colzbar = alpha(c("deepskyblue","deepskyblue4",
                   "dodgerblue","dodgerblue4",
                   "violet","violetred4"), 0.8)
 
-pdf("Percent responses Xtab SEL.pdf", width = 10, height = 6)
+pdf("Output/Percent responses Xtab SEL.pdf", width = 10, height = 6)
 
 par(xpd=T, mar = c(4, 4, 4, 4))
 

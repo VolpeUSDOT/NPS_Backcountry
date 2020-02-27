@@ -30,7 +30,7 @@ MergeVars <- c("site","Survey","SiteType","HikeBeginMinAfterMidnt", "SiteFirstVi
 
 
 # Import the first file and subset the columns to merge using the MergeVars variable
-DRMerged2011 <- read.csv(file.path(datadir, "Input", FileNames[1]))
+DRMerged2011 <- read.csv(file.path(datadir, "Input", FileNames[1]), stringsAsFactors = F)
 names(DRMerged2011)
 DRMerged2011sub <- DRMerged2011[ ,names(DRMerged2011) %in% MergeVars]
 dim(DRMerged2011sub)
@@ -272,7 +272,7 @@ ggplot(DRMerged2011sub, aes(group = Survey)) +
   facet_wrap(~Survey) + 
   coord_flip()
 
-remove("AircraftAnnoy", "SiteType", "InterfereNatQuiet", "ImpCalmPeace", "ImpViewScenery", "ImpHistCult", "ImpAdventure", "HearAircraft")
+rm("Survey", "AircraftAnnoy", "SiteType", "InterfereNatQuiet", "ImpCalmPeace", "ImpViewScenery", "ImpHistCult", "ImpAdventure", "HearAircraft")
 
 detach(DRMerged2011sub)
 
@@ -525,3 +525,4 @@ write.csv(DRMerged2011subComplete, file = file.path(datadir, "ATMP2011_CompleteD
 #######################################################################
 #check HearAircraft variable for comapring survey types
 table(DRMerged2011subComplete$Annoy_SorMore)
+

@@ -16,7 +16,7 @@ To facilitate running this code locally, use RStudio and launch the code by doub
 
 #### Compatibility
 
-These scripts have been tested on Windows 10, R 3.6.2, with the latest version of RStudio (recommended but not required).
+These scripts have been tested on Windows 10, R 3.6.2, with the latest version of RStudio (recommended but not required), as well as on Windows Server 2012R2, R 3.5.3, RStudio 1.2.1335.
 
 # Data
 
@@ -75,4 +75,4 @@ The output include the following:
 - Best-fit final model summaries in .csv format
 - Coefficients, confidence interval, and p-values for final best fit models in .html format
 - A PDF of the annoyance and interference with natural quiet dose-response figures for backcountry visitors.
-
+- Additional PDFs of descriptive figures for the report.
