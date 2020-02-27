@@ -7,6 +7,8 @@ library(lme4)					### Required library
 
 ###########################################################################
 #Set the variables used in the Plot3ModsScript for the simulations
+# 2020-02: These are not in use with the current stand-alone scripts.
+
 DesiredRegrType = "Dichot"        	#Dichot or Ordinal
 OrdMultiYesNo = "No"
 num.curves =  150 #number of curves to show on the plots

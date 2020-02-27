@@ -72,7 +72,8 @@ annS.curve = glm(Annoy_SorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps +
 summary(annS) # copy in to final resultsfile
 
 tab_model(annS,
-          string.est = "Estimate")
+          string.est = "Estimate",
+          file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Annoy M
 varnames.na = c("Annoy_MorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
@@ -97,7 +98,8 @@ annM.curve = glm(Annoy_MorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps +
 summary(annM) # copy in to final resultsfile
 
 tab_model(annM,
-          string.est = "Estimate")
+          string.est = "Estimate",
+          file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Annoy v
 varnames.na = c("Annoy_VorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
@@ -122,7 +124,9 @@ annV.curve = glm(Annoy_VorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps +
 summary(annV) # copy in to final resultsfile
 
 tab_model(annV,
-          string.est = "Estimate")
+          string.est = "Estimate",
+          file = file.path("Output", paste0(varnames.na[1], ".html")))
+
 
 ########### Interfere
 
@@ -153,7 +157,8 @@ intS.curve = glm(IntWithNQ_SorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProp
 summary(intS) # copy in to final resultsfile
 
 tab_model(intS,
-          string.est = "Estimate")
+          string.est = "Estimate",
+          file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Interfere M
 
@@ -179,7 +184,8 @@ intM.curve = glm(IntWithNQ_MorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProp
 summary(intM) # copy in to final resultsfile
 
 tab_model(intM,
-          string.est = "Estimate")
+          string.est = "Estimate",
+          file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Interfere V
 
@@ -203,7 +209,8 @@ intV.curve = glm(IntWithNQ_VorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProp
 summary(intV) # copy in to final resultsfile
 
 tab_model(intV,
-          string.est = "Estimate")
+          string.est = "Estimate",
+          file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Plot ----

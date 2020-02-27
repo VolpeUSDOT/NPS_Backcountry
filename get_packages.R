@@ -2,6 +2,7 @@
 
 loadpacks <- c(
   "arm",
+  "ggplot2",
   "lme4",
   "sjPlot",
   "scales")

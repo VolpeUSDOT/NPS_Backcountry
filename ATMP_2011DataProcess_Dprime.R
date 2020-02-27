@@ -1,11 +1,9 @@
 ## Script to import and merge individual csv files from different surveys and sites
 ## Imports all files and extracts the columns used in the logistic regression models
 ## Applies transformations and dichotomizations to variables
-## Author: EA Sudderth 
+## Author: EA Sudderth, 2013
 ## Modified 2016-10-19 Dan Flynn, to fit overnight data
 ## Updated 2020-02 Dan Flynn for standalone work.
-
-# NOTE: Same as ATMP_2011DataProcess_Dp.r but adds "HierLmaxHelos", "HierLmaxProps", "HierLmaxJets" variables.
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Setup ---- 
