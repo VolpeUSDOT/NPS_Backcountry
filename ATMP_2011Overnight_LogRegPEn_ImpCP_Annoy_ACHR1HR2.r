@@ -143,7 +143,7 @@ results
 ###### REFERENCE REGRESSION
 			## Equation
 				n.vars.ref = length(varnames.ref)
-					eq.ref = paste(res, " ~ (1|Site) + 1", sep="")
+					eq.ref = paste(res, " ~ Site + SiteType + 1", sep="")
 					if (n.vars.ref > 1) {
 						for (n in 2:n.vars.ref) {
 							eq.ref = paste(eq.ref, " + ", varnames.ref[n], sep="")
@@ -151,7 +151,7 @@ results
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data,glmer(noquote(eq.ref), family = binomial(link="logit"), verbose=FALSE))
+				fit.ref = with(vars.all.data, glm(noquote(eq.ref), family = binomial(link="logit"), verbose=FALSE))
 		    print(fit.ref)		
 				
 		    betas = fixef(fit.ref)
@@ -210,138 +210,5 @@ write.csv(fit.table,file=paste0("Output/ATMP_2011Overnight_",
                                 paste(vars.dos,collapse=""),
                                 paste(vars.mit,collapse=""),
                                 "_Annoy_CoeffProbs.csv"))
-
-
-################################################
-#Set mediator variable values used for the results plots
-
-#Mediator variable tables for each hike type
-ImpCPCounts <- table(vars.all.data$ImpCP_VorMore)
-ImpCPCounts
-ImpCPCounts[2]/sum(ImpCPCounts) #86%
-
-VisitBefore <- table(vars.all.data$SiteVisitBefore)
-VisitBefore
-VisitBefore[2]/sum(VisitBefore) #12.9%
-
-AdultsOnlyCounts <- table(vars.all.data$AdultsOnly)
-AdultsOnlyCounts
-AdultsOnlyCounts[2]/sum(AdultsOnlyCounts) #80.6%
-
-Perct.ImpCP = round(ImpCPCounts[2]/sum(ImpCPCounts),2)*100  			
-Perct.Before = round(VisitBefore[2]/sum(VisitBefore),2)*100				
-Perct.Adults = round(AdultsOnlyCounts[2]/sum(AdultsOnlyCounts),2)*100		
-
-###########################################################################
-#Linear regressions of dose variables
-#Note: These plots show the linear regressions that were used to relate the non-plotted dose variables to the plotted dose variables (LeqTresp) in Grant Anderson's code compared to the logisit fits used by EA Sudderth. The logistic fits prevent predicted values for the doses beyond the range of the data (e.g. no negative doses are predicted).
-
-if (PEnRegress == "TRUE"){
-#names(vars.all.data)
-DoseVar <- vars.all.data[,which(names(vars.all.data)==dose.var)]
-
-#Linear regression used in the plotting function (written by Grant)
-m1 <- lm(vars.all.data$PEnHelos~DoseVar)
-m1
-
-#Median and Mean of PEnHelos
-median(vars.all.data$PEnHelos, na.rm=TRUE)
-mean(vars.all.data$PEnHelos, na.rm=TRUE)
-
-#Linear regression used in the plotting function (written by Grant)
-m3 <- lm(vars.all.data$PEnProps~DoseVar)
-m3
-
-#Mean and median of PEnProps
-mean(vars.all.data$PEnProps)
-median(vars.all.data$PEnProps)
-
-##############################################################################
-#Threshold data and apply standard logistic regression. 
-#Try logistic regression function: PEnHelos
-PEnHelos.Binary <- vars.all.data$PEnHelos
-PEnHelos.Binary[PEnHelos.Binary<50] <- 0
-PEnHelos.Binary[PEnHelos.Binary>50] <- 1
-H.log = glm(PEnHelos.Binary~DoseVar, family=binomial(link="logit"))
-summary(H.log)
-
-
-#Logistic regression function: PEnProps
-PEnProps.Binary <- vars.all.data$PEnProps
-PEnProps.Binary[PEnProps.Binary<50] <- 0
-PEnProps.Binary[PEnProps.Binary>50] <- 1
-P.log = glm(PEnProps.Binary~DoseVar, family=binomial(link="logit"))
-summary(P.log)
-#str(P.log)
-P.log$coefficients[1]
-}
-
-
- xmin = min(vars.all.data[DesiredPlotX]) #x-axis minimum
- xmax = max(vars.all.data[DesiredPlotX]) #x-axis max
- xlimits = c(xmin-2, xmax+2)					#Set x-axis limits
-
-#####################################
-# new for 2016! Plot in here. 
-if(!exists("PLOT")) PLOT = FALSE
- 
-if(PLOT){
-  
-
-  varnames.plot = c(DesiredPlotY, vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)])
-  
-  if (DesiredPlotY == "Annoy_SorMore") {
-    fit.plot = fit.1
-    #vars.all.data = vars.all.data.1
-    eq.plot = results[1,"eq"]
-    add.plot=FALSE
-    col.line="darkolivegreen"
-  }
-  if (DesiredPlotY == "Annoy_MorMore") {
-    fit.plot = fit.2
-    #vars.all.data = vars.all.data.2
-    eq.plot = results[2,"eq"]
-    add.plot=FALSE
-    col.line="darkolivegreen3"
-  }	
-  if (DesiredPlotY == "Annoy_VorMore") {
-    fit.plot = fit.3
-    #vars.all.data = vars.all.data.3
-    eq.plot = results[3,"eq"]
-    add.plot=TRUE
-    col.line="honeydew3"
-  }
-  if (DesiredPlotY == "IntWithNQ_SorMore") {
-    fit.plot = fit.4
-    #vars.all.data = vars.all.data.4
-    eq.plot = results[4,"eq"]
-    add.plot=FALSE
-    col.line="darkolivegreen"
-  }
-  if (DesiredPlotY == "IntWithNQ_MorMore") {
-    fit.plot = fit.5
-    #vars.all.data = vars.all.data.5
-    eq.plot = results[5,"eq"]
-    add.plot=TRUE
-    col.line="darkolivegreen3"
-  }
-  if (DesiredPlotY == "IntWithNQ_VorMore") {
-    fit.plot = fit.6
-    #vars.all.data = vars.all.data.6
-    eq.plot = results[6,"eq"]
-    add.plot=TRUE
-    col.line="honeydew3"
-  }
-  
-  
-  
-  
-  
-  }
- 
- 
-####################################
-#Remove variables
-remove(Data)
 
 

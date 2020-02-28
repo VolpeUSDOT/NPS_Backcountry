@@ -14,7 +14,7 @@
 
 #Pre-process datafile
 
-Data <- subset(Data,Data$SiteType == "BCOvernight") #Removes ~300 rows
+Data <- subset(Data, Data$SiteType != "ShortHike") # Removes ~251 rows
 Data$SiteType <- factor(Data$SiteType) 
 # dim(Data)
 # table(Data$SiteType)
@@ -52,7 +52,12 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 				vars.mit.nolog 	= gsub("log", "", vars.mit.logpre, fixed = T)
 
 ##  SET UP RESULTS DATAFRAME FOR EVERYTHING EXCEPT fit
-num.col <- length(c("Response", "Int", vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)], "AIC", "BIC", "logLike", "Deviance", "n.obs", "SigmaSite"))
+# Now adding values for each site and site type level as well
+				
+num.col <- length(c("Response", "Int", vars.dos, 
+                    "SurveyHR1","SurveyHR2", 
+                    vars.mit[2:length(vars.mit)], "AIC", "BIC", "logLike", "Deviance", "n.obs", "SigmaSite"))
+
 results.mat = rep(NA,3*num.col)
 dim(results.mat) = c(3, num.col)
 results = as.data.frame(results.mat)
@@ -73,7 +78,7 @@ rm(results.mat)
 		res = results[r,1]
 	
 		###### Assemble variables and data for both regressions (this r), using na.omit:
-		varnames.na = c(res, "Site", vars.dos.nolog, vars.mit.nolog, DSet, AddData)
+		varnames.na = c(res, "Site", "SiteType", vars.dos.nolog, vars.mit.nolog, DSet, AddData)
 		vars.all.data = Data[varnames.na]													### Grab from proper data set
 		vars.all.data = subset(vars.all.data, Dataset != DSet.filterOff)		### Subset re Dataset
 		if (DataType == "AllCorrectedOnlyPrior") { ##Changed from AllCorrectedNoPrior to filter short visits
@@ -92,7 +97,7 @@ rm(results.mat)
 ###### REFERENCE REGRESSION
 			## Equation
 				n.vars.ref = length(varnames.ref)
-					eq.ref = paste(res, " ~ (1|Site) + 1", sep="")
+					eq.ref = paste(res, " ~ Site + SiteType + 1", sep="")
 					if (n.vars.ref > 1) {
 						for (n in 2:n.vars.ref) {
 							eq.ref = paste(eq.ref, " + ", varnames.ref[n], sep="")
@@ -100,11 +105,15 @@ rm(results.mat)
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data, glmer(noquote(eq.ref), family = binomial(link="logit"), verbose=FALSE))
-		    #print(fit.ref)		
+				fit.ref = glm(noquote(eq.ref), family = binomial(link="logit"), 
+				              data = vars.all.data)  
+		    
+				#print(fit.ref)		
 				#fit.ref
-		    betas = fixef(fit.ref)
-		    coeff.cols <- length(c("Response", "Int", vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)]))
+		    betas = coef(fit.ref)
+		    
+		    # Need column for each predictor. Site and SiteType are now in the fixed effects, so need to add to the coefficient results.
+		    coeff.cols <- length(1 + length(betas))
 		    results[r,2:coeff.cols] = round(betas,5)
 		    #results  
     

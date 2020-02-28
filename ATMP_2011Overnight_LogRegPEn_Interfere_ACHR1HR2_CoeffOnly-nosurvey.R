@@ -91,7 +91,7 @@ rm(results.mat)
 ###### REFERENCE REGRESSION
 			## Equation
 				n.vars.ref = length(varnames.ref)
-					eq.ref = paste(res, " ~ (1|Site) + 1", sep="")
+					eq.ref = paste(res, "  ~ Site + SiteType + 1", sep="")
 					if (n.vars.ref > 1) {
 						for (n in 2:n.vars.ref) {
 							eq.ref = paste(eq.ref, " + ", varnames.ref[n], sep="")
@@ -99,7 +99,7 @@ rm(results.mat)
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data,glmer(noquote(eq.ref), family=binomial(link="logit"), verbose=FALSE))
+				fit.ref = with(vars.all.data, glm(noquote(eq.ref), family=binomial(link="logit"), verbose=FALSE))
 		    #print(fit.ref)		
 				#fit.ref
 		    betas = fixef(fit.ref)

@@ -138,7 +138,7 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 ###### REFERENCE REGRESSION
 			## Equation
 				n.vars.ref = length(varnames.ref)
-					eq.ref = paste(res, " ~ (1|Site) + 1", sep="")
+					eq.ref = paste(res, " ~ Site + SiteType + 1", sep="")
 					if (n.vars.ref > 1) {
 						for (n in 2:n.vars.ref) {
 							eq.ref = paste(eq.ref, " + ", varnames.ref[n], sep="")
@@ -146,7 +146,7 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data,glmer(noquote(eq.ref), family=binomial(link="logit"), verbose=FALSE))
+				fit.ref = with(vars.all.data, glm(noquote(eq.ref), family = binomial(link="logit"), verbose=FALSE))
 		    #print(fit.ref)		
 				#fit.ref
 		    betas = fixef(fit.ref)
@@ -202,18 +202,13 @@ write.csv(results,file = paste0("Output/ATMP_2011Overnight_",
                                 "_Interfere_CoeffAIC.csv"))   #SiteTypeOnly
 
 
-
 fit.table <- rbind(results$Response[1], coef(summary(fit.1)),
                    results$Response[2], coef(summary(fit.2)),
                    results$Response[3], coef(summary(fit.3)))
 fit.table
+
 write.csv(fit.table,file = paste0("Output/ATMP_2011Overnight_",
                                   paste(vars.dos,collapse=""),
                                   paste(vars.mit,collapse=""),
                                   "_Interfere_CoeffProbs.csv"))
-
- xmin = min(vars.all.data[DesiredPlotX]) #x-axis minimum
- xmax = max(vars.all.data[DesiredPlotX]) #x-axis max
- xlimits = c(xmin-2, xmax+2)					#Set x-axis limits
-
 
