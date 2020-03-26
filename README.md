@@ -14,6 +14,8 @@ All necessary code and data are provided to create the output reported in `Multi
 
 To facilitate running this code locally, use RStudio and launch the code by double-clicking `NPS_Backcountry.Rproj`. This will ensure the working directory is set to the location of this project.
 
+This version uses fixed-effect models, as an alternative to the mixed-effect models prsented in the report.
+
 #### Compatibility
 
 These scripts have been tested on Windows 10, R 3.6.2, with the latest version of RStudio (recommended but not required), as well as on Windows Server 2012R2, R 3.5.3, RStudio 1.2.1335.
@@ -55,6 +57,8 @@ Scripts called by this master script are the following:
 - `Model_Selection_Overnight.R`
 
 The script may take several minutes to complete.
+
+Note that these all have been changed to accomodate the fixed effect models of type:
 
 #### 3. Plotting and final tables
 

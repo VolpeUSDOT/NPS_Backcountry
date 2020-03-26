@@ -54,17 +54,22 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 ##  SET UP RESULTS DATAFRAME FOR EVERYTHING EXCEPT fit
 # Now adding values for each site and site type level as well
 				
-num.col <- length(c("Response", "Int", vars.dos, 
-                    "SurveyHR1","SurveyHR2", 
-                    vars.mit[2:length(vars.mit)], "AIC", "BIC", "logLike", "Deviance", "n.obs", "SigmaSite"))
+# Adding all possible sites as colums in the results frame. 
+colnames_results = c("Response", "Int",
+                      levels(Data$Site),
+                      vars.dos, 
+                      "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)], 
+                      "AIC", "BIC", "logLike", "Deviance", "n.obs", "Sigma")
+rownames_results = c("AS", "AM", "AV") #, "IS", "IM", "IV")
 
-results.mat = rep(NA,3*num.col)
-dim(results.mat) = c(3, num.col)
-results = as.data.frame(results.mat)
-colnames(results) = c("Response", "Int", vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)], "AIC", "BIC", "logLike", "Deviance", "n.obs", "SigmaSite")
-rownames(results) = c("AS", "AM", "AV") #, "IS", "IM", "IV")
-rm(results.mat)
-#results
+results = matrix(data = NA,
+                 nrow = length(rownames_results),
+                 ncol = length(colnames_results))
+
+dimnames(results) = list(rownames_results,
+                         colnames_results)
+
+results = as.data.frame(results)
 
 ##EAS: 3 different responses fit for Annoy - 
 	results[1,1] = "Annoy_SorMore"
@@ -72,7 +77,7 @@ rm(results.mat)
 	results[3,1] = "Annoy_VorMore"
 
 ###### RESPONSE: LOOP OVER 3 RESPONSES
-# r = 2 					# Uncomment, to test
+# r = 1 					# Uncomment, to test
 
 	for (r in 1 : 3) {
 		res = results[r,1]
@@ -113,27 +118,29 @@ rm(results.mat)
 		    betas = coef(fit.ref)
 		    
 		    # Need column for each predictor. Site and SiteType are now in the fixed effects, so need to add to the coefficient results.
-		    coeff.cols <- length(1 + length(betas))
-		    results[r,2:coeff.cols] = round(betas,5)
-		    #results  
-    
+		    coeff.cols <- length(betas)
+		    
+		    coeffs_for_res <- round(betas,5)
+		    names(coeffs_for_res)[names(coeffs_for_res) == "(Intercept)"] = "Int"
+		    names(coeffs_for_res) <- sub("^Site", "", names(coeffs_for_res))
+		    names(coeffs_for_res) <- sub("Yes$", "", names(coeffs_for_res))
+		    
     ## Collect required baseline parameters
-        fits <- round(summary(fit.ref)$AICtab,1)
-				AIC.ref = fits[1]
-		    BIC.ref = fits[2]
-  		  logLik.ref = fits[3]
-				Dev.ref = fits[4]
-				SDSts.ref = sigma.hat(fit.ref)$sigma$Site[1]
-        n.ref = dim(fit.ref@frame)[1]
+        
+		    coefs_and_params_for_res = c(coeffs_for_res,
+		                                 AIC = AIC(fit.ref),
+		                                 BIC = BIC(fit.ref),
+		                                 logLike = logLik(fit.ref),
+		                                 Deviance = deviance(fit.ref),
+		                                 n.obs = length(fit.ref$fitted.values),
+		                                 Sigma = sd(resid(fit.ref))
+		                                 )
     
-    ## Add AIC, BIC, deviance to results table
-		    results[r,coeff.cols+1] = AIC.ref
-		    results[r,coeff.cols+2] = BIC.ref
-		    results[r,coeff.cols+3] = logLik.ref
-		    results[r,coeff.cols+4] = Dev.ref
-		    results[r,coeff.cols+5] = n.ref
-		    results[r,coeff.cols+6] = SDSts.ref
-
+		    
+		    results[r, 
+		            na.omit(match(names(coefs_and_params_for_res), names(results)))] =
+		      
+		      coefs_and_params_for_res[na.omit(match(names(results), names(coefs_and_params_for_res)))]  
 		## Save equation for simulation
 			#results$eq[r]  = eq.ref
 		
@@ -154,7 +161,7 @@ print(results)
 # Save model results (coefficient estimates) to file
 write.csv(results,
           file = file.path("Output", 
-                       paste0("ATMP_2011Overnight_", 
+                       paste0("Fixed_ATMP_2011Overnight_", 
                        paste(vars.dos, collapse=""), 
                        paste(vars.mit, collapse=""),"_Annoy_CoeffAIC.csv"))
           )   #SiteTypeOnly
@@ -166,7 +173,7 @@ fit.table <- rbind(results$Response[1], coef(summary(fit.1)),
 
 write.csv(fit.table,
           file = file.path("Output",
-                           paste0("ATMP_2011Overnight_",
+                           paste0("Fixed_ATMP_2011Overnight_",
                                   paste(vars.dos,collapse=""),
                                   paste(vars.mit,collapse=""), "_Annoy_CoeffProbs.csv"))
           )
