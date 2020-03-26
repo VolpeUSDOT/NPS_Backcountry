@@ -38,34 +38,43 @@ Data <- Data[Data$DurVisitMinutes > 60,]
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Re-run final models ----
 
-### Annoy_SorMore
-# Best model: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + WatchBirds
-# Random effects: Site, SiteType
+# Refer to Best Fit Models.csv. See filename for the model.
+
+# Annoyance, but not Interference, uses Survey. 
+# AS: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + lg10.DurVisitMinutes
+# AM: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + PicnicMeal
+# AV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + ViewSunRiseSet
+# IS: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpNQ_VorMore + AdultsOnly + AirTour + WatchBirds
+# IM: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + SiteVisitBefore
+# IV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + AdultsOnly + AirTour + Talk
+
+### Annoy_SorMore #
+# Best model: # SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + lg10.DurVisitMinutes
 
 dose.var = "SELAllAC"
 vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  
-vars.mit = c("Survey", "ImpCP_VorMore", "SiteVisitBefore", "AdultsOnly", "WatchBirds")
+vars.mit = c("Survey", "ImpCP_VorMore", "SiteVisitBefore", "AdultsOnly", "AirTour", "WatchBirds", "lg10.DurVisitMinutes")
 
 varnames.na = c("Annoy_SorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
 vars.all.data = Data[varnames.na]
 vars.all.data = na.omit(vars.all.data)
 vars.all.data2 = vars.all.data
-vars.all.data2[2:5] <- as.numeric(scale(vars.all.data2[2:5]))
+
+is_num_var <- sapply(vars.all.data2[2:length(vars.all.data2)], class) == "numeric"
+
+vars.all.data2[,(2:length(vars.all.data2))[is_num_var]] <- as.numeric(scale(vars.all.data2[,(2:length(vars.all.data2))[is_num_var]]))
 
 with(vars.all.data, tapply(Annoy_SorMore, SiteType, function(x) sum(x)/length(x)))
 
 # Fit model
-annS = glmer(Annoy_SorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-                              Survey + ImpCP_VorMore + SiteVisitBefore +
-                              WatchBirds + AdultsOnly +
-                              (1|Site) + (1|SiteType), 
-                              family = binomial(link="logit"),
-                              data = vars.all.data2)
+eq.ref = paste(c(varnames.na[1], " ~ ", paste(c("Site", "SiteType", vars.dos, vars.mit), collapse = " + ")), collapse = "")
+
+annS = glm(noquote(eq.ref),
+           family = binomial(link="logit"),
+           data = vars.all.data2)
 
 # Fixed effect only model for plotting
-annS.curve = glm(Annoy_SorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-                   Survey + ImpCP_VorMore + SiteVisitBefore +
-                   WatchBirds + AdultsOnly + SiteType + Site, 
+annS.curve = glm(noquote(eq.ref),
                  family = binomial(link="logit"),
                  data = vars.all.data)
 
@@ -76,22 +85,28 @@ tab_model(annS,
           file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Annoy M
+# AM: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + PicnicMeal
+
+dose.var = "SELAllAC"
+vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  
+vars.mit = c("Survey", "ImpCP_VorMore", "SiteVisitBefore", "AdultsOnly", "AirTour", "WatchBirds", "PicnicMeal")
+
 varnames.na = c("Annoy_MorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
 vars.all.data = Data[varnames.na]
 vars.all.data = na.omit(vars.all.data)
 vars.all.data2 = vars.all.data
-vars.all.data2[2:5] <- as.numeric(scale(vars.all.data2[2:5]))
 
-annM = glmer(Annoy_MorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-               Survey + ImpCP_VorMore + SiteVisitBefore +
-               WatchBirds + AdultsOnly +
-               (1|Site) + (1|SiteType), 
-             family = binomial(link="logit"),
-             data = vars.all.data2)
+is_num_var <- sapply(vars.all.data2[2:length(vars.all.data2)], class) == "numeric"
+vars.all.data2[,(2:length(vars.all.data2))[is_num_var]] <- as.numeric(scale(vars.all.data2[,(2:length(vars.all.data2))[is_num_var]]))
 
-annM.curve = glm(Annoy_MorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-                   Survey + ImpCP_VorMore + SiteVisitBefore +
-                   WatchBirds + AdultsOnly + SiteType + Site, 
+eq.ref = paste(c(varnames.na[1], " ~ ", paste(c("Site", "SiteType", vars.dos, vars.mit), collapse = " + ")), collapse = "")
+
+annM = glm(noquote(eq.ref),
+           family = binomial(link="logit"),
+           data = vars.all.data2)
+
+# Fixed effect only model for plotting
+annM.curve = glm(noquote(eq.ref),
                  family = binomial(link="logit"),
                  data = vars.all.data)
 
@@ -102,22 +117,27 @@ tab_model(annM,
           file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Annoy v
+# AV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + ViewSunRiseSet
+
+dose.var = "SELAllAC"
+vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  
+vars.mit = c("Survey", "ImpCP_VorMore", "SiteVisitBefore", "AdultsOnly", "AirTour", "WatchBirds", "ViewSunRiseSet")
+
 varnames.na = c("Annoy_VorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
 vars.all.data = Data[varnames.na]
 vars.all.data = na.omit(vars.all.data)
 vars.all.data2 = vars.all.data
-vars.all.data2[2:5] <- as.numeric(scale(vars.all.data2[2:5]))
+is_num_var <- sapply(vars.all.data2[2:length(vars.all.data2)], class) == "numeric"
+vars.all.data2[,(2:length(vars.all.data2))[is_num_var]] <- as.numeric(scale(vars.all.data2[,(2:length(vars.all.data2))[is_num_var]]))
 
-annV = glmer(Annoy_VorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-               Survey + ImpCP_VorMore + SiteVisitBefore +
-               WatchBirds + AdultsOnly +
-               (1|Site) + (1|SiteType), 
-             family = binomial(link="logit"),
-             data = vars.all.data2)
+eq.ref = paste(c(varnames.na[1], " ~ ", paste(c("Site", "SiteType", vars.dos, vars.mit), collapse = " + ")), collapse = "")
 
-annV.curve = glm(Annoy_VorMore ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-                   Survey + ImpCP_VorMore + SiteVisitBefore +
-                   WatchBirds + AdultsOnly + SiteType + Site, 
+annV = glm(noquote(eq.ref),
+           family = binomial(link="logit"),
+           data = vars.all.data2)
+
+# For plotting
+annV.curve = glm(noquote(eq.ref),
                  family = binomial(link="logit"),
                  data = vars.all.data)
 
@@ -129,31 +149,31 @@ tab_model(annV,
 
 
 ########### Interfere
+# IS: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpNQ_VorMore + AdultsOnly + AirTour + WatchBirds
 
 dose.var = "SELAllAC"
 vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  
-vars.mit = c("ImpCP_VorMore", "AdultsOnly")
+vars.mit = c("ImpNQ_VorMore", "AdultsOnly", "AirTour", "WatchBirds")
 
 varnames.na = c("IntWithNQ_SorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
 vars.all.data = Data[varnames.na]
 vars.all.data = na.omit(vars.all.data)
 vars.all.data2 = vars.all.data
-vars.all.data2[2:5] <- as.numeric(scale(vars.all.data2[2:5]))
+is_num_var <- sapply(vars.all.data2[2:length(vars.all.data2)], class) == "numeric"
+vars.all.data2[,(2:length(vars.all.data2))[is_num_var]] <- as.numeric(scale(vars.all.data2[,(2:length(vars.all.data2))[is_num_var]]))
 
 with(vars.all.data, tapply(IntWithNQ_SorMore, SiteType, function(x) sum(x)/length(x)))
 
-intS = glmer(IntWithNQ_SorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-               ImpCP_VorMore + AdultsOnly + 
-               (1|Site) + (1|SiteType), 
-             family = binomial(link="logit"),
-             data = vars.all.data2)
+eq.ref = paste(c(varnames.na[1], " ~ ", paste(c("Site", "SiteType", vars.dos, vars.mit), collapse = " + ")), collapse = "")
 
+intS = glm(noquote(eq.ref),
+           family = binomial(link="logit"),
+           data = vars.all.data2)
 
-intS.curve = glm(IntWithNQ_SorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-                   ImpCP_VorMore + AdultsOnly + SiteType + Site,
+# For plotting
+intS.curve = glm(noquote(eq.ref),
                  family = binomial(link="logit"),
                  data = vars.all.data)
-
 summary(intS) # copy in to final resultsfile
 
 tab_model(intS,
@@ -161,26 +181,31 @@ tab_model(intS,
           file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Interfere M
+# IM: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + SiteVisitBefore
+
+dose.var = "SELAllAC"
+vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  
+vars.mit = c("ImpCP_VorMore", "SiteVisitBefore")
 
 varnames.na = c("IntWithNQ_MorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
 vars.all.data = Data[varnames.na]
 vars.all.data = na.omit(vars.all.data)
 vars.all.data2 = vars.all.data
-vars.all.data2[2:5] <- as.numeric(scale(vars.all.data2[2:5]))
+is_num_var <- sapply(vars.all.data2[2:length(vars.all.data2)], class) == "numeric"
+vars.all.data2[,(2:length(vars.all.data2))[is_num_var]] <- as.numeric(scale(vars.all.data2[,(2:length(vars.all.data2))[is_num_var]]))
 
 with(vars.all.data, tapply(IntWithNQ_MorMore, SiteType, function(x) sum(x)/length(x)))
 
-intM = glmer(IntWithNQ_MorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-               ImpCP_VorMore + AdultsOnly + 
-               (1|Site) + (1|SiteType), 
-             family = binomial(link="logit"),
-             data = vars.all.data2)
+eq.ref = paste(c(varnames.na[1], " ~ ", paste(c("Site", "SiteType", vars.dos, vars.mit), collapse = " + ")), collapse = "")
 
-intM.curve = glm(IntWithNQ_MorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-                   ImpCP_VorMore + AdultsOnly + SiteType + Site,
+intM = glm(noquote(eq.ref),
+           family = binomial(link="logit"),
+           data = vars.all.data2)
+
+# For plotting
+intM.curve = glm(noquote(eq.ref),
                  family = binomial(link="logit"),
                  data = vars.all.data)
-
 summary(intM) # copy in to final resultsfile
 
 tab_model(intM,
@@ -188,21 +213,27 @@ tab_model(intM,
           file = file.path("Output", paste0(varnames.na[1], ".html")))
 
 # Interfere V
+# IV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + AdultsOnly + AirTour + Talk
+
+dose.var = "SELAllAC"
+vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  
+vars.mit = c("ImpCP_VorMore", "AdultsOnly", "AirTour", "Talk")
 
 varnames.na = c("IntWithNQ_VorMore", vars.dos, vars.mit, "Dataset", "Site", "SiteType")
 vars.all.data = Data[varnames.na]
 vars.all.data = na.omit(vars.all.data)
 vars.all.data2 = vars.all.data
-vars.all.data2[2:5] <- as.numeric(scale(vars.all.data2[2:5]))
+is_num_var <- sapply(vars.all.data2[2:length(vars.all.data2)], class) == "numeric"
+vars.all.data2[,(2:length(vars.all.data2))[is_num_var]] <- as.numeric(scale(vars.all.data2[,(2:length(vars.all.data2))[is_num_var]]))
 
-intV = glmer(IntWithNQ_VorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-               ImpCP_VorMore + AdultsOnly + 
-               (1|Site) + (1|SiteType), 
-             family = binomial(link="logit"),
-             data = vars.all.data2)
+eq.ref = paste(c(varnames.na[1], " ~ ", paste(c("Site", "SiteType", vars.dos, vars.mit), collapse = " + ")), collapse = "")
 
-intV.curve = glm(IntWithNQ_VorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + 
-                   ImpCP_VorMore + AdultsOnly + SiteType + Site,
+intV = glm(noquote(eq.ref),
+           family = binomial(link="logit"),
+           data = vars.all.data2)
+
+# For plotting
+intV.curve = glm(noquote(eq.ref),
                  family = binomial(link="logit"),
                  data = vars.all.data)
 
@@ -222,7 +253,7 @@ ptoffset = 0.015
 ptalpha = 0.08
 ptalpha.bc = 0.16
 
-pdf(file.path("Output", paste0("Best Models Overnight ", Sys.Date(),".pdf")), width = 11, height = 4.5)
+pdf(file.path("Output", paste0("Best Models Overnight Fixed ", Sys.Date(),".pdf")), width = 11, height = 4.5)
 
 par(mfrow=c(1, 3), xpd = F)
 dataxlim = range(vars.all.data$SELAllAC) #c(25, 110)
@@ -244,11 +275,14 @@ points(Data$SELAllAC[Data$SiteType=="Overnight"],
      col = alpha(colz2[1], ptalpha.bc))
 
 # Do all combinations of categorical variables. Plot median, 5 and 95 quantiles profile curves
+# names(annS.curve$coefficients)
 predgrid <- expand.grid(
+            #levels(Data$SiteType),
             levels(Data$Survey),
             levels(Data$ImpCP_VorMore),
             levels(Data$SiteVisitBefore),
             levels(Data$AdultsOnly),
+            levels(Data$AirTour),
             levels(Data$WatchBirds),
             levels(Data$Site))
            
@@ -259,12 +293,14 @@ for(i in 1:nrow(predgrid)){
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
+                                       lg10.DurVisitMinutes = mean(Data$lg10.DurVisitMinutes),
                                        Survey= predgrid[i,1],
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
                                        WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
+                                       AirTour = predgrid[i,6],
+                                       Site = predgrid[i,7],
                                        SiteType = "Dayhike"),
                 type = "resp",
                 se.fit = TRUE)

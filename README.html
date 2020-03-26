@@ -371,6 +371,7 @@ summary {
 <p>Built from the <code>2016_2017_Analysis/Overnight/</code> directory on the Volpe project server.</p>
 <p>All necessary code and data are provided to create the output reported in <code>Multi-day Dose-Response 2017-06-07.docx</code>.</p>
 <p>To facilitate running this code locally, use RStudio and launch the code by double-clicking <code>NPS_Backcountry.Rproj</code>. This will ensure the working directory is set to the location of this project.</p>
+<p>This version uses fixed-effect models, as an alternative to the mixed-effect models prsented in the report.</p>
 <div id="compatibility" class="section level4">
 <h4>Compatibility</h4>
 <p>These scripts have been tested on Windows 10, R 3.6.2, with the latest version of RStudio (recommended but not required), as well as on Windows Server 2012R2, R 3.5.3, RStudio 1.2.1335.</p>
@@ -413,6 +414,8 @@ summary {
 <li><code>Model_Selection_Overnight.R</code></li>
 </ul>
 <p>The script may take several minutes to complete.</p>
+<p>Note that the model scripts have been changed to accomodate the fixed effect models of type: <code>glm(response ~ Site + SiteType + dose_vars + mediating_vars, family = binomial(link=&quot;logit&quot;))</code></p>
+<p>For example, one of the first models run looks at the response ‘annoyed, somewhat or more’ using this model structure: <code>glm(Annoy_VorMore ~ Site + SiteType + SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + WatchBirds, family = binomial(link=&quot;logit&quot;))</code></p>
 </div>
 <div id="plotting-and-final-tables" class="section level4">
 <h4>3. Plotting and final tables</h4>

@@ -58,12 +58,17 @@ Scripts called by this master script are the following:
 
 The script may take several minutes to complete.
 
-Note that these all have been changed to accomodate the fixed effect models of type:
+Note that the model scripts have been changed to accomodate the fixed effect models of type:
+`glm(response ~ Site + SiteType + dose_vars + mediating_vars, family = binomial(link="logit"))`
+
+For example, one of the first models run looks at the response 'annoyed, somewhat or more' using this model structure:
+`glm(Annoy_VorMore ~ Site + SiteType + SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + WatchBirds, family = binomial(link="logit"))`
+
 
 #### 3. Plotting and final tables
 
 - `Plot_Overnight_Descriptors.R`
-This script generates the descriptive tables and figures in the report.
+This script generates the descriptive tables and figures in the report. This is unchanged in the fixed-effect model version.
 
 - `Plot_Run_Final_Overnight_Models.R`
 This script generates the logistic curves from the best fit models for dayhike and overnight.
