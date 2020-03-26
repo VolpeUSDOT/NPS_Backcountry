@@ -58,7 +58,7 @@ source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly.R")
 rm(list = ls())        	### Clears all variables
 source("Model_Setup_Overnight.R")
 
-STypeList=c("BCOvernight")
+STypeList = c("BCOvernight")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.

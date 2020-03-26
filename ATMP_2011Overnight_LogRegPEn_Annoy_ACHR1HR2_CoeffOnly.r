@@ -56,8 +56,9 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 				
 # Adding all possible sites as colums in the results frame. 
 colnames_results = c("Response", "Int",
-                      levels(Data$Site),
-                      vars.dos, 
+                     levels(Data$Site),
+                     levels(Data$SiteType),
+                     vars.dos, 
                       "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)], 
                       "AIC", "BIC", "logLike", "Deviance", "n.obs", "Sigma")
 rownames_results = c("AS", "AM", "AV") #, "IS", "IM", "IV")
@@ -124,6 +125,8 @@ results = as.data.frame(results)
 		    names(coeffs_for_res)[names(coeffs_for_res) == "(Intercept)"] = "Int"
 		    names(coeffs_for_res) <- sub("^Site", "", names(coeffs_for_res))
 		    names(coeffs_for_res) <- sub("Yes$", "", names(coeffs_for_res))
+		    names(coeffs_for_res) <- sub("^Type", "", names(coeffs_for_res))
+		    
 		    
     ## Collect required baseline parameters
         

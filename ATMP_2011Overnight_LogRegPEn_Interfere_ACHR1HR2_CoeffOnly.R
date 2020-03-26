@@ -14,8 +14,8 @@
 
 #Pre-process datafile
 #SiteType: remove ShortHike data from 2011 dataset 
-Data <- subset(Data,Data$SiteType == "BCOvernight") #Removes ~300 rows
-Data$SiteType <- factor(Data$SiteType) 
+  Data <- subset(Data, Data$SiteType != "ShortHike") # Removes ~251 rows
+  Data$SiteType <- factor(Data$SiteType) 
 
 #######################
 ##  DURATION RESTRICTIONS FPR DayHikes
@@ -49,16 +49,26 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 				vars.mit.nolog 	= gsub("log", "", vars.mit.logpre, fixed = T)
 
 ##  SET UP RESULTS DATAFRAME FOR EVERYTHING EXCEPT fit
-num.col <- length(c("Response", "Int", vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)], "AIC", "BIC", "logLike", "Deviance", "n.obs", "SigmaSite"))
-results.mat = rep(NA,3*num.col)
-dim(results.mat) = c(3, num.col)
-results = as.data.frame(results.mat)
-colnames(results) = c("Response", "Int", vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)], "AIC", "BIC", "logLike", "Deviance", "n.obs", "SigmaSite")
-rownames(results) = c("IS", "IM", "IV") # "AS", "AM", "AV") 
-rm(results.mat)
-#results
+				
+				# Adding all possible sites as colums in the results frame. 
+				colnames_results = c("Response", "Int",
+				                     levels(Data$Site),
+				                     levels(Data$SiteType),
+				                     vars.dos, 
+				                     "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)], 
+				                     "AIC", "BIC", "logLike", "Deviance", "n.obs", "Sigma")
+				rownames_results = c("IS", "IM", "IV")
+				
+				results = matrix(data = NA,
+				                 nrow = length(rownames_results),
+				                 ncol = length(colnames_results))
+				
+				dimnames(results) = list(rownames_results,
+				                         colnames_results)
+				
+				results = as.data.frame(results)
 
-##EAS: 3 different responses fit for Annoy - 
+##EAS: 3 different responses fit for Interfere - 
 
 	results[1,1] = "IntWithNQ_SorMore"
 	results[2,1] = "IntWithNQ_MorMore"
@@ -72,7 +82,7 @@ rm(results.mat)
 		res = results[r,1]
 	
 		###### Assemble variables and data for both regressions (this r), using na.omit:
-		varnames.na = c(res, "Site", vars.dos.nolog, vars.mit.nolog, DSet, AddData)
+		varnames.na = c(res, "Site", "SiteType", vars.dos.nolog, vars.mit.nolog, DSet, AddData)
 		vars.all.data = Data[varnames.na]													### Grab from proper data set
 		vars.all.data = subset(vars.all.data, Dataset != DSet.filterOff)		### Subset re Dataset
 		if (DataType == "AllCorrectedOnlyPrior") { ##Changed from AllCorrectedNoPrior to filter short visits
@@ -99,30 +109,38 @@ rm(results.mat)
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data, glm(noquote(eq.ref), family=binomial(link="logit"), verbose=FALSE))
-		    #print(fit.ref)		
+				fit.ref = glm(noquote(eq.ref), 
+				              family = binomial(link="logit"),
+				              data = vars.all.data)
+		    
 				#fit.ref
-		    betas = fixef(fit.ref)
-		    coeff.cols <- length(c("Response", "Int", vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)]))
-		    results[r,2:coeff.cols] = round(betas,5)
-		    #results  
-    
-    ## Collect required baseline parameters
-        fits <- round(summary(fit.ref)$AICtab,1)
-				AIC.ref = fits[1]
-		    BIC.ref = fits[2]
-  		  logLik.ref = fits[3]
-				Dev.ref = fits[4]
-				SDSts.ref = sigma.hat(fit.ref)$sigma$Site[1]
-        n.ref = dim(fit.ref@frame)[1]
-    
-    ## Add AIC, BIC, deviance to results table
-		    results[r,coeff.cols+1] = AIC.ref
-		    results[r,coeff.cols+2] = BIC.ref
-		    results[r,coeff.cols+3] = logLik.ref
-		    results[r,coeff.cols+4] = Dev.ref
-		    results[r,coeff.cols+5] = n.ref
-		    results[r,coeff.cols+6] = SDSts.ref
+				betas = coef(fit.ref)
+				
+				# Need column for each predictor. Site and SiteType are now in the fixed effects, so need to add to the coefficient results.
+				coeff.cols <- length(betas)
+				
+				coeffs_for_res <- round(betas,5)
+				names(coeffs_for_res)[names(coeffs_for_res) == "(Intercept)"] = "Int"
+				names(coeffs_for_res) <- sub("^Site", "", names(coeffs_for_res))
+				names(coeffs_for_res) <- sub("Yes$", "", names(coeffs_for_res))
+				names(coeffs_for_res) <- sub("^Type", "", names(coeffs_for_res))
+				
+				## Collect required baseline parameters
+				
+				coefs_and_params_for_res = c(coeffs_for_res,
+				                             AIC = AIC(fit.ref),
+				                             BIC = BIC(fit.ref),
+				                             logLike = logLik(fit.ref),
+				                             Deviance = deviance(fit.ref),
+				                             n.obs = length(fit.ref$fitted.values),
+				                             Sigma = sd(resid(fit.ref))
+				)
+				
+				
+				results[r, 
+				        na.omit(match(names(coefs_and_params_for_res), names(results)))] =
+				  
+				  coefs_and_params_for_res[na.omit(match(names(results), names(coefs_and_params_for_res)))]  
 
 		## Save equation for simulation
 			#results$eq[r]  = eq.ref
@@ -143,9 +161,24 @@ rm(results.mat)
 print(results)
 
 #Save model results (coefficient estimates) to file
-write.csv(results,file=paste("Output/ATMP_2011Overnight_",paste(vars.dos,collapse=""),paste(vars.mit,collapse=""),"_Interfere_CoeffAIC.csv",sep=""))   #SiteTypeOnly
+write.csv(results, file = file.path("Output",
+                                   paste0("Fixed_ATMP_2011Overnight_",
+                                          paste(vars.dos,collapse=""),
+                                          paste(vars.mit,collapse=""),
+                                          "_Interfere_CoeffAIC.csv",sep="")
+                                   )
+          )
 
-fit.table <- rbind(results$Response[1],coef(summary(fit.1)),results$Response[2],coef(summary(fit.2)),results$Response[3],coef(summary(fit.3)))
+fit.table <- rbind(results$Response[1], coef(summary(fit.1)),
+                   results$Response[2], coef(summary(fit.2)),
+                   results$Response[3], coef(summary(fit.3)))
+
 #fit.table
-write.csv(fit.table,file=paste("Output/ATMP_2011Overnight_",paste(vars.dos,collapse=""),paste(vars.mit,collapse=""),"_Interfere_CoeffProbs.csv",sep=""))
+write.csv(fit.table, file = file.path("Output",
+                                      paste0("Fixed_ATMP_2011Overnight_",
+                                             paste(vars.dos,collapse=""),
+                                             paste(vars.mit,collapse=""),
+                                             "_Interfere_CoeffProbs.csv",sep="")
+                                      )
+          )
 
