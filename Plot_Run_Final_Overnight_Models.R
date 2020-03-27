@@ -35,12 +35,15 @@ Data$SiteType <- as.factor(as.character(Data$SiteType))
 
 Data <- Data[Data$DurVisitMinutes > 60,]
 
+table(Data$SiteType)
+# Dayhike Overnight 
+# 947       324 
+
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Re-run final models ----
 
 # Refer to Best Fit Models.csv. See filename for the model.
 
-# Annoyance, but not Interference, uses Survey. 
 # AS: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + lg10.DurVisitMinutes
 # AM: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + PicnicMeal
 # AV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + ViewSunRiseSet
@@ -277,7 +280,6 @@ points(Data$SELAllAC[Data$SiteType=="Overnight"],
 # Do all combinations of categorical variables. Plot median, 5 and 95 quantiles profile curves
 # names(annS.curve$coefficients)
 predgrid <- expand.grid(
-            #levels(Data$SiteType),
             levels(Data$Survey),
             levels(Data$ImpCP_VorMore),
             levels(Data$SiteVisitBefore),
@@ -298,8 +300,8 @@ for(i in 1:nrow(predgrid)){
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
-                                       WatchBirds = predgrid[i,5],
                                        AirTour = predgrid[i,6],
+                                       WatchBirds = predgrid[i,5],
                                        Site = predgrid[i,7],
                                        SiteType = "Dayhike"),
                 type = "resp",
@@ -336,12 +338,14 @@ for(i in 1:nrow(predgrid)){
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
+                                       lg10.DurVisitMinutes = mean(Data$lg10.DurVisitMinutes),
                                        Survey= predgrid[i,1],
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
+                                       AirTour = predgrid[i,6],
                                        WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
+                                       Site = predgrid[i,7],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -376,12 +380,14 @@ for(i in 1:nrow(predgrid)){
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
+                                       lg10.DurVisitMinutes = mean(Data$lg10.DurVisitMinutes),
                                        Survey= predgrid[i,1],
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
+                                       AirTour = predgrid[i,6],
                                        WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
+                                       Site = predgrid[i,7],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -416,7 +422,9 @@ legend("topleft",
        cex = 1.5)
 
 ### Annoy_MorMore
-# Best model: SELAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore
+# Old: SELAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore
+# New: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + PicnicMeal
+
 plot(Data$SELAllAC, jitter(Data$Annoy_MorMore, factor = 0.03)-ptoffset, 
      pch = 16, cex = ptcex, 
      xlim = c(dataxlim[1], dataxlim[2]),
@@ -434,6 +442,17 @@ points(Data$SELAllAC[Data$SiteType=="Overnight"],
 
 gridres <- gridres.se <- vector()
 
+# names(annM.curve$coefficients)
+predgrid <- expand.grid(
+  levels(Data$Survey),
+  levels(Data$ImpCP_VorMore),
+  levels(Data$SiteVisitBefore),
+  levels(Data$AdultsOnly),
+  levels(Data$AirTour),
+  levels(Data$WatchBirds),
+  levels(Data$PicnicMeal),
+  levels(Data$Site))
+
 for(i in 1:nrow(predgrid)){
   px <- predict(annM.curve, data.frame(SELAllAC = seq(dataxlim[1], dataxlim[2], by = 0.1), 
                                        PEnHelos = mean(Data$PEnHelos),
@@ -443,8 +462,10 @@ for(i in 1:nrow(predgrid)){
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
-                                       WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
+                                       AirTour = predgrid[i,5],
+                                       WatchBirds = predgrid[i,6],
+                                       PicnicMeal = predgrid[i,7],
+                                       Site = predgrid[i,8],
                                        SiteType = "Dayhike"),
                 type = "resp",
                 se.fit = TRUE)
@@ -456,7 +477,6 @@ for(i in 1:nrow(predgrid)){
 medfit <- apply(gridres, 2, function(x) quantile(x, 0.5))
 
 sefit <- apply(gridres.se, 2, function(x) quantile(x, 0.5))
-
 
 polygon(c(
   seq(dataxlim[1], dataxlim[2], by = 0.1),
@@ -482,8 +502,10 @@ for(i in 1:nrow(predgrid)){
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
-                                       WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
+                                       AirTour = predgrid[i,5],
+                                       WatchBirds = predgrid[i,6],
+                                       PicnicMeal = predgrid[i,7],
+                                       Site = predgrid[i,8],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -522,8 +544,10 @@ for(i in 1:nrow(predgrid)){
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
-                                       WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
+                                       AirTour = predgrid[i,5],
+                                       WatchBirds = predgrid[i,6],
+                                       PicnicMeal = predgrid[i,7],
+                                       Site = predgrid[i,8],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -557,6 +581,8 @@ legend("topleft",
        cex = 1.5)
 
 ### Annoy_VorMore
+# AV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + ViewSunRiseSet
+
 plot(Data$SELAllAC, jitter(Data$Annoy_VorMore, factor = 0.03)-ptoffset, 
      pch = 16, cex = ptcex, 
      xlim = c(dataxlim[1], dataxlim[2]),
@@ -571,6 +597,17 @@ points(Data$SELAllAC[Data$SiteType=="Overnight"],
 
 gridres <- gridres.se <- vector()
 
+# names(annV.curve$coefficients)
+predgrid <- expand.grid(
+  levels(Data$Survey),
+  levels(Data$ImpCP_VorMore),
+  levels(Data$SiteVisitBefore),
+  levels(Data$AdultsOnly),
+  levels(Data$AirTour),
+  levels(Data$WatchBirds),
+  levels(Data$ViewSunRiseSet),
+  levels(Data$Site))
+
 for(i in 1:nrow(predgrid)){
   px <- predict(annV.curve, data.frame(SELAllAC = seq(dataxlim[1], dataxlim[2], by = 0.1), 
                                        PEnHelos = mean(Data$PEnHelos),
@@ -580,9 +617,11 @@ for(i in 1:nrow(predgrid)){
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
-                                       WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
-                                       SiteType = "Overnight"),
+                                       AirTour = predgrid[i,5],
+                                       WatchBirds = predgrid[i,6],
+                                       ViewSunRiseSet = predgrid[i,7],
+                                       Site = predgrid[i,8],
+                                       SiteType = "Dayhike"),
                 type = "resp",
                 se.fit = TRUE)
   
@@ -610,6 +649,48 @@ lines(seq(dataxlim[1], dataxlim[2], by = 0.1),
 gridres <- gridres.se <- vector()
 
 for(i in 1:nrow(predgrid)){
+  px <- predict(annV.curve, data.frame(SELAllAC = seq(dataxlim[1], dataxlim[2], by = 0.1),
+                                       PEnHelos = mean(Data$PEnHelos),
+                                       PEnProps = mean(Data$PEnProps),
+                                       PTAudAllAC = mean(Data$PTAudAllAC),
+                                       Survey= predgrid[i,1],
+                                       ImpCP_VorMore = predgrid[i,2],
+                                       SiteVisitBefore = predgrid[i,3],
+                                       AdultsOnly = predgrid[i,4],
+                                       AirTour = predgrid[i,5],
+                                       WatchBirds = predgrid[i,6],
+                                       ViewSunRiseSet = predgrid[i,7],
+                                       Site = predgrid[i,8],
+                                       SiteType = "Overnight"),
+                type = "resp",
+                se.fit = TRUE)
+  
+  gridres = rbind(gridres, px$fit)
+  gridres.se = rbind(gridres.se, px$se.fit)
+}
+
+medfit <- apply(gridres, 2, function(x) quantile(x, 0.5))
+
+sefit <- apply(gridres.se, 2, function(x) quantile(x, 0.5))
+
+# First draw whole range, very light
+polygon(c(
+  seq(dataxlim[1], dataxlim[2], by = 0.1),
+  seq(dataxlim[2], dataxlim[1], by = -0.1)),
+  c(medfit-sefit, 
+    rev(medfit+sefit)), 
+  col=alpha(colz2[1], 0.1),
+  border = NA)
+
+lines(seq(dataxlim[1], dataxlim[2], length.out = length(medfit)),
+      medfit, 
+      col=alpha(colz2[1], 0.1), lty = 1, lwd = 2)
+
+# Then draw overnight range, a bit darker
+
+gridres <- gridres.se <- vector()
+
+for(i in 1:nrow(predgrid)){
   px <- predict(annV.curve, data.frame(SELAllAC = seq(overnightxlim[1], overnightxlim[2], by = 0.1), 
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
@@ -618,8 +699,10 @@ for(i in 1:nrow(predgrid)){
                                        ImpCP_VorMore = predgrid[i,2],
                                        SiteVisitBefore = predgrid[i,3],
                                        AdultsOnly = predgrid[i,4],
-                                       WatchBirds = predgrid[i,5],
-                                       Site = predgrid[i,6],
+                                       AirTour = predgrid[i,5],
+                                       WatchBirds = predgrid[i,6],
+                                       ViewSunRiseSet = predgrid[i,7],
+                                       Site = predgrid[i,8],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -655,6 +738,7 @@ legend("topleft",
 
 # Interfere Plots ----
 ### IntWithNQ_SorMore
+# IS: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpNQ_VorMore + AdultsOnly + AirTour + WatchBirds
 
 plot(Data$SELAllAC, jitter(Data$IntWithNQ_SorMore, factor = 0.03)-ptoffset, 
      pch = 16, cex = ptcex, 
@@ -668,10 +752,11 @@ points(Data$SELAllAC[Data$SiteType=="Overnight"],
        pch = 16, cex = ptcex, 
        col = alpha(colz2[1], ptalpha.bc))
 
-
 predgrid <- expand.grid(
-  levels(Data$ImpCP_VorMore),
+  levels(Data$ImpNQ_VorMore),
   levels(Data$AdultsOnly),
+  levels(Data$AirTour),
+  levels(Data$WatchBirds),
   levels(Data$Site))
 
 gridres <- gridres.se <- vector()
@@ -681,9 +766,11 @@ for(i in 1:nrow(predgrid)){
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
-                                       ImpCP_VorMore = predgrid[i,1],
+                                       ImpNQ_VorMore = predgrid[i,1],
                                        AdultsOnly = predgrid[i,2],
-                                       Site = predgrid[i,3],
+                                       AirTour = predgrid[i,3],
+                                       WatchBirds = predgrid[i,4],
+                                       Site = predgrid[i,5],
                                        SiteType = "Dayhike"),
                 type = "resp",
                 se.fit = TRUE)
@@ -716,9 +803,11 @@ for(i in 1:nrow(predgrid)){
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
-                                       ImpCP_VorMore = predgrid[i,1],
+                                       ImpNQ_VorMore = predgrid[i,1],
                                        AdultsOnly = predgrid[i,2],
-                                       Site = predgrid[i,3],
+                                       AirTour = predgrid[i,3],
+                                       WatchBirds = predgrid[i,4],
+                                       Site = predgrid[i,5],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -750,9 +839,11 @@ for(i in 1:nrow(predgrid)){
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
-                                       ImpCP_VorMore = predgrid[i,1],
+                                       ImpNQ_VorMore = predgrid[i,1],
                                        AdultsOnly = predgrid[i,2],
-                                       Site = predgrid[i,3],
+                                       AirTour = predgrid[i,3],
+                                       WatchBirds = predgrid[i,4],
+                                       Site = predgrid[i,5],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -789,7 +880,8 @@ legend("topleft",
 
 
 ### IntWithNQ_MorMore
-# Best model: SELAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore
+# Old: SELAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore
+# New: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + SiteVisitBefore
 
 plot(Data$SELAllAC, jitter(Data$IntWithNQ_MorMore, factor = 0.03)-ptoffset, 
      pch = 16, cex = ptcex, 
@@ -807,13 +899,18 @@ title(main = "Likelihood of Interference with Natural Quiet")
 
 gridres <- gridres.se <- vector()
 
+predgrid <- expand.grid(
+  levels(Data$ImpCP_VorMore),
+  levels(Data$SiteVisitBefore),
+  levels(Data$Site))
+
 for(i in 1:nrow(predgrid)){
   px <- predict(intM.curve, data.frame(SELAllAC = seq(dataxlim[1], dataxlim[2], by = 0.1), 
                                        PEnHelos = mean(Data$PEnHelos),
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
                                        ImpCP_VorMore = predgrid[i,1],
-                                       AdultsOnly = predgrid[i,2],
+                                       SiteVisitBefore = predgrid[i,2],
                                        Site = predgrid[i,3],
                                        SiteType = "Dayhike"),
                 type = "resp",
@@ -849,7 +946,7 @@ for(i in 1:nrow(predgrid)){
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
                                        ImpCP_VorMore = predgrid[i,1],
-                                       AdultsOnly = predgrid[i,2],
+                                       SiteVisitBefore = predgrid[i,2],
                                        Site = predgrid[i,3],
                                        SiteType = "Overnight"),
                 type = "resp",
@@ -883,7 +980,7 @@ for(i in 1:nrow(predgrid)){
                                        PEnProps = mean(Data$PEnProps),
                                        PTAudAllAC = mean(Data$PTAudAllAC),
                                        ImpCP_VorMore = predgrid[i,1],
-                                       AdultsOnly = predgrid[i,2],
+                                       SiteVisitBefore = predgrid[i,2],
                                        Site = predgrid[i,3],
                                        SiteType = "Overnight"),
                 type = "resp",
@@ -896,7 +993,6 @@ for(i in 1:nrow(predgrid)){
 medfit <- apply(gridres, 2, function(x) quantile(x, 0.5))
 
 sefit <- apply(gridres.se, 2, function(x) quantile(x, 0.5))
-
 
 polygon(c(
   seq(overnightxlim[1], overnightxlim[2], by = 0.1),
@@ -920,6 +1016,8 @@ legend("topleft",
        cex = 1.5)
 
 ### IntWithNQ_VorMore
+# IV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + AdultsOnly + AirTour + Talk
+
 plot(Data$SELAllAC, jitter(Data$IntWithNQ_VorMore, factor = 0.03)-ptoffset, 
      pch = 16, cex = ptcex, 
      xlim = c(dataxlim[1], dataxlim[2]),
@@ -934,6 +1032,13 @@ points(Data$SELAllAC[Data$SiteType=="Overnight"],
 
 gridres <- gridres.se <- vector()
 
+predgrid <- expand.grid(
+  levels(Data$ImpCP_VorMore),
+  levels(Data$AdultsOnly),
+  levels(Data$AirTour),
+  levels(Data$Talk),
+  levels(Data$Site))
+
 for(i in 1:nrow(predgrid)){
   px <- predict(intV.curve, data.frame(SELAllAC = seq(dataxlim[1], dataxlim[2], by = 0.1), 
                                        PEnHelos = mean(Data$PEnHelos),
@@ -941,7 +1046,9 @@ for(i in 1:nrow(predgrid)){
                                        PTAudAllAC = mean(Data$PTAudAllAC),
                                        ImpCP_VorMore = predgrid[i,1],
                                        AdultsOnly = predgrid[i,2],
-                                       Site = predgrid[i,3],
+                                       AirTour = predgrid[i,3],
+                                       Talk = predgrid[i,4],
+                                       Site = predgrid[i,5],
                                        SiteType = "Dayhike"),
                 type = "resp",
                 se.fit = TRUE)
@@ -978,7 +1085,9 @@ for(i in 1:nrow(predgrid)){
                                        PTAudAllAC = mean(Data$PTAudAllAC),
                                        ImpCP_VorMore = predgrid[i,1],
                                        AdultsOnly = predgrid[i,2],
-                                       Site = predgrid[i,3],
+                                       AirTour = predgrid[i,3],
+                                       Talk = predgrid[i,4],
+                                       Site = predgrid[i,5],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -1012,7 +1121,9 @@ for(i in 1:nrow(predgrid)){
                                        PTAudAllAC = mean(Data$PTAudAllAC),
                                        ImpCP_VorMore = predgrid[i,1],
                                        AdultsOnly = predgrid[i,2],
-                                       Site = predgrid[i,3],
+                                       AirTour = predgrid[i,3],
+                                       Talk = predgrid[i,4],
+                                       Site = predgrid[i,5],
                                        SiteType = "Overnight"),
                 type = "resp",
                 se.fit = TRUE)
@@ -1049,30 +1160,40 @@ legend("topleft",
 
 dev.off()
 
-# compile random effects into a table
-siteran <- typeran <- vector()
+# compile Site and SiteType  effects into a table
+site_eff <- type_eff <- vector()
 
 counter = 1
-for(i in c(annS, annM, annV, 
-           intS, intM, intV)){
-
+for(i in c('annS', 'annM', 'annV', 
+           'intS', 'intM', 'intV')){
+  
+  i = get(i)
+  
+  find_site_eff <- names(coef(i))[grepl('Site', names(coef(i)))]
+  find_site_eff <- find_site_eff[!grepl('Type', find_site_eff)]
+  find_site_eff <- find_site_eff[!grepl('Visit', find_site_eff)]
+  
   if(counter == 1){
-    siteran <- ranef(i)$Site[,1]
-    typeran <- ranef(i)$SiteType[,1]
+    
+    site_eff <- coef(i)[c(names(coef(i))[1], find_site_eff)]
+    type_eff <- coef(i)[grepl("SiteType", names(coef(i)))]
     
   } else {
 
-    siteran <- data.frame(siteran, ranef(i)$Site[,1])
-    typeran <- data.frame(typeran, ranef(i)$SiteType[,1])
+    site_eff <- data.frame(site_eff, coef(i)[c(names(coef(i))[1], find_site_eff)])
+    type_eff <- data.frame(type_eff, coef(i)[grepl("SiteType", names(coef(i)))])
 
   }
+  
   counter = counter+1
+  
   }
 
-colnames(siteran) <- names(typeran) <- c('annS', 'annM', 'annV', 'intS', 'intM', 'intV')
-rownames(siteran) <- c('Grandview','Hermit','Sperry','Wrim')
-rownames(typeran) <- c('Dayhike', 'Overnight')
 
-round(siteran, 3)
-round(typeran, 3)
+colnames(site_eff) <- names(type_eff) <- c('annS', 'annM', 'annV', 'intS', 'intM', 'intV')
+rownames(site_eff) <- c('Grandview_Intercept','Hermit_Offset','Sperry_Offset','Wrim_Offset')
+rownames(type_eff) <- c('Overnight_Offset')
+
+round(exp(site_eff), 3)
+round(exp(type_eff), 3)
 
