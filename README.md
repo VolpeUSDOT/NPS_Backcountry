@@ -14,6 +14,8 @@ All necessary code and data are provided to create the output reported in `Multi
 
 To facilitate running this code locally, use RStudio and launch the code by double-clicking `NPS_Backcountry.Rproj`. This will ensure the working directory is set to the location of this project.
 
+This version moves site type to a fixed effect, while leaving the sites themselves as random effects.
+
 #### Compatibility
 
 These scripts have been tested on Windows 10, R 3.6.2, with the latest version of RStudio (recommended but not required), as well as on Windows Server 2012R2, R 3.5.3, RStudio 1.2.1335.
@@ -55,6 +57,14 @@ Scripts called by this master script are the following:
 - `Model_Selection_Overnight.R`
 
 The script may take several minutes to complete.
+
+
+Note that the model scripts have been changed to accomodate the fixed effects for site type :
+`glmer(response ~ (1|Site) + SiteType + dose_vars + mediating_vars, family = binomial(link="logit"))`
+
+For example, one of the first models run looks at the response 'annoyed, somewhat or more' using this model structure:
+!!!! CHECK !!!!
+`glmer(Annoy_VorMore ~ (1|Site) + SiteType + SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + WatchBirds, family = binomial(link="logit"))`
 
 #### 3. Plotting and final tables
 

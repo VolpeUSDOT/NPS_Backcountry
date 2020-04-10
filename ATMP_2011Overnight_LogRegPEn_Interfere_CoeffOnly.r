@@ -13,10 +13,15 @@
 #Pre-process datafile
 #SiteType: remove ShortHike data from 2011 dataset 
 dim(Data)
-Data <- subset(Data,Data$SiteType == "BCOvernight") #Removes ~300 rows
-Data$SiteType <- factor(Data$SiteType) 
+Data <- subset(Data, Data$SiteType != "ShortHike") #Removes ~251 rows
+
+Data$SiteType <- factor(as.character(Data$SiteType))
+levels(Data$SiteType) = c('2_BCOvernight', '1_DayHike')
+Data$SiteType <- factor(as.character(Data$SiteType))
+
 Data <- subset(Data,Data$Survey != "AC") #Removes ~878 rows
 Data$Survey <- factor(Data$Survey) 
+
 dim(Data)
 table(Data$SiteType)
 table(Data$Survey)
@@ -38,46 +43,7 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 		SiteFilterYesNo = "No"
 		SiteFilterOn = c()
 		
-###########################################################################	
-####	VARIABLE DEFINITIONS	(written by Grant Anderson)
-###########################################################################	
-##
-##	Input string variables
-##		Outfile: The CSV file for output	
-##		SeqNo: Numbering for CSV output file
-##	
-##		vars.dos: All the non-test, non-interaction dose variables
-##		vars.mit: Same, mitigation variables
-##		vars.interact: All the non-test, interaction variables (dose, or mitigation, or both)
-##	
-#####	Dichotomized regressions
-##	Variables slightly modified
-##		vars.dos.logpre: Same, for non-test doses
-##		vars.mit.logpre: Same, for non-test mitigators
-##		vars.dos.nolog: Same, for non-test doses
-##		vars.mit.nolog: Same, for non-test mitigators
-##  			logpre variables are shorthand for the header equation of simulation plots 
-##  			nolog variables are for ...
-##	
-##	Resulting equation variables
-##	results [6,5]: 6 responses, response name and three equation components and full equation]
-##		
-##	Response-loop variables
-##		r: Loop index over the 6 responses
-##		res: The response for this loop (pulled from response[,]
-##		varnames.na: Names of all variables in this loop's two regressions---to accomplish na.omit
-##		vars.all.data: Data frame with those variables, with NA's omitted---for all regressions
-##	
-####	Reference part of loop
-##					Names, equations
-##						varnames.ref: Variables needed for just the reference equation
-##						eq.ref: The reference equation for this loop, built from varnames.ref
-##					Results
-##						fit.ref: The reference fit from this loop, fit with lmer()
-##						AIC.ref: The reference AIC for this loop
-##						Dev.ref: The reference Deviance for this loop
-##						SDSts.ref: The Standard Deviation of the Sites for this loop	
-	
+
 ###########################################################################
 #### COMPUTATIONS
 ###########################################################################
@@ -132,6 +98,11 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 		}
 		vars.all.data = na.omit(vars.all.data)
 		
+		# Scale numeric variables
+		vars.all.data2 <- vars.all.data
+		is_numeric = sapply(vars.all.data2, class) == 'numeric'
+		vars.all.data2[is_numeric] <- as.numeric(scale(vars.all.data2[is_numeric]))
+		
 		varnames.ref = c(res, vars.dos, vars.interact, vars.mit)	# Reference case
 		varnames.ref		
 		
@@ -146,8 +117,13 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data,glmer(noquote(eq.ref), family=binomial(link="logit"), verbose=FALSE))
-		    #print(fit.ref)		
+					fit.ref = glmer(noquote(eq.ref), 
+					                family = binomial(link="logit"),
+					                verbose = FALSE,
+					                data = vars.all.data2,
+					                glmerControl(optimizer = "optimx", optCtrl = list(method = 'nlminb'))
+					)
+				#print(fit.ref)		
 				#fit.ref
 		    betas = fixef(fit.ref)
 		    coeff.cols <- length(c("Response", "Int", vars.dos, vars.interact, vars.mit))

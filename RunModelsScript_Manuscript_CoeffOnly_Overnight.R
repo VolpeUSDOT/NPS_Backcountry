@@ -36,12 +36,12 @@ rm(list = ls())        	### Clears all variables
 
 source("Model_Setup_Overnight.R")
 
-STypeList=c("BCOvernight")
+STypeList = c("BCOvernight")
 dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
 vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  ###For PEn:
-vars.mit = c("Survey", "ImpCP_VorMore", "SiteVisitBefore",  "AdultsOnly", "WatchBirds") 
+vars.mit = c("Survey", "ImpCP_VorMore", "SiteVisitBefore",  "AdultsOnly", "WatchBirds", "SiteType") 
 #vars.interact =	""#"I(PEnHelos * PEnProps)"	###For PEn: "I(PEnHelos * PEnProps)"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
@@ -63,7 +63,7 @@ dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "PTAudAllAC" #Use "none" if additional doses are not included in the model.
 vars.dos = c("SELAllAC", "PTAudAllAC", "PEnHelos", "PEnProps")  ###For PEn:
-vars.mit = c("ImpCP_VorMore", "AdultsOnly", "WatchBirds") #Use "none" if additional doses are not included in the model.
+vars.mit = c("ImpCP_VorMore", "AdultsOnly", "WatchBirds", "SiteType") #Use "none" if additional doses are not included in the model.
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
@@ -86,7 +86,7 @@ source("ATMP_2011Overnight_LogRegPEn_Interfere_ACHR1HR2_CoeffOnly-nosurvey.R")
    dose.var = "SELAllAC"
    AddDose = "none" 
    vars.dos = c("SELAllAC", "PEnHelos", "PEnProps","PTAudAllAC")
-   vars.mit = c("Survey", "ImpNQ_VorMore")#, "SiteVisitBefore",  "AdultsOnly")    ###For OnlyPrior: "SiteType"
+   vars.mit = c("Survey", "ImpNQ_VorMore", "SiteType")#, "SiteVisitBefore",  "AdultsOnly")    ###For OnlyPrior: "SiteType"
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
 
@@ -106,7 +106,7 @@ dose.name= "LAE (dBA)"
 dose.var = "SELAllAC"
 AddDose = "none" 
 vars.dos = c("SELAllAC", "PEnHelos", "PEnProps","PTAudAllAC")
-vars.mit = c("Survey", "ImpCP_VorMore")#, "SiteVisitBefore",  "AdultsOnly")    ###For OnlyPrior: "SiteType"
+vars.mit = c("Survey", "ImpCP_VorMore", "SiteType")#, "SiteVisitBefore",  "AdultsOnly")   
 
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]
@@ -128,7 +128,7 @@ dose.var = "SELAllAC"
 AddDose = "none" 
 vars.dos = c("SELAllAC", "PEnHelos", "PEnProps","PTAudAllAC")
 
-vars.mit = c("Survey", "ImpNQ_VorMore")#, "SiteVisitBefore",  "AdultsOnly")    ###For OnlyPrior: "SiteType"
+vars.mit = c("Survey", "ImpNQ_VorMore", "SiteType")#, "SiteVisitBefore",  "AdultsOnly")    ###For OnlyPrior: "SiteType"
 
 PEnRegress = TRUE
 DesiredPlotX = vars.dos[1]

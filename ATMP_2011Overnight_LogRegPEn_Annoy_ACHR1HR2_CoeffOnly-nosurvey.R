@@ -15,8 +15,12 @@
 #Pre-process datafile
 #SiteType: remove ShortHike data from 2011 dataset 
 # dim(Data)
-Data <- subset(Data,Data$SiteType == "BCOvernight") #Removes ~300 rows
-Data$SiteType <- factor(Data$SiteType) 
+  Data <- subset(Data, Data$SiteType != "ShortHike") #Removes ~251 rows
+  
+  Data$SiteType <- factor(as.character(Data$SiteType))
+  levels(Data$SiteType) = c('2_BCOvernight', '1_DayHike')
+  Data$SiteType <- factor(as.character(Data$SiteType))
+
 # dim(Data)
 # table(Data$SiteType)
 # table(Data$Survey)
@@ -87,6 +91,11 @@ rm(results.mat)
 		}
 		vars.all.data = na.omit(vars.all.data)
 		
+		# Scale numeric variables
+		vars.all.data2 <- vars.all.data
+		is_numeric = sapply(vars.all.data2, class) == 'numeric'
+		vars.all.data2[is_numeric] <- as.numeric(scale(vars.all.data2[is_numeric]))
+		
 		varnames.ref = c(res, vars.dos, vars.mit)	# Reference case
 		varnames.ref		
 		
@@ -101,8 +110,14 @@ rm(results.mat)
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data,glmer(noquote(eq.ref), family=binomial(link="logit"), verbose=FALSE))
-		    #print(fit.ref)		
+					fit.ref = glmer(noquote(eq.ref), 
+					                family = binomial(link="logit"),
+					                verbose = FALSE,
+					                data = vars.all.data2,
+					                glmerControl(optimizer = "optimx", optCtrl = list(method = 'nlminb'))
+					)
+				
+				#print(fit.ref)		
 				#fit.ref
 		    betas = fixef(fit.ref)
 		    coeff.cols <- length(c("Response", "Int", vars.dos, vars.mit))
