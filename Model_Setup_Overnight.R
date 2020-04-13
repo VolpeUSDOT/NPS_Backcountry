@@ -4,6 +4,7 @@
 rm(list = ls())      		### Clears all variables
 library(arm)					### Required library
 library(lme4)					### Required library
+library(optimx)
 
 ###########################################################################
 #Set the variables used in the Plot3ModsScript for the simulations
