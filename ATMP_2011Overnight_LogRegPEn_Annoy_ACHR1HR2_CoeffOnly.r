@@ -14,8 +14,11 @@
 
 #Pre-process datafile
 
-Data <- subset(Data,Data$SiteType == "BCOvernight") #Removes ~300 rows
-Data$SiteType <- factor(Data$SiteType) 
+  Data <- subset(Data, Data$SiteType != "ShortHike") #Removes ~251 rows
+  
+  Data$SiteType <- factor(as.character(Data$SiteType))
+  levels(Data$SiteType) = c('2_BCOvernight', '1_DayHike')
+  Data$SiteType <- factor(as.character(Data$SiteType))
 # dim(Data)
 # table(Data$SiteType)
 # table(Data$Survey)
@@ -86,13 +89,18 @@ rm(results.mat)
 		}
 		vars.all.data = na.omit(vars.all.data)
 		
+		# Scale numeric variables
+		vars.all.data2 <- vars.all.data
+		is_numeric = sapply(vars.all.data2, class) == 'numeric'
+		vars.all.data2[is_numeric] <- as.numeric(scale(vars.all.data2[is_numeric]))
+		
 		varnames.ref = c(res, vars.dos, vars.mit)	# Reference case
 		varnames.ref		
 		
 ###### REFERENCE REGRESSION
 			## Equation
 				n.vars.ref = length(varnames.ref)
-					eq.ref = paste(res, " ~ (1|Site) + 1", sep="")
+					eq.ref = paste(res, " ~ (1|Site) + (1|SiteType) + 1", sep = "")
 					if (n.vars.ref > 1) {
 						for (n in 2:n.vars.ref) {
 							eq.ref = paste(eq.ref, " + ", varnames.ref[n], sep="")
@@ -100,7 +108,7 @@ rm(results.mat)
 					}
 					
       ## Regression
-				fit.ref = with(vars.all.data, glmer(noquote(eq.ref), family = binomial(link="logit"), verbose=FALSE))
+				fit.ref = with(vars.all.data2, glmer(noquote(eq.ref), family = binomial(link="logit"), verbose=FALSE))
 		    #print(fit.ref)		
 				#fit.ref
 		    betas = fixef(fit.ref)

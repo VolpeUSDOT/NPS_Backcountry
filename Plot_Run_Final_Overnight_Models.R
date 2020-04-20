@@ -38,6 +38,15 @@ Data <- Data[Data$DurVisitMinutes > 60,]
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Re-run final models ----
 
+# AS: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + lg10.DurVisitMinutes + SiteType
+# AM: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + PicnicMeal + SiteType
+# AV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + AirTour + WatchBirds + ViewSunRiseSet + SiteType
+# IS: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpNQ_VorMore + AdultsOnly + AirTour + WatchBirds + SiteType
+# IM: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + SiteVisitBefore + SiteType
+# IV: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + ImpCP_VorMore + AdultsOnly + AirTour + Talk + SiteType
+
+
+
 ### Annoy_SorMore
 # Best model: SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + AdultsOnly + WatchBirds
 # Random effects: Site, SiteType
@@ -59,7 +68,7 @@ annS = glmer(Annoy_SorMore ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps +
                               Survey + ImpCP_VorMore + SiteVisitBefore +
                               WatchBirds + AdultsOnly +
                               (1|Site) + (1|SiteType), 
-                              family = binomial(link="logit"),
+                              family = binomial(link = "logit"),
                               data = vars.all.data2)
 
 # Fixed effect only model for plotting
