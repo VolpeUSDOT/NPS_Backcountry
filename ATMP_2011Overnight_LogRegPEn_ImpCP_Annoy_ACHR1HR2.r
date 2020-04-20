@@ -123,9 +123,7 @@ results
 					fit.ref = glmer(noquote(eq.ref), 
 					                family = binomial(link="logit"),
 					                verbose = FALSE,
-					                data = vars.all.data2,
-					                glmerControl(optimizer = "optimx", optCtrl = list(method = 'nlminb'))
-					)
+					                data = vars.all.data2)
 					
 		    betas = fixef(fit.ref)
 		    coeff.cols <- length(c("Response", "Int", vars.dos, "SurveyHR1","SurveyHR2", vars.mit[2:length(vars.mit)]))

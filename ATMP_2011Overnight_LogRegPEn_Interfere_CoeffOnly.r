@@ -120,9 +120,8 @@ AddData = c("SeqAll", "DurVisitMinutes", "Survey")		# Plus others, if desired du
 					fit.ref = glmer(noquote(eq.ref), 
 					                family = binomial(link="logit"),
 					                verbose = FALSE,
-					                data = vars.all.data2,
-					                glmerControl(optimizer = "optimx", optCtrl = list(method = 'nlminb'))
-					)
+					                data = vars.all.data2)
+			
 				#print(fit.ref)		
 				#fit.ref
 		    betas = fixef(fit.ref)
