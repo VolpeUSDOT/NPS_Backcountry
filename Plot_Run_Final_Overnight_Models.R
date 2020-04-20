@@ -1013,13 +1013,19 @@ legend("topleft",
 
 dev.off()
 
-# compile random effects into a table
+# compile random effects into a table ---- 
+
 siteran <- typeran <- vector()
+AICs <- Nobs <- vector()
 
 counter = 1
 for(i in c(annS, annM, annV, 
            intS, intM, intV)){
 
+  AICs <- c(AICs, AIC(i))
+  
+  Nobs <- c(Nobs, length(summary(i)$residuals))
+  
   if(counter == 1){
     siteran <- ranef(i)$Site[,1]
     typeran <- ranef(i)$SiteType[,1]
@@ -1033,10 +1039,11 @@ for(i in c(annS, annM, annV,
   counter = counter+1
   }
 
-colnames(siteran) <- names(typeran) <- c('annS', 'annM', 'annV', 'intS', 'intM', 'intV')
+names(AICs) <- names(Nobs) <- colnames(siteran) <- names(typeran) <- c('annS', 'annM', 'annV', 'intS', 'intM', 'intV')
 rownames(siteran) <- c('Grandview','Hermit','Sperry','Wrim')
 rownames(typeran) <- c('Dayhike', 'Overnight')
 
 round(siteran, 3)
 round(typeran, 3)
 
+data.frame(AICs,Nobs)
