@@ -9,15 +9,16 @@ library(sjPlot) # for summary tables using tab_model
 library(scales) # for alpha() and muted()
 library(optimx)
 
-Data <- read.csv(file.path("Data", "ATMP2011_CompleteDoseVars_dprime.csv"))
+Data <- read.csv(file.path("Data", "ATMP2011_CompleteDoseVars_dprime.csv"),
+                 stringsAsFactors = T)
 
-Data$IntWithNQ_SorMore <- as.numeric(Data$IntWithNQ_SorMore) - 1
-Data$IntWithNQ_MorMore <- as.numeric(Data$IntWithNQ_MorMore) - 1
-Data$IntWithNQ_VorMore <- as.numeric(Data$IntWithNQ_VorMore) - 1
+Data$IntWithNQ_SorMore <- as.numeric(as.factor(Data$IntWithNQ_SorMore)) - 1
+Data$IntWithNQ_MorMore <- as.numeric(as.factor(Data$IntWithNQ_MorMore)) - 1
+Data$IntWithNQ_VorMore <- as.numeric(as.factor(Data$IntWithNQ_VorMore)) - 1
 
-Data$Annoy_SorMore <- as.numeric(Data$Annoy_SorMore) - 1
-Data$Annoy_MorMore <- as.numeric(Data$Annoy_MorMore) - 1
-Data$Annoy_VorMore <- as.numeric(Data$Annoy_VorMore) - 1
+Data$Annoy_SorMore <- as.numeric(as.factor(Data$Annoy_SorMore)) - 1
+Data$Annoy_MorMore <- as.numeric(as.factor(Data$Annoy_MorMore)) - 1
+Data$Annoy_VorMore <- as.numeric(as.factor(Data$Annoy_VorMore)) - 1
 
 # use only data for which there is both day and overnight
 keepsites <- tapply(Data$SiteType, Data$Site, function(x) length(x[x == "BCOvernight"]) > 0)

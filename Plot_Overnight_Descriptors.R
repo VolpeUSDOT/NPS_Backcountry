@@ -3,6 +3,7 @@
 library(lme4)
 library(sjPlot)
 library(scales)
+library(tidyverse)
 
 ################### Table 1 ----
 
@@ -14,9 +15,17 @@ d <- d[d$DurVisitMinutes > 60,]
 
 levels(d$SiteType) = c("Overnight", "Dayhike", "sh")
 
+
 d$SiteType <- as.factor(as.character(d$SiteType))
 
+col_is_char <- sapply(d, function(x) class(x)[1] == 'character', simplify = T)
 
+for (c in 1:length(col_is_char)) {
+  this_col = col_is_char[c]
+  if (this_col) {
+    d[,names(this_col)] <- as.factor(d[,names(this_col)])
+  }
+}
 # d <- d[d$Survey != "AC",] # Uncomment to excluding audio clip surveys
 
 # Row 1
@@ -24,10 +33,11 @@ summary(d$SiteType)
 
 tapply(d$DurVisitMinutes/60, d$SiteType, summary)
 
+
 # Row 3
 aggregate(d$DurVisitMinutes/60,
           by = list(d$Site, d$SiteType),
-          mean, na.rm=T)
+          mean, na.rm = T)
 
 # Rows 4-10
 xx <- aggregate(d[,c("ImpCP_VorMore",
@@ -42,26 +52,57 @@ xx <- aggregate(d[,c("ImpCP_VorMore",
 
 xx <- xx[1:2,]
 
-xy = vector(); count=1
+xy = vector(); count = 1
 
-for(i in c("ImpCP_VorMore",
+for (i in c("ImpCP_VorMore",
            "ImpNQ_VorMore",
            "SiteVisitBefore",
            "AdultsOnly",
            "WatchBirds",
            "Talk",
-           "AirTour")){
+           "AirTour")) {
   xy <- rbind(xy, apply(xx[,i],
                         1,
                         function(x)
                           x[2]/sum(x[1:2])))
   rownames(xy)[count] = i
-  count=count+1
+  count = count + 1
 }
 
-xy[7,] = 1-xy[7,]
+xy[7,] = 1 - xy[7,]
 
 round(xy*100,2)
+
+### Response to Kurt: are multi-day visitors more likely to report annoyance/interference in general?
+
+d %>% 
+  group_by(Site, SiteType) %>%
+  summarize(mean_AS = mean(Annoy_SorMore == 'Yes'),
+            mean_IS = mean(IntWithNQ_SorMore == 'Yes', na.rm = T)) %>%
+  pivot_wider(names_from = SiteType,
+              values_from = c(mean_AS, mean_IS)
+              )
+
+# Mean sound variables  for overnight vs dayhike
+
+SELAllAC + PTAudAllAC + PEnHelos + PEnProps
+
+d %>% 
+  group_by(SiteType) %>%
+  summarize(mean_SELAllAC = mean(SELAllAC, na.rm = T),
+            mean_PTAudAllAC = mean(PTAudAllAC, na.rm = T),
+            mean_PEnHelos = mean(PEnHelos, na.rm = T),
+            mean_PEnProps = mean(PEnProps, na.rm = T)
+  )
+
+# 25th, 50th, 75th quantiles
+d %>% 
+  group_by(SiteType) %>%
+  summarize(`25th percentile SEL` = quantile(SELAllAC, na.rm = T)[2],
+            `50th percentile SEL` = quantile(SELAllAC, na.rm = T)[3],
+            `75th percentile SEL` = quantile(SELAllAC, na.rm = T)[4],
+            n())
+
 
 #######################  Figure 1 histograms ---- 
 colzbar = c("deepskyblue","deepskyblue4",
