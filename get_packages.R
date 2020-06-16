@@ -4,7 +4,9 @@ loadpacks <- c(
   "arm",
   "ggplot2",
   "lme4",
+  "readxl",
   "sjPlot",
-  "scales")
+  "scales",
+  "tidyverse")
 
 for(i in loadpacks){if(length(grep(i, (.packages(all.available=T))))==0) install.packages(i, dependencies =TRUE)}
