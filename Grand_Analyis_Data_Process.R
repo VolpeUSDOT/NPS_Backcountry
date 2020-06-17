@@ -50,7 +50,7 @@ var_presence = var_presence %>%
          `In RABR` = all_vars %in% names(dRB),
          `In all` = `In 1990s` == TRUE & `In 2000s` == TRUE & `In RABR` == TRUE)
 
-
+write.csv(var_presence, file = 'Vars_Compare_Grand.csv', row.names = F)
 
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
