@@ -30,6 +30,9 @@ d00 = read_csv(file.path(project_shared_drive, dat_2000))
 
 dRB = read_csv(file.path(project_shared_drive, dat_RABR))
 
+
+d90 <- d90[-1,] # Remove first non-header row, column numbers manually entered.
+
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Merge ----
 
@@ -52,20 +55,85 @@ var_presence = var_presence %>%
 
 write.csv(var_presence, file = 'Vars_Compare_Grand.csv', row.names = F)
 
+# Create necessary columns in 90s
+# PEnHelos and Props from ATMP_2011DataProcess_Dp.r in 
+# \\vntscex\DFS\Projects\PROJ-VXK600\MLB48\2016_2017_Analysis\EAS old analysis archives\Rwork\DprimeScripts
+# But depends on HierSELHelos and HierSELProps, what are these?
+
+
+d90 <- d90 %>%
+  mutate(AdultsOnly = ifelse(NumbChildren < 1, TRUE, FALSE),
+         Survey = 'HR0',
+         lg10.PTAudAllAC = log10(PTAudAllAC)#,
+         # PEnHelos	= 100*((10^(HierSELHelos/10))/(10^(SELAllAC/10))),
+         # PEnProps	= 100*((10^(HierSELProps/10))/(10^(SELAllAC/10)))
+         ) 
+# %>%
+#   mutate(PEnHelos = ifelse(is.na(HierSELHelos) & SELAllAC > 0, 0, PEnHelos),
+#          PEnHelos = ifelse(is.na(HierSELProps) & SELAllAC > 0, 0, PEnProps)
+#          )
+
+# Filter out BackCty and PimaTr from 90s
+
+d90 <- d90 %>%
+  filter(SiteType != 'BackCty' & SiteType != 'Rim')
+
+# Filter out all except for Rainbow Bridge from RB
+
+dRB <- dRB %>% 
+  filter(Site == 'RainbowBridge')
+
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
-# Subset to complete cases ----
 
-# complete.dose <- c("Site", "LmaxAllAC", "SELAllAC", "PTAudAllAC", "LeqTresp", "LeqTAC", "L50NatQuiet", "PEnHelos", "PEnProps", "SiteType", "ImpNQ_VorMore", "ImpHC_VorMore", "ImpVS_VorMore", "ImpCP_VorMore",  "SiteVisitBefore", "AdultsOnly", "Survey", "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore", "EarlyStart", "Talk", "HikeBeginMinAfterMidnt")
-# 
-# dose.cols <- DRMerged2011sub[,complete.dose]
-# dose.rows <- complete.cases(dose.cols)
-# length(dose.rows)
-# 
-# DRMerged2011subComplete <- DRMerged2011sub[dose.rows==TRUE,]
-# dim(DRMerged2011subComplete)
-# table(DRMerged2011subComplete$Survey)
-# table(DRMerged2011subComplete$Survey,DRMerged2011subComplete$HearAircraft)
-# 
-# write.csv(DRMerged2011subComplete, file = file.path(datadir, "ATMP2011_CompleteDoseVars_dprime.csv"), row.names = FALSE)
-# 
+# Merge ----
+
+
+
+use_vars = c('Site', 'SiteType','SiteFirstVisit', 'Survey',
+             'ImpNQ_VorMore',
+             'ImpHistCult',
+             'Annoy_VorMore',
+             'Annoy_MorMore',
+             'Annoy_SorMore',
+             'IntWithNQ_VorMore',
+             'IntWithNQ_MorMore',
+             'IntWithNQ_SorMore',
+             'LmaxAllAC',
+             'SELAllAC',
+             'PTAudHelos',
+             'PTAudProps',
+             'PTAudJets',
+             'PTAudAllAC',
+             'lg10.PTAudAllAC',
+             'LeqHelos',
+             'LeqProps',
+             'LeqJets',
+             'AdultsOnly')
+
+
+d90_use <- d90 %>% dplyr::select(all_of(use_vars))
+
+d90_use <- d90_use %>%
+  mutate(Dataset = '90s')
+
+d00_use <- d90 %>% dplyr::select(all_of(use_vars))
+
+d00_use <- d00_use %>%
+  mutate(Dataset = '00s')
+
+dRB_use <- dRB %>% dplyr::select(all_of(use_vars))
+
+dRB_use <- dRB_use %>%
+  mutate(Dataset = 'RB')
+
+
+dAll <- rbind(d90_use, d00_use)
+dAll <- rbind(dAll, dRB_use)
+
+write.csv(dAll,
+          file = file.path(project_shared_drive,
+                           '2020 Grand Analysis',
+                           'GrandAnalysis_CompleteDoseVars.csv'
+                           ),
+          row.names = F)
