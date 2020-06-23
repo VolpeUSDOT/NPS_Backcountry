@@ -58,20 +58,20 @@ write.csv(var_presence, file = 'Vars_Compare_Grand.csv', row.names = F)
 # Create necessary columns in 90s
 # PEnHelos and Props from ATMP_2011DataProcess_Dp.r in 
 # \\vntscex\DFS\Projects\PROJ-VXK600\MLB48\2016_2017_Analysis\EAS old analysis archives\Rwork\DprimeScripts
-# But depends on HierSELHelos and HierSELProps, what are these?
+# But depends on HierSELHelos and HierSELProps, not named in 90s data. Per Amanda, use SELHelos and SELProps here.
+# 'Hier' was a hierarchical method for if multiple sources available at the same time
 
 
 d90 <- d90 %>%
   mutate(AdultsOnly = ifelse(NumbChildren < 1, TRUE, FALSE),
          Survey = 'HR0',
-         lg10.PTAudAllAC = log10(PTAudAllAC)#,
-         # PEnHelos	= 100*((10^(HierSELHelos/10))/(10^(SELAllAC/10))),
-         # PEnProps	= 100*((10^(HierSELProps/10))/(10^(SELAllAC/10)))
-         ) 
-# %>%
-#   mutate(PEnHelos = ifelse(is.na(HierSELHelos) & SELAllAC > 0, 0, PEnHelos),
-#          PEnHelos = ifelse(is.na(HierSELProps) & SELAllAC > 0, 0, PEnProps)
-#          )
+         lg10.PTAudAllAC = log10(PTAudAllAC),
+         PEnHelos	= 100*((10^(SELHelos/10))/(10^(SELAllAC/10))),
+         PEnProps	= 100*((10^(SELProps/10))/(10^(SELAllAC/10)))
+         )  %>%
+   mutate(PEnHelos = ifelse(is.na(SELHelos) & SELAllAC > 0, 0, PEnHelos),
+          PEnHelos = ifelse(is.na(SELProps) & SELAllAC > 0, 0, PEnProps)
+          )
 
 # Filter out BackCty and PimaTr from 90s
 
@@ -109,6 +109,8 @@ use_vars = c('Site', 'SiteType','SiteFirstVisit', 'Survey',
              'LeqHelos',
              'LeqProps',
              'LeqJets',
+             'PEnHelos',
+             'PEnProps',
              'AdultsOnly')
 
 
@@ -117,7 +119,7 @@ d90_use <- d90 %>% dplyr::select(all_of(use_vars))
 d90_use <- d90_use %>%
   mutate(Dataset = '90s')
 
-d00_use <- d90 %>% dplyr::select(all_of(use_vars))
+d00_use <- d00 %>% dplyr::select(all_of(use_vars))
 
 d00_use <- d00_use %>%
   mutate(Dataset = '00s')

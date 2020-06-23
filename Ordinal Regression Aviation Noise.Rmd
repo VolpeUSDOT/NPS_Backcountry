@@ -1,0 +1,128 @@
+---
+title: "Ordinal regression Grand Analysis "
+author: "Dan Flynn"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+
+setwd("//vntscex/DFS/Projects/PROJ-VXK600/MLB48/2016_2017_Analysis/Overnight")
+
+library(lme4)   # for glmer() generalized linear mixed effects models
+library(sjPlot) # for summary tables using sjt.glmer and summary plots using sjp.glmer
+library(scales) # for alpha() and muted()
+library(MASS) # for polr
+library(ordinal) # for clmm
+
+Data <- read.csv("ATMP2011_CompleteDoseVars_dprime.csv")
+
+Data$IntWithNQ_SorMore <- as.numeric(Data$IntWithNQ_SorMore)-1
+Data$IntWithNQ_MorMore <- as.numeric(Data$IntWithNQ_MorMore)-1
+Data$IntWithNQ_VorMore <- as.numeric(Data$IntWithNQ_VorMore)-1
+
+Data$Annoy_SorMore <- as.numeric(Data$Annoy_SorMore)-1
+Data$Annoy_MorMore <- as.numeric(Data$Annoy_MorMore)-1
+Data$Annoy_VorMore <- as.numeric(Data$Annoy_VorMore)-1
+
+# keeping three levels for now
+# Data <- Data[Data$SiteType != "ShortHike",]
+levels(Data$SiteType) = c("Overnight", "Dayhike", "ShortHike")
+
+Data$SiteType <- as.factor(as.character(Data$SiteType))
+
+# additionally, omit the few remaining day hikes which have durations fewer than 60 min.
+Data <- Data[Data$DurVisitMinutes > 60,]
+Data$Site <- as.factor(as.character(Data$Site)) 
+
+Data$annoy3 <- Data$AircraftAnnoy
+
+levels(Data$annoy3) <- c(3, 2, 0, 1, 3)
+Data$annoy3 <- as.ordered(as.factor(as.character(Data$annoy3)))
+
+table(Data$annoy3, Data$Annoy_SorMore)
+table(Data$annoy3, Data$Annoy_MorMore)
+table(Data$annoy3, Data$Annoy_VorMore)
+```
+
+## First pass: Non-hierarchical
+
+Logistic regression can use `glm( y ~ x, family = binomial(link = "logit")`. Probit regression the same, `glm(y ~ x, family = binomial(link = "probit")`. Logistic regression uses the logit transformation, which is the log of the odds ratio: `log( p / (1-p) )` for the proportion of events `p`. Probit regression uses the normal `$\(\theta\)$`.
+
+Ordinal regression need to use a different package, MASS (Modern Applied Statistics with S), which has the function `polr`. The function defaults to logistic regression, and probit regression can be specified.
+
+```{r polr, echo = T}
+
+m1 <- polr(annoy3 ~  SELAllAC + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore +
+        WatchBirds + AdultsOnly + Site + SiteType, 
+        data = Data,
+        Hess = T)
+
+summary(m1)
+```
+
+Better, convert these values to odds ratios. Just like logistic regression, the coefficients can be meaningfully interpreted as the odds of an outcome occuring, by converting coefficients using the exponential function `exp(coef)`. This is because the coefficients of the model represent the effect of each predictor on the transformed response variable, `ln( p / (1-p) )`.
+
+Note that the 'Intercepts' show the cutpoints. These are values on a continuous scale, but our response variable was categorical. These are where the latent variable was cut
+
+```{r odds, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, results="hide"}
+# Runnning confidence intervals is slow.
+
+ctable <- coef(summary(m1))
+(ci <- confint(m1)) # default method gives profiled CIs
+
+# Calculate p-values
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+
+## combined table
+(ctable <- cbind(ctable, "p value" = p))
+
+# odds ratio
+exp(coef(m1))
+```
+
+```{r, echo=TRUE}
+
+# Combine confidence intervals and coefficients, calculating odds ratios
+round(exp(cbind(OR = coef(m1), ci)), 3)
+      
+```
+
+So, one unit of SELAllAC increases odds of responding "somewhat or more annoyed" and odds of each additional level increases by a factor of 1.04. Largest effects are at the site level, where  we can see if a visitor was in Hermit lake, odds of responding to each level of annoyance is 5.09 times greater.
+But this model is not ideal, as Site and SiteType are treated as separate varaibles, rather than as grouping variables. Another deficiency of this approach is that only 'symmetric' differences between levels are able to be fit, meaning the distance between thresholds is the same.
+
+## Next step: hierarchical
+
+Here we can use the cumulative link mixed model approach, function `clmm` in the `ordinal` package. This allows fitting an ordinal model with random effects. Additionally, this appraoch allows us to test non-symmetric thresholds, meaning the difference between 'somewhat or more' and 'moderately or more' can be different from that of 'moderately or more' and 'very or more'.
+
+The name 'cumulative link model' is equivalent to 'ordinal regression model'. Ordered logit and ordered probit are types of ordinal regression, where the link function is specified as the logit or probit function. The model is cumulative in the sense that it estimates the cumulative probability that a response will fall into one of the ordered catetories.
+
+
+```{r, eval=FALSE, include=FALSE}
+# use clmm, not older clmm2 function which only allows one random effect
+m2 <- clmm(annoy3 ~ SELAllAC 
+          + PTAudAllAC + PEnHelos + PEnProps + Survey + ImpCP_VorMore + SiteVisitBefore + WatchBirds + AdultsOnly 
+          + (1|Site)
+          + (1|SiteType),
+          Hess = T, 
+          data = Data,
+          link = "logit")
+
+summary(m2)
+
+```
+Looking at the odds ratios again, we can see the results using a random effect of site are similar to the non-hierarchial version above, with OR for SELAllAC = `r round(exp(m2$beta), 2)[1]` and for WatchBirds = `r round(exp(m2$beta), 2)[9]`. 
+
+The site effects can also be shown:
+```{r, echo=TRUE}
+round(exp(ranef(m2)$Site), 3)
+
+# and SiteType Effects
+round(exp(ranef(m2)$SiteType), 3)
+
+```
+Visitors at Hermit were three-fold more likely to report annoyance in general. Overnight visitors were 1.27x more and dayhike visitors 0.15x less likely to report annoyance, compared to the population as a whole.
+
+
