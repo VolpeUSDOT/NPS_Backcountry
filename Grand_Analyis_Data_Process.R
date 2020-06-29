@@ -21,6 +21,8 @@ dat_2000 = '2016_2017_Analysis/Overnight/Standalone_2020/NPS_Backcountry/Data/DR
   
 dat_RABR = '2014_RABR/RABR Processing/DATABASE/BCsub_CompleteDoseVars.csv'
 
+# Park info
+site_park = '2020 Grand Analysis/Vars_Compare_Grand.xlsx'
 
 # read in files
 
@@ -30,6 +32,8 @@ d00 = read_csv(file.path(project_shared_drive, dat_2000))
 
 dRB = read_csv(file.path(project_shared_drive, dat_RABR))
 
+park_info = read_xlsx(file.path(project_shared_drive, site_park),
+                     sheet = 'Site to Park')
 
 d90 <- d90[-1,] # Remove first non-header row, column numbers manually entered.
 
@@ -60,7 +64,6 @@ write.csv(var_presence, file = 'Vars_Compare_Grand.csv', row.names = F)
 # \\vntscex\DFS\Projects\PROJ-VXK600\MLB48\2016_2017_Analysis\EAS old analysis archives\Rwork\DprimeScripts
 # But depends on HierSELHelos and HierSELProps, not named in 90s data. Per Amanda, use SELHelos and SELProps here.
 # 'Hier' was a hierarchical method for if multiple sources available at the same time
-
 
 d90 <- d90 %>%
   mutate(AdultsOnly = ifelse(NumbChildren < 1, TRUE, FALSE),
@@ -141,6 +144,14 @@ d90 %>% filter(is.na(Annoy_VorMore)) %>% select(Annoy)
 dAll <- rbind(d90_use, d00_use)
 dAll <- rbind(dAll, dRB_use)
 
+# Add park info
+dAll <- dAll %>%
+  left_join(park_info %>% select(Site, Park), by = 'Site')
+
+# Clean up Site names
+dAll <- dAll %>%
+  mutate(Site = ifelse(dAll$Site == 'FryLnd', 'Fairyland', dAll$Site))
+
 # Create 3-level ordinal variables for response. ----
 # as.factor from character string of No and Yes: No = 1, Yes = 2. Subtract one and make numeric.
 dAll <- dAll %>%
@@ -164,6 +175,7 @@ dAll %>% select(IntWithNQ_VorMore, IntWithNQ_MorMore, IntWithNQ_SorMore, IntWith
 # Make factors and numeric mediator variables as appropriate
 dAll <- dAll %>%
   mutate(Site = as.factor(Site),
+         Park = as.factor(Park),
          SiteType = as.factor(SiteType),
          Survey = as.factor(Survey),
          SiteFirstVisit = as.factor(SiteFirstVisit),
@@ -174,13 +186,42 @@ dAll <- dAll %>%
          )
 
 # Check data 
-key_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC',
-             'Dataset', 'Site', 'SiteType',
-             'ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey',
-             'Annoy3', 'IntWithNQ3')
+dos_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC')
+dat_vars = c('Dataset', 'Site', 'SiteType', 'Park')
+med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey')
+res_vars = c('Annoy3', 'IntWithNQ3')
 
-pairs(dAll[,key_vars])
+gp <- GGally::ggpairs(dAll[,c(dos_vars, res_vars)]) 
+gp + ggtitle('Dose + Response variables for grand analysis')
+ggsave(filename = file.path(project_shared_drive,
+                            '2020 Grand Analysis',
+                            'Dose_Response_Variables.jpg'),
+       height = 8, width = 9)
+                                  
 
+gp <- GGally::ggpairs(dAll[,c(dat_vars[!dat_vars %in% 'Site'], res_vars)]) 
+gp + ggtitle('Dataset + Response variables for grand analysis')
+ggsave(filename = file.path(project_shared_drive,
+                            '2020 Grand Analysis',
+                            'Data_Response_Variables.jpg'),
+       height = 8, width = 9)
+
+gp <- GGally::ggpairs(dAll[,c('Park', res_vars)]) 
+gp + ggtitle('Dataset (Park only) + Response variables for grand analysis')
+ggsave(filename = file.path(project_shared_drive,
+                            '2020 Grand Analysis',
+                            'Park_Response_Variables.jpg'),
+       height = 8, width = 9)
+
+
+gp <- GGally::ggpairs(dAll[,c(med_vars, res_vars)]) 
+gp + ggtitle('Mediator + Response variables for grand analysis')
+ggsave(filename = file.path(project_shared_drive,
+                            '2020 Grand Analysis',
+                            'Mediator_Response_Variables.jpg'),
+       height = 8, width = 9)
+
+# Save ----
 
 save(list = 'dAll',
      file = file.path(project_shared_drive,
