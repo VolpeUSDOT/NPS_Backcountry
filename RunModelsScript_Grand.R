@@ -34,18 +34,52 @@ load(file.path(project_shared_drive,
           '2020 Grand Analysis',
           'GrandAnalysis_CompleteDoseVars.RData'))
 
+dos_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC')
+dat_vars = c('Dataset', 'Site', 'SiteType', 'Park')
+med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey')
+res_vars = c('Annoy3', 'IntWithNQ3')
+
 # Model run function ----
 
-run_clmm <- function()
-m{model_number} <- clmm({ordered_response} ~ {dose_var} + {mediator_vars} +
-           + (1|Site)
-           + SiteType,
-           Hess = T,
-           data = dAll,
-           link = "logit")
+# Run for Annoy and Interfere, using model number as a 
+# run_clmm <- function()
+# m{model_number} <- clmm({ordered_response} ~ {dose_var} + {mediator_vars} +
+#            + (1|Site)
+#            + SiteType,
+#            Hess = T,
+#            data = dAll,
+#            link = "logit")
 
 # Model 1: Base ----
 
+model_number = 1
+
+
+assign(paste0('annoy_',
+              formatC(model_number, width = 2, flag = 0)),
+
+  clmm(Annoy3 ~ SELAllAC + PEnProps + PEnHelos + PTAudAllAC + 
+         Dataset + SiteType  + 
+         (1|Site),
+         Hess = T,
+         data = dAll,
+         link = "logit")
+  )
+
+
+summary(annoy_01)
+
+
+
+ctable <- coef(summary(annoy_01))
+(ci <- confint(annoy_01)) # default method gives profiled CIs
+
+
+# odds ratio
+exp(coef(m1))
+# odds ratio
+exp(coef(annoy_01))
+round(exp(cbind(OR = coef(annoy_01), ci)), 3)
 
 # Model 2: Survey	----
 

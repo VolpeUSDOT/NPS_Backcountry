@@ -86,6 +86,10 @@ d90 <- d90 %>%
 dRB <- dRB %>% 
   filter(Site == 'RainbowBridge')
 
+# Combine DurVisitMinutes from 00s and RB with DurationsMinutes in 90s for filtering to at least 60 min
+
+d90 <- d90 %>%
+  rename(DurVisitMinutes = DurationVisit)
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 
@@ -112,7 +116,8 @@ use_vars = c('Site', 'SiteType','SiteFirstVisit', 'Survey',
              'LeqJets',
              'PEnHelos',
              'PEnProps',
-             'AdultsOnly')
+             'AdultsOnly',
+             'DurVisitMinutes')
 
 
 d90_use <- d90 %>% dplyr::select(all_of(use_vars))
@@ -152,6 +157,7 @@ dAll <- dAll %>%
 dAll <- dAll %>%
   mutate(Site = ifelse(dAll$Site == 'FryLnd', 'Fairyland', dAll$Site))
 
+
 # Create 3-level ordinal variables for response. ----
 # as.factor from character string of No and Yes: No = 1, Yes = 2. Subtract one and make numeric.
 dAll <- dAll %>%
@@ -165,8 +171,8 @@ dAll <- dAll %>%
 
 # Make ordered factor out of the sum of Annoy and sum of IntWithNQ
 dAll <- dAll %>%
-  mutate(Annoy3 = as.ordered(as.factor(rowSums(select_(., "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore")))),
-         IntWithNQ3 = as.ordered(as.factor(rowSums(select_(., "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")))))
+  mutate(Annoy3 = as.ordered(as.factor(rowSums(select(., "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore")))),
+         IntWithNQ3 = as.ordered(as.factor(rowSums(select(., "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")))))
 
 
 dAll %>% select(Annoy_VorMore, Annoy_MorMore, Annoy_SorMore, Annoy3)
@@ -188,7 +194,7 @@ dAll <- dAll %>%
 # Check data 
 dos_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC')
 dat_vars = c('Dataset', 'Site', 'SiteType', 'Park')
-med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey')
+med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey', 'DurVisitMinutes')
 res_vars = c('Annoy3', 'IntWithNQ3')
 
 gp <- GGally::ggpairs(dAll[,c(dos_vars, res_vars)]) 
