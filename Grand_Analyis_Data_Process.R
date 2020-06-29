@@ -88,8 +88,6 @@ dRB <- dRB %>%
 
 # Merge ----
 
-
-
 use_vars = c('Site', 'SiteType','SiteFirstVisit', 'Survey',
              'ImpNQ_VorMore',
              'ImpHistCult',
@@ -130,8 +128,65 @@ dRB_use <- dRB_use %>%
   mutate(Dataset = 'RB')
 
 
+# NA in 1990's response variables ----
+# What do NA values represent in 1990's data? 
+d90 %>% filter(is.na(IntWithNQ_VorMore)) %>% group_by(Site) %>% summarize(n())
+
+d90 %>% filter(is.na(Annoy_VorMore)) %>% group_by(Site) %>% summarize(n())
+
+d90 %>% filter(is.na(Annoy_VorMore)) %>% select(Annoy)
+
+
+# Compile ---
 dAll <- rbind(d90_use, d00_use)
 dAll <- rbind(dAll, dRB_use)
+
+# Create 3-level ordinal variables for response. ----
+# as.factor from character string of No and Yes: No = 1, Yes = 2. Subtract one and make numeric.
+dAll <- dAll %>%
+  filter(!is.na(Annoy_SorMore) & !is.na(IntWithNQ_VorMore)) %>%
+  mutate(IntWithNQ_SorMore = as.numeric(as.factor(IntWithNQ_SorMore)) - 1,
+         IntWithNQ_MorMore = as.numeric(as.factor(IntWithNQ_MorMore)) - 1,
+         IntWithNQ_VorMore = as.numeric(as.factor(IntWithNQ_VorMore)) - 1,
+         Annoy_SorMore = as.numeric(as.factor(Annoy_SorMore)) - 1,
+         Annoy_MorMore = as.numeric(as.factor(Annoy_MorMore)) - 1,
+         Annoy_VorMore = as.numeric(as.factor(Annoy_VorMore)) - 1)
+
+# Make ordered factor out of the sum of Annoy and sum of IntWithNQ
+dAll <- dAll %>%
+  mutate(Annoy3 = as.ordered(as.factor(rowSums(select_(., "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore")))),
+         IntWithNQ3 = as.ordered(as.factor(rowSums(select_(., "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")))))
+
+
+dAll %>% select(Annoy_VorMore, Annoy_MorMore, Annoy_SorMore, Annoy3)
+dAll %>% select(IntWithNQ_VorMore, IntWithNQ_MorMore, IntWithNQ_SorMore, IntWithNQ3)
+
+# Make factors and numeric mediator variables as appropriate
+dAll <- dAll %>%
+  mutate(Site = as.factor(Site),
+         SiteType = as.factor(SiteType),
+         Survey = as.factor(Survey),
+         SiteFirstVisit = as.factor(SiteFirstVisit),
+         ImpNQ_VorMore = as.factor(ifelse(dAll$ImpNQ_VorMore == 'Yes', 1, 0)),
+         ImpHistCult_VorMore =  as.factor(ifelse(dAll$ImpHistCult == 'Very' | dAll$ImpHistCult == 'Extremely' , 1, 0)),
+         AdultsOnly = as.factor(ifelse(dAll$AdultsOnly == TRUE | dAll$AdultsOnly == 'Yes', 1, 0)),
+         Dataset = as.factor(Dataset)
+         )
+
+# Check data 
+key_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC',
+             'Dataset', 'Site', 'SiteType',
+             'ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey',
+             'Annoy3', 'IntWithNQ3')
+
+pairs(dAll[,key_vars])
+
+
+save(list = 'dAll',
+     file = file.path(project_shared_drive,
+                      '2020 Grand Analysis',
+                      'GrandAnalysis_CompleteDoseVars.RData')
+     )
 
 write.csv(dAll,
           file = file.path(project_shared_drive,

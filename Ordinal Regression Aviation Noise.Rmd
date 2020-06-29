@@ -1,5 +1,5 @@
 ---
-title: "Ordinal regression Grand Analysis "
+title: "Ordinal Regression Grand Analysis "
 author: "Dan Flynn"
 output:
   html_document: default
