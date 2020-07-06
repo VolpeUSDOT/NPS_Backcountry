@@ -64,17 +64,19 @@ write.csv(var_presence, file = 'Vars_Compare_Grand.csv', row.names = F)
 # \\vntscex\DFS\Projects\PROJ-VXK600\MLB48\2016_2017_Analysis\EAS old analysis archives\Rwork\DprimeScripts
 # But depends on HierSELHelos and HierSELProps, not named in 90s data. Per Amanda, use SELHelos and SELProps here.
 # 'Hier' was a hierarchical method for if multiple sources available at the same time
+# Clean log10 values, use NA if 0
 
 d90 <- d90 %>%
   mutate(AdultsOnly = ifelse(NumbChildren < 1, TRUE, FALSE),
          Survey = 'HR0',
-         lg10.PTAudAllAC = log10(PTAudAllAC),
+         lg10.PTAudAllAC = ifelse(PTAudAllAC > 0, log10(PTAudAllAC), NA),
          PEnHelos	= 100*((10^(SELHelos/10))/(10^(SELAllAC/10))),
          PEnProps	= 100*((10^(SELProps/10))/(10^(SELAllAC/10)))
          )  %>%
    mutate(PEnHelos = ifelse(is.na(SELHelos) & SELAllAC > 0, 0, PEnHelos),
           PEnHelos = ifelse(is.na(SELProps) & SELAllAC > 0, 0, PEnProps)
           )
+
 
 # Filter out BackCty and PimaTr from 90s
 
@@ -142,7 +144,7 @@ d90 %>% filter(is.na(IntWithNQ_VorMore)) %>% group_by(Site) %>% summarize(n())
 
 d90 %>% filter(is.na(Annoy_VorMore)) %>% group_by(Site) %>% summarize(n())
 
-d90 %>% filter(is.na(Annoy_VorMore)) %>% select(Annoy)
+d90 %>% filter(is.na(Annoy_VorMore)) %>% dplyr::select(Annoy)
 
 
 # Compile ---
@@ -151,7 +153,7 @@ dAll <- rbind(dAll, dRB_use)
 
 # Add park info
 dAll <- dAll %>%
-  left_join(park_info %>% select(Site, Park), by = 'Site')
+  left_join(park_info %>% dplyr::select(Site, Park), by = 'Site')
 
 # Clean up Site names
 dAll <- dAll %>%
@@ -171,12 +173,12 @@ dAll <- dAll %>%
 
 # Make ordered factor out of the sum of Annoy and sum of IntWithNQ
 dAll <- dAll %>%
-  mutate(Annoy3 = as.ordered(as.factor(rowSums(select(., "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore")))),
-         IntWithNQ3 = as.ordered(as.factor(rowSums(select(., "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")))))
+  mutate(Annoy3 = as.ordered(as.factor(rowSums(dplyr::select(., "Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore")))),
+         IntWithNQ3 = as.ordered(as.factor(rowSums(dplyr::select(., "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")))))
 
 
-dAll %>% select(Annoy_VorMore, Annoy_MorMore, Annoy_SorMore, Annoy3)
-dAll %>% select(IntWithNQ_VorMore, IntWithNQ_MorMore, IntWithNQ_SorMore, IntWithNQ3)
+dAll %>% dplyr::select(Annoy_VorMore, Annoy_MorMore, Annoy_SorMore, Annoy3)
+dAll %>% dplyr::select(IntWithNQ_VorMore, IntWithNQ_MorMore, IntWithNQ_SorMore, IntWithNQ3)
 
 # Make factors and numeric mediator variables as appropriate
 dAll <- dAll %>%
