@@ -198,6 +198,48 @@ model_compare <- run_clmm(model_no = 8,
                           med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                           GeoVar = 'Site')
 
+# Model 9: 1 with Park instead of Site ----
+
+model_compare <- run_clmm(model_no = 9,
+                          PTAud = 'PTAudAllAC',
+                          med_vars = NULL,
+                          GeoVar = 'Park')
+
+# Model 10: 2 with Park instead of Site	----
+
+model_compare <- run_clmm(model_no = 10,
+                          PTAud = 'PTAudAllAC',
+                          survey = 'Survey',
+                          med_vars = NULL,
+                          GeoVar = 'Park')
+
+
+# Model 11: 3 with Park instead of Site ----
+
+model_compare <- run_clmm(model_no = 11,
+                          PTAud = 'PTAudAllAC',
+                          survey = NULL,
+                          med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
+                          GeoVar = 'Park')
+
+
+# Model 12: Mediators + Survey with Park ---- 
+
+model_compare <- run_clmm(model_no = 12,
+                          PTAud = 'PTAudAllAC',
+                          survey = 'Survey',
+                          med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
+                          GeoVar = 'Park')
+
 
 # Run model selection script ----
-source("Model_Selection_Overnight.R")
+
+# source("Model_Selection_Overnight.R")
+
+# Summary: 
+# Park instead of Site is worse, stick with site but consider Park/Site nested
+# log10(PTAud) can't compare by default, since different number of observations (0's omitted), need to compare with same data, but appears to be much worse
+# Including survey improves every model
+# Including mediators improves models a tiny bit
+# Including both survey and mediators is better than just including survey or mediators
+# Next steps: move backwards on indivdiaul mediators to simplify
