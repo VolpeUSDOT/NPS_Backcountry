@@ -42,7 +42,7 @@ res_vars = c('Annoy3', 'IntWithNQ3')
 
 # Model run function ----
 
-run_clmm <- function(model_no, survey = NULL,
+run_clmm <- function(model_no, use_survey = NULL,
                      PTAud = c('PTAudAllAC', 'lg10.PTAudAllAC'),
                      med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                      addl_vars = NULL,
@@ -53,7 +53,7 @@ run_clmm <- function(model_no, survey = NULL,
   
   # Add survey and additional variables to mediator variables if they exist
   if(!is.null(med_vars)) {
-    if(!is.null(survey)) med_vars = c(med_vars, survey)
+    if(!is.null(use_survey)) med_vars = c(med_vars, use_survey)
     if(!is.null(addl_vars)) med_vars = c(med_vars, addl_vars)
   
     formula_strings = paste(paste0(res_vars, ' ~ SELAllAC + PEnProps + PEnHelos + Dataset + SiteType'),
@@ -63,9 +63,9 @@ run_clmm <- function(model_no, survey = NULL,
                          sep = ' + ')   
   } 
   
-  if (is.null(med_vars) & !is.null(survey)) {
+  if (is.null(med_vars) & !is.null(use_survey)) {
     # Mediators are null, add survey and addl_variables to formula string
-    if(!is.null(survey)) sur_vars = survey
+    if(!is.null(use_survey)) sur_vars = use_survey
     if(!is.null(addl_vars)) sur_vars = c(sur_vars, addl_vars)
     
     formula_strings = paste(paste0(res_vars, ' ~ SELAllAC + PEnProps + PEnHelos + Dataset + SiteType'),
@@ -75,7 +75,7 @@ run_clmm <- function(model_no, survey = NULL,
                             sep = ' + ')  
     
   } 
-  if(is.null(med_vars) & is.null(survey)) {
+  if(is.null(med_vars) & is.null(use_survey)) {
 
     formula_strings = paste(paste0(res_vars, ' ~ SELAllAC + PEnProps + PEnHelos + Dataset + SiteType'),
                             PTAud,
@@ -104,7 +104,12 @@ run_clmm <- function(model_no, survey = NULL,
             file = file.path(output, paste0(model_name, ".html")))
   
   model_compare <- rbind(model_compare, 
-                         data.frame(model_name, summary(get(model_name))$info[,c('nobs','AIC')]))
+                         data.frame(model_name,
+                                    summary(get(model_name))$info[,c('nobs','AIC')],
+                                    use_survey = ifelse(is.null(use_survey), 'NULL', use_survey),
+                                    PTAud,
+                                    GeoVar,
+                                    med_vars = ifelse(is.null(med_vars), 'NULL', paste(med_vars, collapse = ','))))
   
   # Interfere Model
   model_name = paste0('interfere_',
@@ -123,7 +128,12 @@ run_clmm <- function(model_no, survey = NULL,
             file = file.path(output, paste0(model_name, ".html")))
   
   model_compare <- rbind(model_compare, 
-                         data.frame(model_name, summary(get(model_name))$info[,c('nobs','AIC')]))
+                         data.frame(model_name,
+                                    summary(get(model_name))$info[,c('nobs','AIC')],
+                                    use_survey = ifelse(is.null(use_survey), 'NULL', use_survey),
+                                    PTAud,
+                                    GeoVar,
+                                    med_vars = ifelse(is.null(med_vars), 'NULL', paste(med_vars, collapse = ','))))
   
   model_compare
   
@@ -143,7 +153,7 @@ model_compare <- run_clmm(model_no = 1,
 
 model_compare <- run_clmm(model_no = 2,
                           PTAud = 'PTAudAllAC',
-                          survey = 'Survey',
+                          use_survey = 'Survey',
                           med_vars = NULL,
                           GeoVar = 'Site')
 
@@ -152,7 +162,7 @@ model_compare <- run_clmm(model_no = 2,
 
 model_compare <- run_clmm(model_no = 3,
                           PTAud = 'PTAudAllAC',
-                          survey = NULL,
+                          use_survey = NULL,
                           med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                           GeoVar = 'Site')
 
@@ -161,7 +171,7 @@ model_compare <- run_clmm(model_no = 3,
 
 model_compare <- run_clmm(model_no = 4,
                           PTAud = 'PTAudAllAC',
-                          survey = 'Survey',
+                          use_survey = 'Survey',
                           med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                           GeoVar = 'Site')
 
@@ -177,7 +187,7 @@ model_compare <- run_clmm(model_no = 5,
 
 model_compare <- run_clmm(model_no = 6,
                           PTAud = 'lg10.PTAudAllAC',
-                          survey = 'Survey',
+                          use_survey = 'Survey',
                           med_vars = NULL,
                           GeoVar = 'Site')
 
@@ -186,7 +196,7 @@ model_compare <- run_clmm(model_no = 6,
 
 model_compare <- run_clmm(model_no = 7,
                           PTAud = 'lg10.PTAudAllAC',
-                          survey = NULL,
+                          use_survey = NULL,
                           med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                           GeoVar = 'Site')
 
@@ -194,7 +204,7 @@ model_compare <- run_clmm(model_no = 7,
 
 model_compare <- run_clmm(model_no = 8,
                           PTAud = 'lg10.PTAudAllAC',
-                          survey = 'Survey',
+                          use_survey = 'Survey',
                           med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                           GeoVar = 'Site')
 
@@ -209,7 +219,7 @@ model_compare <- run_clmm(model_no = 9,
 
 model_compare <- run_clmm(model_no = 10,
                           PTAud = 'PTAudAllAC',
-                          survey = 'Survey',
+                          use_survey = 'Survey',
                           med_vars = NULL,
                           GeoVar = 'Park')
 
@@ -218,7 +228,7 @@ model_compare <- run_clmm(model_no = 10,
 
 model_compare <- run_clmm(model_no = 11,
                           PTAud = 'PTAudAllAC',
-                          survey = NULL,
+                          use_survey = NULL,
                           med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                           GeoVar = 'Park')
 
@@ -227,12 +237,30 @@ model_compare <- run_clmm(model_no = 11,
 
 model_compare <- run_clmm(model_no = 12,
                           PTAud = 'PTAudAllAC',
-                          survey = 'Survey',
+                          use_survey = 'Survey',
                           med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
                           GeoVar = 'Park')
 
 
 # Run model selection script ----
+
+model_compare$response = unlist(lapply(strsplit(model_compare$model_name, "_"), function(x) x[[1]]))
+model_compare$model_no = unlist(lapply(strsplit(as.character(model_compare$model_name), "_"), function(x) x[[2]]))
+
+
+model_compare$model_name <- as.factor(model_compare$model_name)
+model_compare$model_no <- as.factor(model_compare$model_no)
+model_compare$response <- as.factor(model_compare$response)
+model_compare$AIC <- as.numeric(model_compare$AIC)
+
+
+write.csv(model_compare, file = file.path(output, 'Model_Compare.csv'), row.names = F)
+
+library(tidyverse)
+
+ggplot(model_compare, aes(x = model_no, y = AIC)) +
+  geom_point() + 
+  facet_wrap(~response + GeoVar + PTAud + use_survey, scales = 'free_y')
 
 # source("Model_Selection_Overnight.R")
 
