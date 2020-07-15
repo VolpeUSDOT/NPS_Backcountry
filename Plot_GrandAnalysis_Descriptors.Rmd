@@ -23,6 +23,7 @@ library(tidyverse)
 library(kableExtra)
 library(knitr)
 library(DT)
+library(plotly)
 
 project_shared_drive = "//vntscex/DFS/Projects/PROJ-VXK600/MLB48"
 
@@ -82,37 +83,44 @@ datatable(Dataset_Park_table,
 Mediators_table <- d %>%
   group_by(SiteType) %>%
   summarize(mean_duration_hrs = round(mean(DurVisitMinutes/60, na.rm=T),2),
-            ImpNQ_VorMore_pct = mean(ImpNQ_VorMore == '1', na.rm=T),
+            ImpNQ_VorMore = mean(ImpNQ_VorMore == '1', na.rm=T),
             SiteFirstVisit = mean(SiteFirstVisit == 'Yes', na.rm=T),
             AdultsOnly = mean(AdultsOnly == '1', na.rm=T),
             ImpHistCult_VorMore = mean(ImpHistCult_VorMore == 1, na.rm=T),
             )
 
 datatable(Mediators_table, 
-          caption = 'Mediators by Site Type',
+          caption = 'Mediators by Site Type. Percentages are for postive responses to those survey questions.',
           options = list(dom = 't',
                          digits = 2),
           rownames = F) %>%
-      formatRound(columns = ~, digits=3)
+      formatPercentage(columns = ~ ImpNQ_VorMore + SiteFirstVisit + AdultsOnly + ImpHistCult_VorMore, digits = 1)
 
 ```
 
-## Data frequency figures
+# Descriptive figures
 
-```{r hists, eval=FALSE, include=FALSE}
+## Sound exposure distributions
+
+Showing dayhike, overnight, and shorthike distributions of LAE and percent of time audible.
+
+```{r hists}
 colzbar = c("deepskyblue","deepskyblue4",
             "dodgerblue","dodgerblue4",
-            "violet","violetred4")
+            "violetred4","violet")
 
 colzbar[3] = alpha(colzbar[3], 0.3)
-colzbar[4] = alpha(colzbar[4], 0.6)
+colzbar[4] = alpha(colzbar[4], 0.9)
+colzbar[5] = alpha(colzbar[5], 0.2)
+colzbar[6] = alpha(colzbar[6], 0.2)
+
 
 par(mfrow = c(1, 2))
 
 with(d[d$SiteType == "Dayhike",], hist(SELAllAC,
                                        xlab = "LAE",
                                        breaks = 25, 
-                                       xlim = c(40, 95),
+                                       xlim = c(40, 125),
                                        col = colzbar[3],
                                        border = colzbar[3],
                                        main = ""))
@@ -121,6 +129,13 @@ with(d[d$SiteType == "Overnight",], hist(SELAllAC,
                                          add = TRUE,
                                          breaks = 15,
                                          col = colzbar[4],
+                                         border = colzbar[4]))
+
+
+with(d[d$SiteType == "ShortHike",], hist(SELAllAC,
+                                         add = TRUE,
+                                         breaks = 35,
+                                         col = colzbar[5],
                                          border = colzbar[4]))
 
 
@@ -138,152 +153,82 @@ with(d[d$SiteType == "Overnight",], hist(PTAudAllAC,
                                          col = colzbar[4],
                                          border = colzbar[4]))
 
+with(d[d$SiteType == "ShortHike",], hist(PTAudAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[5],
+                                         border = colzbar[4]))
+
+
 legend("topright",
        bty = "n",
-       fill = c(colzbar[3], colzbar[4]),
-       legend = c("Dayhike", "Overnight")
+       fill = c(colzbar[3], colzbar[4], colzbar[5]),
+       legend = c("Dayhike", "Overnight", "Shorthike")
 )
+
+# fill_cols =  c(scales::alpha("dodgerblue", 0.5),
+#                scales::alpha("dodgerblue4", 0.7),
+#                scales::alpha("violetred4", 0.8),
+#                scales::alpha("violet", 0.2))
+# 
+# ggplot(d, aes(x = SELAllAC, fill = SiteType)) +
+#   geom_histogram(color = 'black') +
+#   theme_bw() +
+#   scale_fill_manual(values = fill_cols)
+
+
 ```
 
 
-# Figure 2 SiteType by Day/Overnight
+## Sound exposure and responses by site type
 
-```{r fig2, eval=FALSE, include=FALSE}
-d <- read.csv("Data/ATMP2011_CompleteDoseVars_dprime.csv")
+In the figures below, colors represent site types, while size of the points represents number of respondents.
 
-d <- d[d$SiteType != "ShortHike",]
+```{r fig2}
+annoy_LAE <- d %>%
+  group_by(Annoy3, SiteType) %>%
+  summarize(meanLAE = mean(SELAllAC, na.rm = T),
+            n_respond = n())
 
-d <- d[d$DurVisitMinutes > 60,]
+gp_a <- ggplot(annoy_LAE, aes(x = meanLAE, y = Annoy3, size = n_respond, color = SiteType)) +
+  geom_point() + scale_size(range = c(1, 9)) +
+  theme_bw() +
+  ggtitle('Site visitors reporting annoyance by mean sound exposure') +
+  ylab('Annoyance level') + xlab('Mean LAE')
 
-keepsites <- tapply(d$SiteType, d$Site, function(x) length(x[x=="BCOvernight"])>0)
-d <- d[d$Site %in% names(keepsites[keepsites==TRUE]),]
+int_LAE <- d %>%
+  group_by(IntWithNQ3, SiteType) %>%
+  summarize(meanLAE = mean(SELAllAC, na.rm = T),
+            n_respond = n())
 
-d$Site <- as.factor(as.character(d$Site)) # clear empty levels
+gp_i <- ggplot(int_LAE, aes(x = meanLAE, y = IntWithNQ3, size = n_respond, color = SiteType)) +
+  geom_point() + scale_size(range = c(1, 9)) +
+  theme_bw() +
+  ggtitle('Site visitors reporting interference by mean sound exposure') +
+  ylab('Interference level') + xlab('Mean LAE')
 
-levels(d$SiteType) = c("Overnight", "Dayhike", "sh")
+ggplotly(gp_a)
 
-d$SiteType <- as.factor(as.character(d$SiteType))
+ggplotly(gp_i)
 
-colzbar = alpha(c("deepskyblue","deepskyblue4",
-                  "dodgerblue","dodgerblue4",
-                  "violet","violetred4"), 0.8)
 
-par(xpd=T, mar = c(4, 4, 4, 4), mfrow = c(1,1))
-
-j = "SiteType"
-  res <- vector()
-  res.mean <- vector()
-  res.se <- vector()
-  for(i in c("Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore",
-             "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")){
-    
-    xtab <- table(d[,i], d[,j])
-    pcts <- apply(xtab, 2, function(x) round(100*x[2]/sum(x),2))
-    
-    res <- rbind(res, data.frame(var=i, t(data.frame(pcts))))
-    
-    sel.mean <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], mean)
-    sel.se <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], function(x) sd(x)/sqrt(length(x)-1))
-    
-    res.mean <- rbind(res.mean, data.frame(var=i, t(data.frame(sel.mean))))
-    res.se <- rbind(res.se, data.frame(var=i, t(data.frame(sel.se))))
-    
-    
-  }
-  
-  rownames(res) = c("Annoy, Slight+", "Annoy, Mod+", "Annoy, Very+",
-                    "Interfere, Slight+", "Interfere, Mod+", "Interfere, Very+")
-  
-  bp <- barplot(t(res[,2:3]), beside = T, col = colzbar,
-                ylab = "Percent of respondents",
-                ylim = c(0, 90))
-  
-  title(main = j)
-  
-  axis(4, at = c(0, 30, 60, 90))
-  mtext("Sound Exposure Level (dBA)", side = 4, at = 50, line = 2)
-  
-  legend(x = 15, y = 100, 
-         fill = colzbar[1:2],
-         legend = levels(d[,j]),
-         bty = "n"
-  )
-  
-  points(as.numeric(bp),
-         as.numeric(t(res.mean[,2:3])),
-         pch = 5)
-  
-  
-  arrows(as.numeric(bp),
-         as.numeric(t(res.mean[,2:3]))-as.numeric(t(res.se[,2:3])),
-         as.numeric(bp),
-         as.numeric(t(res.mean[,2:3]))+as.numeric(t(res.se[,2:3])),
-         angle = 90,
-         length = 0.01,
-         code = 3)
-  
 ```
 
-# Figure 3 by Site
+
+```{r interpret_cutoff}
+annoy_LAE <- d %>%
+  group_by(Annoy3) %>%
+  summarize(meanLAE = mean(SELAllAC, na.rm = T),
+            n_respond = n())
+
+gp_a <- ggplot(annoy_LAE, aes(x = meanLAE, y = Annoy3, size = n_respond)) +
+  geom_point() + scale_size(range = c(1, 9)) +
+  theme_bw() +
+  ggtitle('Site visitors reporting annoyance by mean sound exposure') +
+  ylab('Annoyance level') + xlab('Mean LAE')
+
+ggplotly(gp_a)
 
 
-```{r fig3, eval=FALSE, include=FALSE}
-colzbar4 = alpha(c("deepskyblue4", "dodgerblue4", "violet","seagreen"), 0.8)
 
-par(xpd=T, mar = c(4, 4, 4, 4))
-
-j = "Site"
-  res <- vector()
-  res.mean <- vector()
-  res.se <- vector()
-  for(i in c("Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore",
-             "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")){
-    
-    xtab <- table(d[,i], d[,j])
-    pcts <- apply(xtab, 2, function(x) round(100*x[2]/sum(x),2))
-    
-    res <- rbind(res, data.frame(var=i, t(data.frame(pcts))))
-    
-    sel.mean <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], mean)
-    sel.se <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], function(x) sd(x)/sqrt(length(x)-1))
-    
-    res.mean <- rbind(res.mean, data.frame(var=i, t(data.frame(sel.mean))))
-    res.se <- rbind(res.se, data.frame(var=i, t(data.frame(sel.se))))
-    
-    
-  }
-  
-  rownames(res) = c("Annoy, Slight+", "Annoy, Mod+", "Annoy, Very+",
-                    "Interfere, Slight+", "Interfere, Mod+", "Interfere, Very+")
-  
-  bp <- barplot(t(res[,2:ncol(res)]), beside = T, col = colzbar4,
-                ylab = "Percent of respondents",
-                ylim = c(0, 90))
-  
-  title(main = j)
-  
-  axis(4, at = c(0, 30, 60, 90))
-  mtext("Sound Exposure Level (dBA)", side = 4, at = 50, line = 2)
-  
-  legend(x = 0, y = 100, 
-         fill = colzbar4,
-         legend = levels(d$Site),
-         bty = "n",
-         ncol = 2
-  )
-  
-  points(as.numeric(bp),
-         as.numeric(t(res.mean[,2:5])),
-         pch = 5)
-  
-  
-  arrows(as.numeric(bp),
-         as.numeric(t(res.mean[,2:5]))-as.numeric(t(res.se[,2:5])),
-         as.numeric(bp),
-         as.numeric(t(res.mean[,2:5]))+as.numeric(t(res.se[,2:5])),
-         angle = 90,
-         length = 0.01,
-         code = 3)
-  
 ```
-
