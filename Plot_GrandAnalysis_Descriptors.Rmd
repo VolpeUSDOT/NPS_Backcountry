@@ -1,0 +1,289 @@
+---
+title: "Data Descriptors for Grand Analysis "
+output:
+  html_document:
+    fig_caption: true
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+<!-- Add the following line manually to the rendered HTML document so that IE does not block the javascript elements: -->
+<!-- saved from url=(0014)about:internet --> 
+Generates descriptive tables and figures for the Grand Analysis
+
+
+```{r Setup, message = F, warning = F, echo = F}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+
+library(tidyverse)
+library(kableExtra)
+library(knitr)
+library(DT)
+
+project_shared_drive = "//vntscex/DFS/Projects/PROJ-VXK600/MLB48"
+
+output = file.path(project_shared_drive,
+                   '2020 Grand Analysis',
+                   'Output')
+
+# For dAll data frame, 5233 observations and 31 variables
+load(file.path(project_shared_drive,
+               '2020 Grand Analysis',
+               'GrandAnalysis_CompleteDoseVars.RData'))
+
+dos_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC')
+dat_vars = c('Dataset', 'Site', 'SiteType', 'Park')
+med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes')
+res_vars = c('Annoy3', 'IntWithNQ3')
+
+d <- dAll
+
+levels(d$SiteType) = c("Overnight", "Dayhike", "Overlook", "ShortHike")
+
+# Re-ordere alphabetically
+d$SiteType <- as.factor(as.character(d$SiteType))
+
+levels(d$Dataset) = c('1990s', '2000s', 'Rainbow Bridge')
+d$SiteType <- as.factor(as.character(d$SiteType))
+
+```
+
+# Descriptive Tables
+
+```{r tabs}
+
+
+Dataset_Type_table <- d %>% 
+  group_by(Dataset, SiteType) %>%
+  summarize(n()) %>%
+  pivot_wider(names_from = 'SiteType',
+              values_from = 'n()')
+
+datatable(Dataset_Type_table,
+          caption = 'Dataset by SiteType, count of observations',
+          options = list(dom = 't'),
+          rownames = F)
+
+Dataset_Park_table <- d %>% 
+  group_by(Dataset, Park) %>%
+  summarize(n()) %>%
+  pivot_wider(names_from = 'Park',
+              values_from = 'n()')
+
+datatable(Dataset_Park_table,
+          caption = 'Dataset by Park, count of observations',
+          options = list(dom = 't'),
+          rownames = F)
+
+Mediators_table <- d %>%
+  group_by(SiteType) %>%
+  summarize(mean_duration_hrs = round(mean(DurVisitMinutes/60, na.rm=T),2),
+            ImpNQ_VorMore_pct = mean(ImpNQ_VorMore == '1', na.rm=T),
+            SiteFirstVisit = mean(SiteFirstVisit == 'Yes', na.rm=T),
+            AdultsOnly = mean(AdultsOnly == '1', na.rm=T),
+            ImpHistCult_VorMore = mean(ImpHistCult_VorMore == 1, na.rm=T),
+            )
+
+datatable(Mediators_table, 
+          caption = 'Mediators by Site Type',
+          options = list(dom = 't',
+                         digits = 2),
+          rownames = F) %>%
+      formatRound(columns = ~, digits=3)
+
+```
+
+## Data frequency figures
+
+```{r hists, eval=FALSE, include=FALSE}
+colzbar = c("deepskyblue","deepskyblue4",
+            "dodgerblue","dodgerblue4",
+            "violet","violetred4")
+
+colzbar[3] = alpha(colzbar[3], 0.3)
+colzbar[4] = alpha(colzbar[4], 0.6)
+
+par(mfrow = c(1, 2))
+
+with(d[d$SiteType == "Dayhike",], hist(SELAllAC,
+                                       xlab = "LAE",
+                                       breaks = 25, 
+                                       xlim = c(40, 95),
+                                       col = colzbar[3],
+                                       border = colzbar[3],
+                                       main = ""))
+
+with(d[d$SiteType == "Overnight",], hist(SELAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[4],
+                                         border = colzbar[4]))
+
+
+with(d[d$SiteType == "Dayhike",], hist(PTAudAllAC,
+                                       xlab = "% Time Audible",
+                                       breaks = 25, 
+                                       xlim = c(0, 100),
+                                       col = colzbar[3],
+                                       border = colzbar[3],
+                                       main = ""))
+
+with(d[d$SiteType == "Overnight",], hist(PTAudAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[4],
+                                         border = colzbar[4]))
+
+legend("topright",
+       bty = "n",
+       fill = c(colzbar[3], colzbar[4]),
+       legend = c("Dayhike", "Overnight")
+)
+```
+
+
+# Figure 2 SiteType by Day/Overnight
+
+```{r fig2, eval=FALSE, include=FALSE}
+d <- read.csv("Data/ATMP2011_CompleteDoseVars_dprime.csv")
+
+d <- d[d$SiteType != "ShortHike",]
+
+d <- d[d$DurVisitMinutes > 60,]
+
+keepsites <- tapply(d$SiteType, d$Site, function(x) length(x[x=="BCOvernight"])>0)
+d <- d[d$Site %in% names(keepsites[keepsites==TRUE]),]
+
+d$Site <- as.factor(as.character(d$Site)) # clear empty levels
+
+levels(d$SiteType) = c("Overnight", "Dayhike", "sh")
+
+d$SiteType <- as.factor(as.character(d$SiteType))
+
+colzbar = alpha(c("deepskyblue","deepskyblue4",
+                  "dodgerblue","dodgerblue4",
+                  "violet","violetred4"), 0.8)
+
+par(xpd=T, mar = c(4, 4, 4, 4), mfrow = c(1,1))
+
+j = "SiteType"
+  res <- vector()
+  res.mean <- vector()
+  res.se <- vector()
+  for(i in c("Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore",
+             "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")){
+    
+    xtab <- table(d[,i], d[,j])
+    pcts <- apply(xtab, 2, function(x) round(100*x[2]/sum(x),2))
+    
+    res <- rbind(res, data.frame(var=i, t(data.frame(pcts))))
+    
+    sel.mean <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], mean)
+    sel.se <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], function(x) sd(x)/sqrt(length(x)-1))
+    
+    res.mean <- rbind(res.mean, data.frame(var=i, t(data.frame(sel.mean))))
+    res.se <- rbind(res.se, data.frame(var=i, t(data.frame(sel.se))))
+    
+    
+  }
+  
+  rownames(res) = c("Annoy, Slight+", "Annoy, Mod+", "Annoy, Very+",
+                    "Interfere, Slight+", "Interfere, Mod+", "Interfere, Very+")
+  
+  bp <- barplot(t(res[,2:3]), beside = T, col = colzbar,
+                ylab = "Percent of respondents",
+                ylim = c(0, 90))
+  
+  title(main = j)
+  
+  axis(4, at = c(0, 30, 60, 90))
+  mtext("Sound Exposure Level (dBA)", side = 4, at = 50, line = 2)
+  
+  legend(x = 15, y = 100, 
+         fill = colzbar[1:2],
+         legend = levels(d[,j]),
+         bty = "n"
+  )
+  
+  points(as.numeric(bp),
+         as.numeric(t(res.mean[,2:3])),
+         pch = 5)
+  
+  
+  arrows(as.numeric(bp),
+         as.numeric(t(res.mean[,2:3]))-as.numeric(t(res.se[,2:3])),
+         as.numeric(bp),
+         as.numeric(t(res.mean[,2:3]))+as.numeric(t(res.se[,2:3])),
+         angle = 90,
+         length = 0.01,
+         code = 3)
+  
+```
+
+# Figure 3 by Site
+
+
+```{r fig3, eval=FALSE, include=FALSE}
+colzbar4 = alpha(c("deepskyblue4", "dodgerblue4", "violet","seagreen"), 0.8)
+
+par(xpd=T, mar = c(4, 4, 4, 4))
+
+j = "Site"
+  res <- vector()
+  res.mean <- vector()
+  res.se <- vector()
+  for(i in c("Annoy_SorMore", "Annoy_MorMore", "Annoy_VorMore",
+             "IntWithNQ_SorMore", "IntWithNQ_MorMore", "IntWithNQ_VorMore")){
+    
+    xtab <- table(d[,i], d[,j])
+    pcts <- apply(xtab, 2, function(x) round(100*x[2]/sum(x),2))
+    
+    res <- rbind(res, data.frame(var=i, t(data.frame(pcts))))
+    
+    sel.mean <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], mean)
+    sel.se <- tapply(d[d[,i]=="Yes","SELAllAC"], d[d[,i]=="Yes", j], function(x) sd(x)/sqrt(length(x)-1))
+    
+    res.mean <- rbind(res.mean, data.frame(var=i, t(data.frame(sel.mean))))
+    res.se <- rbind(res.se, data.frame(var=i, t(data.frame(sel.se))))
+    
+    
+  }
+  
+  rownames(res) = c("Annoy, Slight+", "Annoy, Mod+", "Annoy, Very+",
+                    "Interfere, Slight+", "Interfere, Mod+", "Interfere, Very+")
+  
+  bp <- barplot(t(res[,2:ncol(res)]), beside = T, col = colzbar4,
+                ylab = "Percent of respondents",
+                ylim = c(0, 90))
+  
+  title(main = j)
+  
+  axis(4, at = c(0, 30, 60, 90))
+  mtext("Sound Exposure Level (dBA)", side = 4, at = 50, line = 2)
+  
+  legend(x = 0, y = 100, 
+         fill = colzbar4,
+         legend = levels(d$Site),
+         bty = "n",
+         ncol = 2
+  )
+  
+  points(as.numeric(bp),
+         as.numeric(t(res.mean[,2:5])),
+         pch = 5)
+  
+  
+  arrows(as.numeric(bp),
+         as.numeric(t(res.mean[,2:5]))-as.numeric(t(res.se[,2:5])),
+         as.numeric(bp),
+         as.numeric(t(res.mean[,2:5]))+as.numeric(t(res.se[,2:5])),
+         angle = 90,
+         length = 0.01,
+         code = 3)
+  
+```
+
