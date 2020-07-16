@@ -230,7 +230,7 @@ run_clmm(model_no = 3,
 run_clmm(model_no = 4,
          PTAud = 'PTAudAllAC',
          use_survey = 'Survey',
-         med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
+         med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit'), #'DurVisitMinutes'),
          GeoVar = 'Site')
 
 #	Model  5: 1 + log(PTAudAllAC)  ----
@@ -253,8 +253,9 @@ run_clmm(model_no = 6,
 
 run_clmm(model_no = 7,
          PTAud = 'lg10.PTAudAllAC',
-         use_survey = NULL,
-         med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),
+         #use_survey = NULL,
+         med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit'), 
+         # 'DurVisitMinutes'), doesn't run - b/c not a factor?
          GeoVar = 'Site')
 
 #	Model  8: 4 + log(PTAudAllAC)  ---- 
@@ -341,5 +342,8 @@ ggplot(model_compare, aes(x = model_no, y = AIC)) +
 # Including survey improves every model BUT is singular within Dataset, so produces illogical outputs.
 # Including mediators improves models a tiny bit
 # Next steps: move backwards on indivdiaul mediators to simplify
-# Model 7 is the best by AIC of the resonable models, but uses the fewest data points. Site, log Pct Aud, and mediators
-# Model 1 is a very reasonable model overall, and is most straightforward to interpret. Site, PTAud, no mediators, so 
+# Model 7 is the best by AIC of the reasonable models, but uses the fewest data points. Site, log Pct Aud, and mediators
+# Model 1 is a very reasonable model overall, and is most straightforward to interpret. Site, PTAud, no mediators
+
+#summary()
+
