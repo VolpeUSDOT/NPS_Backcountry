@@ -347,3 +347,30 @@ ggplot(model_compare, aes(x = model_no, y = AIC)) +
 
 #summary()
 
+
+### Compare: 1) Logistic vs clmm for just d00, 2) d90 vs d00 for logistic, and 3) d90 vs d00 for CLMM----
+
+# d90 vs d00 for CLMM 
+d90sub <- dAll %>%
+  filter(Dataset == "90s")
+
+d00sub <- dAll %>%
+  filter(Dataset == "00s")
+
+#Need to adjust function to specify dataset to run models for different datasets
+
+#Model 1
+run_clmm(model_no = 1,
+         PTAud = 'PTAudAllAC',
+         med_vars = NULL,
+         GeoVar = 'Site')
+
+#Model 7
+run_clmm(model_no = 7,
+         PTAud = 'lg10.PTAudAllAC',
+         use_survey = NULL,
+         med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit'), 
+         GeoVar = 'Site')
+
+
+
