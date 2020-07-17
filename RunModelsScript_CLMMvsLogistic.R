@@ -147,55 +147,334 @@ interfere_07_d90 = clmm(IntWithNQ3 ~ lg10.PTAudAllAC +
 ###################################
 #Model compare (CLMM for dAll, d90s, d00s)
 
-Models01 <- c("annoy_01_dAll", "interfere_01_dAll", 
+CLMM_Models01 <- c("annoy_01_dAll", "interfere_01_dAll", 
                "annoy_01_d00", "interfere_01_d00", 
                "annoy_01_d90", "interfere_01_d90")
 
-Mods1Table <- NULL
-for (i in 1:length(Models01)){
-  modName <- Models01[i] 
-  perf <- summary(get(Models01[i]))$info[,c('nobs','AIC')]
-  all_coefs <- exp(coef(get(Models01[i])))
+CLMM_Mods1Table <- NULL
+for (i in 1:length(CLMM_Models01)){
+  modName <- CLMM_Models01[i] 
+  perf <- summary(get(CLMM_Models01[i]))$info[,c('nobs','AIC')]
+  all_coefs <- exp(coef(get(CLMM_Models01[i])))
   thresholds <- data.frame(t(all_coefs[1:3]))
   coefx <- data.frame(t(all_coefs[4:length(all_coefs)]))
   
   model_summary <- data.frame(modName, perf, thresholds,coefx) 
   
-  Mods1Table <- rbind(Mods1Table,model_summary)
+  CLMM_Mods1Table <- rbind(CLMM_Mods1Table,model_summary)
 }  
-Mods1Table
+CLMM_Mods1Table
  
 #####################################################################
-Models07 <- c("annoy_07_dAll", "interfere_07_dAll", 
+CLMM_Models07 <- c("annoy_07_dAll", "interfere_07_dAll", 
               "annoy_07_d00", "interfere_07_d00", 
               "annoy_07_d90", "interfere_07_d90")
 
-Mods7Table <- NULL
-for (i in 1:length(Models07)){
-  modName <- Models07[i] 
-  perf <- summary(get(Models07[i]))$info[,c('nobs','AIC')]
-  all_coefs <- exp(coef(get(Models07[i])))
+CLMM_Mods7Table <- NULL
+for (i in 1:length(CLMM_Models07)){
+  modName <- CLMM_Models07[i] 
+  perf <- summary(get(CLMM_Models07[i]))$info[,c('nobs','AIC')]
+  all_coefs <- exp(coef(get(CLMM_Models07[i])))
   thresholds <- data.frame(t(all_coefs[1:3]))
   coefx <- data.frame(t(all_coefs[4:length(all_coefs)]))
   
   model_summary <- data.frame(modName, perf, thresholds,coefx) 
   
-  Mods7Table <- rbind(Mods7Table,model_summary)
+  CLMM_Mods7Table <- rbind(CLMM_Mods7Table,model_summary)
 }  
-Mods7Table
+CLMM_Mods7Table
 
 
 
-write.csv(Mods1Table, file = file.path(output, 'Mods1Table.csv'), row.names = F)
+write.csv(CLMM_Mods1Table, file = file.path(output, 'CLMM_Mods1Table.csv'), row.names = F)
+write.csv(CLMM_Mods7Table, file = file.path(output, 'CLMM_Mods7Table.csv'), row.names = F)
 
 
-write.csv(Mods7Table, file = file.path(output, 'Mods7Table.csv'), row.names = F)
+############################################################################
+## Logistic regression
+#Model 1 - dAll
+annoy_SorMore_01_dAll = glmer(Annoy_SorMore ~ PTAudAllAC + (1|Site),
+                family = binomial(link="logit"),
+                verbose = FALSE,
+                data = dAll)
+
+annoy_MorMore_01_dAll = glmer(Annoy_MorMore ~ PTAudAllAC + (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = dAll)
+
+annoy_VorMore_01_dAll = glmer(Annoy_VorMore ~ PTAudAllAC + (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = dAll)
+
+
+IntWithNQ_SorMore_01_dAll = glmer(IntWithNQ_SorMore ~ PTAudAllAC + (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = dAll)
+
+IntWithNQ_MorMore_01_dAll = glmer(IntWithNQ_MorMore ~ PTAudAllAC + (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = dAll)
+
+IntWithNQ_VorMore_01_dAll = glmer(IntWithNQ_VorMore ~ PTAudAllAC + (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = dAll)
+
+#Model 1 - d90
+annoy_SorMore_01_d90 = glmer(Annoy_SorMore ~ PTAudAllAC + (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = d90sub)
+
+annoy_MorMore_01_d90 = glmer(Annoy_MorMore ~ PTAudAllAC + (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = d90sub)
+
+annoy_VorMore_01_d90 = glmer(Annoy_VorMore ~ PTAudAllAC + (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = d90sub)
+
+
+IntWithNQ_SorMore_01_d90 = glmer(IntWithNQ_SorMore ~ PTAudAllAC + (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = d90sub)
+
+IntWithNQ_MorMore_01_d90 = glmer(IntWithNQ_MorMore ~ PTAudAllAC + (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = d90sub)
+
+IntWithNQ_VorMore_01_d90 = glmer(IntWithNQ_VorMore ~ PTAudAllAC + (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = d90sub)
+
+#Model 1 - d00
+annoy_SorMore_01_d00 = glmer(Annoy_SorMore ~ PTAudAllAC + (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = d90sub)
+
+annoy_MorMore_01_d00 = glmer(Annoy_MorMore ~ PTAudAllAC + (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = d00sub)
+
+annoy_VorMore_01_d00 = glmer(Annoy_VorMore ~ PTAudAllAC + (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = d00sub)
+
+
+IntWithNQ_SorMore_01_d00 = glmer(IntWithNQ_SorMore ~ PTAudAllAC + (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = d00sub)
+
+IntWithNQ_MorMore_01_d00 = glmer(IntWithNQ_MorMore ~ PTAudAllAC + (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = d00sub)
+
+IntWithNQ_VorMore_01_d00 = glmer(IntWithNQ_VorMore ~ PTAudAllAC + (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = d00sub)
+
+##############################
+#Model 07 - dAll
+annoy_SorMore_07_dAll = glmer(Annoy_SorMore ~ lg10.PTAudAllAC + 
+                                ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = dAll)
+
+annoy_MorMore_07_dAll = glmer(Annoy_MorMore ~ lg10.PTAudAllAC + 
+                                ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = dAll)
+
+annoy_VorMore_07_dAll = glmer(Annoy_VorMore ~ lg10.PTAudAllAC + 
+                                ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                (1|Site),
+                              family = binomial(link="logit"),
+                              verbose = FALSE,
+                              data = dAll)
+
+
+IntWithNQ_SorMore_07_dAll = glmer(IntWithNQ_SorMore ~ lg10.PTAudAllAC + 
+                                    ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                    (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = dAll)
+
+IntWithNQ_MorMore_07_dAll = glmer(IntWithNQ_MorMore ~ lg10.PTAudAllAC + 
+                                    ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                    (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = dAll)
+
+IntWithNQ_VorMore_07_dAll = glmer(IntWithNQ_VorMore ~ lg10.PTAudAllAC + 
+                                    ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                    (1|Site),
+                                  family = binomial(link="logit"),
+                                  verbose = FALSE,
+                                  data = dAll)
+
+#Model 07 - d90
+annoy_SorMore_07_d90 = glmer(Annoy_SorMore ~ lg10.PTAudAllAC + 
+                               ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                               (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = d90sub)
+
+annoy_MorMore_07_d90 = glmer(Annoy_MorMore ~ lg10.PTAudAllAC + 
+                               ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                               (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = d90sub)
+
+annoy_VorMore_07_d90 = glmer(Annoy_VorMore ~ lg10.PTAudAllAC + 
+                               ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                               (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = d90sub)
+
+
+IntWithNQ_SorMore_07_d90 = glmer(IntWithNQ_SorMore ~ lg10.PTAudAllAC + 
+                                   ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                   (1|Site),
+                                 family = binomial(link="logit"),
+                                 verbose = FALSE,
+                                 data = d90sub)
+
+IntWithNQ_MorMore_07_d90 = glmer(IntWithNQ_MorMore ~ lg10.PTAudAllAC + 
+                                   ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                   (1|Site),
+                                 family = binomial(link="logit"),
+                                 verbose = FALSE,
+                                 data = d90sub)
+
+IntWithNQ_VorMore_07_d90 = glmer(IntWithNQ_VorMore ~ lg10.PTAudAllAC + 
+                                   ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                   (1|Site),
+                                 family = binomial(link="logit"),
+                                 verbose = FALSE,
+                                 data = d90sub)
+
+#Model 07 - d00
+annoy_SorMore_07_d00 = glmer(Annoy_SorMore ~ lg10.PTAudAllAC + 
+                               ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                               (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = d90sub)
+
+annoy_MorMore_07_d00 = glmer(Annoy_MorMore ~ lg10.PTAudAllAC + 
+                               ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                               (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = d00sub)
+
+annoy_VorMore_07_d00 = glmer(Annoy_VorMore ~ lg10.PTAudAllAC + 
+                               ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                               (1|Site),
+                             family = binomial(link="logit"),
+                             verbose = FALSE,
+                             data = d00sub)
+
+
+IntWithNQ_SorMore_07_d00 = glmer(IntWithNQ_SorMore ~ lg10.PTAudAllAC + 
+                                   ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                   (1|Site),
+                                 family = binomial(link="logit"),
+                                 verbose = FALSE,
+                                 data = d00sub)
+
+IntWithNQ_MorMore_07_d00 = glmer(IntWithNQ_MorMore ~ lg10.PTAudAllAC + 
+                                   ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                   (1|Site),
+                                 family = binomial(link="logit"),
+                                 verbose = FALSE,
+                                 data = d00sub)
+
+IntWithNQ_VorMore_07_d00 = glmer(IntWithNQ_VorMore ~ lg10.PTAudAllAC + 
+                                   ImpHistCult_VorMore + ImpNQ_VorMore + SiteFirstVisit +
+                                   (1|Site),
+                                 family = binomial(link="logit"),
+                                 verbose = FALSE,
+                                 data = d00sub)
 
 
 
 
-# Summary: 
+###################################
+#Model compare (LogReg for dAll, d90s, d00s)
+
+#Model 1
+LR_Models01 <- c("annoy_SorMore_01_dAll", "annoy_MorMore_01_dAll", "annoy_VorMore_01_dAll",
+                 "annoy_SorMore_01_d90", "annoy_MorMore_01_d90", "annoy_VorMore_01_d90",
+                 "annoy_SorMore_01_d00", "annoy_MorMore_01_d00", "annoy_VorMore_01_d00", 
+                 "IntWithNQ_SorMore_01_dAll","IntWithNQ_MorMore_01_dAll","IntWithNQ_VorMore_01_dAll",
+                 "IntWithNQ_SorMore_01_d90","IntWithNQ_MorMore_01_d90","IntWithNQ_VorMore_01_d90",
+                 "IntWithNQ_SorMore_01_d00","IntWithNQ_MorMore_01_d00","IntWithNQ_VorMore_01_d00")
+
+LR_Mods1Table <- NULL
+i=1
+for (i in 1:length(LR_Models01)){
+  modName <- LR_Models01[i] 
+  betas = c(fixef(get(LR_Models01[i])))
+  fits <- c(round(summary(get(LR_Models01[i]))$AICtab,1))
+  
+  model_summary <- data.frame(fits) #modName, betas - doesn't work yet 
+  
+  LR_Mods1Table <- rbind(LR_Mods1Table,model_summary)
+}  
+LR_Mods1Table
+
+
+#Model 7
+
+LR_Models07 <- c("annoy_SorMore_07_dAll", "annoy_MorMore_07_dAll", "annoy_VorMore_07_dAll",
+                 "annoy_SorMore_07_d90", "annoy_MorMore_07_d90", "annoy_VorMore_07_d90",
+                 "annoy_SorMore_07_d00", "annoy_MorMore_07_d00", "annoy_VorMore_07_d00", 
+                 "IntWithNQ_SorMore_07_dAll","IntWithNQ_MorMore_07_dAll","IntWithNQ_VorMore_07_dAll",
+                 "IntWithNQ_SorMore_07_d90","IntWithNQ_MorMore_07_d90","IntWithNQ_VorMore_07_d90",
+                 "IntWithNQ_SorMore_07_d00","IntWithNQ_MorMore_07_d00","IntWithNQ_VorMore_07_d00")
+
+LR_Mods7Table <- NULL
+i=1
+for (i in 1:length(LR_Models07)){
+  modName <- LR_Models07[i] 
+  betas = c(fixef(get(LR_Models07[i])))
+  fits <- c(round(summary(get(LR_Models07[i]))$AICtab,7))
+  
+  model_summary <- data.frame(fits) #modName, betas - doesn't work yet 
+  
+  LR_Mods7Table <- rbind(LR_Mods7Table,model_summary)
+}  
+LR_Mods7Table
 
 
 
+#####################################################################
+
+write.csv(LR_Mods1Table, file = file.path(output, 'LR_Mods1Table.csv'), row.names = F)
+write.csv(LR_Mods7Table, file = file.path(output, 'LR_Mods7Table.csv'), row.names = F)
 
