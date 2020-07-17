@@ -173,6 +173,8 @@ Models01 <- c("annoy_01_dAll", "interfere_01_dAll",
 ThresholdsTable <- NULL
 CoefsTable <- NULL
 
+i=1
+
 for (i in 1:length(Models01)){
   all_coefs <- exp(coef(get(Models01[i])))
   
