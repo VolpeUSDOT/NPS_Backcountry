@@ -426,6 +426,7 @@ IntWithNQ_VorMore_07_d00 = glmer(IntWithNQ_VorMore ~ lg10.PTAudAllAC +
 
 ###################################
 #Model compare (LogReg for dAll, d90s, d00s)
+##DOES NOT WORK YET - tables in wrong direction
 
 #Model 1
 LR_Models01 <- c("annoy_SorMore_01_dAll", "annoy_MorMore_01_dAll", "annoy_VorMore_01_dAll",
@@ -439,10 +440,10 @@ LR_Mods1Table <- NULL
 i=1
 for (i in 1:length(LR_Models01)){
   modName <- LR_Models01[i] 
-  betas = c(fixef(get(LR_Models01[i])))
-  fits <- c(round(summary(get(LR_Models01[i]))$AICtab,1))
+  betas = (fixef(get(LR_Models01[i])))
+  fits <- (round(summary(get(LR_Models01[i]))$AICtab,1))
   
-  model_summary <- data.frame(fits) #modName, betas - doesn't work yet 
+  model_summary <- data.frame(modName,fits) #modName, betas - doesn't work yet 
   
   LR_Mods1Table <- rbind(LR_Mods1Table,model_summary)
 }  
@@ -465,7 +466,7 @@ for (i in 1:length(LR_Models07)){
   betas = c(fixef(get(LR_Models07[i])))
   fits <- c(round(summary(get(LR_Models07[i]))$AICtab,7))
   
-  model_summary <- data.frame(fits) #modName, betas - doesn't work yet 
+  model_summary <- (fits) #modName, betas - doesn't work yet 
   
   LR_Mods7Table <- rbind(LR_Mods7Table,model_summary)
 }  
