@@ -59,7 +59,8 @@ run_clmm <- function(model_no, use_survey = NULL,
                      res_vars = c('Annoy3', 'IntWithNQ3')) {
 
   # model_no = 1;  PTAud = 'PTAudAllAC'; med_vars = NULL; GeoVar = 'Site'; use_survey = NULL; addl_vars = NULL
-  
+  # model_no = 7;  PTAud = 'lg10.PTAudAllAC'; use_survey = NULL; med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'); GeoVar = 'Site'
+
   # Set up variables
   
   # Add survey and additional variables to mediator variables if they exist
@@ -128,7 +129,7 @@ run_clmm <- function(model_no, use_survey = NULL,
                                     PTAud,
                                     GeoVar,
                                     med_vars = ifelse(is.null(med_vars), 'NULL', paste(med_vars, collapse = ','))))
-  
+  # tab_model(get(model_name), file = file.path(output, paste0(model_name, '.html')))
   # Interfere Model
   # Assign outputs to global environment with <<-
   
@@ -254,8 +255,7 @@ run_clmm(model_no = 6,
 run_clmm(model_no = 7,
          PTAud = 'lg10.PTAudAllAC',
          #use_survey = NULL,
-         med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit'), 
-         # 'DurVisitMinutes'), doesn't run - b/c not a factor?
+         med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes'),# doesn't run - b/c not a factor?
          GeoVar = 'Site')
 
 #	Model  8: 4 + log(PTAudAllAC)  ---- 
