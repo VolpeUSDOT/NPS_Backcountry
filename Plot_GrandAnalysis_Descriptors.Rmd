@@ -43,13 +43,16 @@ res_vars = c('Annoy3', 'IntWithNQ3')
 
 d <- dAll
 
-levels(d$SiteType) = c("Overnight", "Dayhike", "Overlook", "ShortHike")
+d$SiteType <- as.character(d$SiteType)
+
+d$SiteType[d$SiteType == 'BCOvernight'] = 'Overnight'
+# levels(d$SiteType) = c("Overnight", "Dayhike", "Overlook", "ShortHike")
 
 # Re-ordere alphabetically
 d$SiteType <- as.factor(as.character(d$SiteType))
 
-levels(d$Dataset) = c('1990s', '2000s', 'Rainbow Bridge')
-d$SiteType <- as.factor(as.character(d$SiteType))
+levels(d$Dataset) = c('2000s', '1990s', 'Rainbow Bridge')
+d$Dataset <- as.factor(as.character(d$Dataset))
 
 ```
 
@@ -117,7 +120,7 @@ colzbar[6] = alpha(colzbar[6], 0.2)
 
 par(mfrow = c(1, 2))
 
-with(d[d$SiteType == "Dayhike",], hist(SELAllAC,
+with(d[d$SiteType == "DayHike",], hist(SELAllAC,
                                        xlab = "LAE",
                                        breaks = 25, 
                                        xlim = c(40, 125),
@@ -139,7 +142,7 @@ with(d[d$SiteType == "ShortHike",], hist(SELAllAC,
                                          border = colzbar[4]))
 
 
-with(d[d$SiteType == "Dayhike",], hist(PTAudAllAC,
+with(d[d$SiteType == "DayHike",], hist(PTAudAllAC,
                                        xlab = "% Time Audible",
                                        breaks = 25, 
                                        xlim = c(0, 100),
@@ -211,6 +214,9 @@ ggplotly(gp_a)
 
 ggplotly(gp_i)
 
+gp_a
+ggsave(filename = 'Annoyance_response_by_SEL_by_SiteType.jpeg',
+       width = 6, height = 4.5)
 
 ```
 
