@@ -186,6 +186,15 @@ m1_1 <- clmm(Annoy3 ~ SELAllAC + (1 | Site),
      Hess = T,
      link = "logit") # for proportional odds mixed model
 
+# Omitted values from data
+
+omitted <- dAll[1:nrow(dAll) %in% m1_1$na.action,]
+used <- dAll[!1:nrow(dAll) %in% m1_1$na.action,]
+obs <- as.numeric(used$Annoy3)
+pred <- exp(m1_1$fitted.values)
+
+plot(pred ~ used$Annoy3)
+
 # CLMM 2 version
 m1_2 <- clmm2(Annoy3 ~ SELAllAC,
               random = Site,
@@ -197,6 +206,14 @@ m1_2 <- clmm2(Annoy3 ~ SELAllAC,
 exp(confint(m1_1))
 
 m1_1$Theta
+
+
+omitted <- dAll[1:nrow(dAll) %in% m1_2$na.action,]
+used <- dAll[!1:nrow(dAll) %in% m1_2$na.action,]
+obs <- as.numeric(used$Annoy3)
+pred <- exp(m1_2$fitted.values)
+
+plot(pred ~ used$Annoy3)
 
 # profile(m1_1)
 
