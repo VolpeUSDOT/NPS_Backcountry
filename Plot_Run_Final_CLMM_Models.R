@@ -64,6 +64,9 @@ annoy_01.2 <- clmm2(Annoy3 ~ SELAllAC + PEnProps + PEnHelos + SiteType, random =
                     data = dC,
                     Hess = T) 
 
+anova(annoy_01.0,
+      annoy_01.1)
+
 tab_model(annoy_01.2)
 
 # Drop PEN vars
