@@ -38,7 +38,7 @@ load(file.path(project_shared_drive,
 
 dos_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC')
 dat_vars = c('Dataset', 'Site', 'SiteType', 'Park')
-med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes')
+med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes', 'Survey', 'AdultsOnly')
 res_vars = c('Annoy3', 'IntWithNQ3')
 
 d <- dAll
@@ -99,6 +99,25 @@ datatable(Mediators_table,
           rownames = F) %>%
       formatPercentage(columns = ~ ImpNQ_VorMore + SiteFirstVisit + AdultsOnly + ImpHistCult_VorMore, digits = 1)
 
+```
+
+## Overview of variables
+
+```{r vars}
+d = d[, names(d) %in% 
+        c(dos_vars, dat_vars, med_vars, res_vars)]
+
+overview_df = data.frame(Variables = names(d),
+                         Class = sapply(d, function(x) class(x)[1]),
+                         N_unique = sapply(d, function(x) length(unique(x))),
+                         Levels = sapply(d, function(x) ifelse(is.factor(x), paste(names(sort(table(x), dec=T)), collapse = ", "), "")),
+                         Min_numeric = sapply(d, function(x) ifelse(is.numeric(x), round(min(x, na.rm=T), 2), "")),
+                         Max_numeric = sapply(d, function(x) ifelse(is.numeric(x), round(max(x, na.rm=T), 2), ""))
+                         )
+kable(overview_df, 
+       row.names = F,
+       caption = "Overview of RDR Scenario Inputs to test. For factor variables, most frequent value is shown." ) %>% 
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
 # Descriptive figures
