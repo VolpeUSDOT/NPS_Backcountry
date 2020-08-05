@@ -95,6 +95,67 @@ d90 <- d90 %>%
   rename(DurVisitMinutes = DurationVisit)
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
+# Examine Leq vars
+
+pdf(file = file.path(project_shared_drive, '2020 Grand Analysis', 'Output',
+                     'Leq_variable_comparisons.pdf'),
+    width = 11, height = 8)
+
+gp <- ggplot(d90, aes(x = LeqAllAC)) +
+  geom_histogram() +
+  facet_wrap(~SiteType) +
+  ggtitle('1990s - LeqAllAC histogram by SiteType')
+
+print(gp)
+
+
+gp <- ggplot(d00, aes(x = LeqTresp)) +
+  geom_histogram() +
+  facet_wrap(~SiteType) +
+  ggtitle('2000s - LeqTresp histogram by SiteType')
+
+print(gp)
+
+
+
+gp <- ggplot(d90 %>% filter(!is.na(Annoy_SorMore)), aes(y = LeqAllAC,
+                x = Annoy_SorMore)) +
+  geom_boxplot() +
+  facet_wrap(~SiteType) +
+  ggtitle('1990s - LeqAllAC by Annoy Somewhat or More and SiteType')
+
+print(gp)
+
+gp <- ggplot(d00 %>% filter(!is.na(Annoy_SorMore)), aes(y = LeqTresp,
+                x = Annoy_SorMore)) +
+  geom_boxplot() +
+  facet_wrap(~SiteType) +
+  ggtitle('2000s - LeqTresp by Annoy Somewhat or More and SiteType')
+
+print(gp)
+
+gp <- ggplot(d90, aes(y = LeqAllAC,
+                      x = DurVisitMinutes)) +
+  geom_point() +
+  facet_wrap(~SiteType, scales = 'free_x') +
+  ggtitle('1990s - LeqAllAC by Duration of Visit and SiteType')
+
+print(gp)
+
+
+gp <- ggplot(d00, aes(y = LeqTresp,
+                      x = DurVisitMinutes)) +
+  geom_point() +
+  facet_wrap(~SiteType, scales = 'free_x') +
+  ggtitle('2000s - LeqTresp by Duration of Visit and SiteType')
+
+print(gp)
+
+dev.off()
+
+
+
+# <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 
 # Merge ----
 

@@ -62,10 +62,12 @@ annoy_01.2 <- clmm2(Annoy3 ~ SELAllAC + PEnProps + PEnHelos + SiteType, random =
 # Then put in the coefficients for each predictor, as well as the absence of that predictor with a 0
 # To generate across range of SELAllAC, need to feed in new range of sound exposure to a predict(clmm_model) statement to generate the etas, rather than making a prediction matrix as here. Then feed that to the pred_clmm function.
 
-mat <- expand.grid(Site = qnorm(0.95) * c(-1, 0, 1) * annoy_01.2$stDev,
-                   SELAllAC = annoy_01.2$beta[1],
-                   PEnProps = annoy_01.2$beta[2],
-                   PEnHelos = annoy_01.2$beta[3],
+SELvals = c(40, 60, 80, 100)
+
+mat <- expand.grid(Site = annoy_01.2$stDev,
+                   SELAllAC = annoy_01.2$beta[1] * SELvals,
+                   PEnProps = annoy_01.2$beta[2] * median(dC$PEnProps),
+                   PEnHelos = annoy_01.2$beta[3] * median(dC$PEnHelos),
                    SiteTypeDayHike = c(0, annoy_01.2$beta[4]),
                    SiteTypeOverlook = c(0, annoy_01.2$beta[5]),
                    SiteTypeShortHike = c(0, annoy_01.2$beta[6])
@@ -83,21 +85,26 @@ rownames(mat) = 1:nrow(mat)
 
 pred.mat <- pred_clmm(eta = rowSums(mat), theta = annoy_01.2$Theta)
 
+data.frame(pred.mat,
+           rep(SELvals, each = 4)
+
 # Plot probabilities for 5th, average, and 95th percentile sites, 
-# For each sitetype
+# For each site type
+
+lab = c('Overnight', 'Day hike', 'Overlook', 'Short hike')
 
 par(mfrow=c(2, 2))
 
-lab = 
-
-for(k in c(1, 4, 7, 10)) {
-  plot(1:4, pred.mat[k,], lty=2, type = "l", ylim=c(0,1),
+for(k in c(1, 5, 9, 13)) {
+  plot(1:4, pred.mat[k,], lty=2, type = "l", ylim = c(0,1),
        xlab="Annoyance Category", axes=FALSE,
-       ylab="Probability", main=lab[ceiling(k/3)], las=1)
+       ylab="Probability", main = lab[ceiling(k/4)], las=1)
   axis(1); axis(2)
   lines(1:4, pred.mat[k+1, ], lty=1)
   lines(1:4, pred.mat[k+2, ], lty=3)
+  lines(1:4, pred.mat[k+3, ], lty=4)
   legend("topright",
-         c("avg. site", "5th %ile site", "95th %ile site"),
+         title = 'SEL',
+         legend = SELvals,
          lty=1:3, bty="n")
 }

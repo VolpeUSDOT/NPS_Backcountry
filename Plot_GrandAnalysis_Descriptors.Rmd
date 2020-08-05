@@ -239,6 +239,21 @@ ggsave(filename = 'Annoyance_response_by_SEL_by_SiteType.jpeg',
 
 ```
 
+### Compare Leq variables
+
+- Want to be able to compare `SELAllAC`, which sums sound exposure over time to `LeqAllAC`, which is an average over time.
+- Currently, `LeqAllAC` not available in the 2000's data or RB, but `LeqTresp` is.
+- Compare these variables here
+
+
+```{r}
+
+hist(dAll$le)
+
+```
+
+
+### Interpret cutoff
 
 ```{r interpret_cutoff}
 annoy_LAE <- d %>%
