@@ -76,8 +76,7 @@ d90 <- d90 %>%
          )  %>%
    mutate(PEnHelos = ifelse(is.na(SELHelos) & SELAllAC > 0, 0, PEnHelos),
           PEnHelos = ifelse(is.na(SELProps) & SELAllAC > 0, 0, PEnProps)
-          )
-
+          ) 
 
 # Filter out BackCty and PimaTr from 90s
 
@@ -93,6 +92,14 @@ dRB <- dRB %>%
 
 d90 <- d90 %>%
   rename(DurVisitMinutes = DurationVisit)
+
+# Rename LeqTresp to LeqAllAC in 00s and RB
+
+dRB <- dRB %>%
+  rename(LeqAllAC = LeqTresp)
+
+d00 <- d00 %>%
+  rename(LeqAllAC = LeqTresp)
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Examine Leq vars
@@ -175,6 +182,7 @@ use_vars = c('Site', 'SiteType','SiteFirstVisit', 'Survey',
              'PTAudJets',
              'PTAudAllAC',
              'lg10.PTAudAllAC',
+             'LeqAllAC', # from LeqTresp in 00s and RB
              'LeqHelos',
              'LeqProps',
              'LeqJets',
@@ -256,7 +264,7 @@ dAll <- dAll %>%
          )
 
 # Check data 
-dos_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC')
+dos_vars = c('SELAllAC', 'PEnProps','PEnHelos', 'PTAudAllAC', 'lg10.PTAudAllAC', 'LeqAllAC')
 dat_vars = c('Dataset', 'Site', 'SiteType', 'Park')
 med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey', 'DurVisitMinutes')
 res_vars = c('Annoy3', 'IntWithNQ3')

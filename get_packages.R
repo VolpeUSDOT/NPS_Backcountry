@@ -2,6 +2,7 @@
 
 loadpacks <- c(
   "arm",
+  "GGally",
   "ggplot2",
   "lme4",
   "MASS",
