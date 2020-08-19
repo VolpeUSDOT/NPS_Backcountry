@@ -1,4 +1,4 @@
-## Merge 1990s and 2000s data files for grand analyis proposed by Kurt in spring 2020.
+## Merge 1990s and 2000s data files for grand analysis proposed by Kurt in spring 2020.
 ## Also include Rainbow Bridge
 ## Modified from ATMP_2011DataProcess_Dprime.R
 
@@ -81,7 +81,8 @@ d90 <- d90 %>%
 # Filter out BackCty and PimaTr from 90s
 
 d90 <- d90 %>%
-  filter(SiteType != 'BackCty' & SiteType != 'Rim')
+  filter(SiteType != 'BackCty' & SiteType != 'Rim') %>%
+  filter(Site != 'BgDunTrl') # Exclude shorthikes from White Sands
 
 # Filter out all except for Rainbow Bridge from RB
 
@@ -313,3 +314,4 @@ write.csv(dAll,
                            'GrandAnalysis_CompleteDoseVars.csv'
                            ),
           row.names = F)
+
