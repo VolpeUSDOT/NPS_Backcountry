@@ -1,5 +1,10 @@
 # Grand Analysis of all sites, using approach from previous backcountry work.
 # Many fewer possible models, since only one model for Annoy, and one for Interfere.
+# Test models with combinations of: 
+# 1) Two dose variables: LEQ vs. SEL + PTAudAllAC
+# 2) Random effects (Data set, Survey, Site, Site Type - can use 2 of the 4)
+# 3) Mediators
+
 
 # https://cran.r-project.org/web/packages/ordinal/vignettes/clm_article.pdf
 # https://cran.r-project.org/web/packages/ordinal/vignettes/clmm2_tutorial.pdf
@@ -185,6 +190,7 @@ m1_1 <- clmm(Annoy3 ~ SELAllAC + (1 | Site),
      data = dAll,
      Hess = T,
      link = "logit") # for proportional odds mixed model
+
 
 # Omitted values from data
 
