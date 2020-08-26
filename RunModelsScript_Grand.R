@@ -12,7 +12,7 @@
 # General structure for CLMM models:
 
 # m{model_number} <- clmm({ordered_response} ~ {dose_var} + {mediator_vars} +
-#            + (1|Site)
+#            + (1|Site) or (1|Park) or (1|Dataset)
 #            + SiteType,
 #            Hess = T, 
 #            data = dAll,
@@ -173,19 +173,17 @@ run_clmm <- function(model_no, use_survey = NULL,
 
 # To store results
 # Store threshold coefficients for the response levels separately from OR from predictors.
-# 
-
 
 model_compare <- thresholds <- coefs <- vector()
 
 # Model 1: Base ----
 
-run_clmm(model_no = 1,
-         PTAud = 'PTAudAllAC',
-         med_vars = NULL,
-         GeoVar = 'Site')
+#m1_t <- run_clmm(model_no = 1,
+#         PTAud = 'PTAudAllAC',
+#         med_vars = NULL,
+#        GeoVar = 'Site')
 
-# Manual model runs to interpret thresholds
+#### Manual model runs to interpret thresholds ####
 m1_1 <- clmm(Annoy3 ~ SELAllAC + (1 | Site),
      data = dAll,
      Hess = T,
