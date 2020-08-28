@@ -123,7 +123,7 @@ summary(m5)
 confint(m5)
 m5$Theta
 m5$info[,c('nobs','AIC')] #nobs 3400 AIC 5813
-##m5 is best - Site RE, plus site type fixed with LeqAllAC dose
+##m5 is best BUT LOWER N (subset and retest) - Site RE, plus site type fixed with LeqAllAC dose
 
 ## 
 # m6(log(PTAudAllAC) instead of PTAuddAllAC)
@@ -137,6 +137,52 @@ summary(m6)
 confint(m6)
 m6$Theta
 m6$info[,c('nobs','AIC')] #nobs 3429 AIC 5869.2
-##m5 is still best - Site RE, plus site type fixed with LeqAllAC dose
+##m5 is still best BUT LOWER N (subset and retest) - Site RE, plus site type fixed with LeqAllAC dose
 
+## 
+# m7(Add durvisit)
+m7 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType + DurVisitMinutes +(1|Site),
+           data = dAll,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
 
+# m7 summary
+summary(m7)
+confint(m7)
+m7$Theta
+m7$info[,c('nobs','AIC')] #nobs 3400 AIC 5808.8
+##m7 is best BUT LOWER N (subset and retest) - Site RE, plus site type fixed with LeqAllAC dose
+
+## 
+# m8(+ Adults only + SiteFirstVisit)
+m8 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType 
+           + DurVisitMinutes 
+           + AdultsOnly + SiteFirstVisit
+           + (1|Site),
+           data = dAll,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m8 summary
+summary(m8)
+confint(m8)
+m8$Theta
+m8$info[,c('nobs','AIC')] #nobs 3393 AIC 5820.8
+##m8 is worse than m7, even with lower n
+
+## 
+# m9(+ ImpHist + ImpNQ)
+m9 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType 
+           + DurVisitMinutes 
+           + ImpHistCult_VorMore + ImpNQ_VorMore
+           + (1|Site),
+           data = dAll,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m9 summary
+summary(m9)
+confint(m9)
+m9$Theta
+m9$info[,c('nobs','AIC')] #nobs 3351 AIC 5718.1
+##m9 is better than m7 BUT LOWER N (subset and retest)
