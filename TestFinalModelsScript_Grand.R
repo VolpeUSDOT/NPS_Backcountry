@@ -67,7 +67,7 @@ m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
 summary(m1)
 confint(m1)
 m1$Theta
-m1$info[,c('nobs','AIC')] #AIC 5898.2
+m1$info[,c('nobs','AIC')] #nobs 3433 AIC 5898.2 
 
 ##
 # m2(site type - fixed)
@@ -80,7 +80,7 @@ m2 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
 summary(m2)
 confint(m2)
 m2$Theta
-m2$info[,c('nobs','AIC')] #AIC 5890.2
+m2$info[,c('nobs','AIC')] #nobs 3433 AIC 5890.2
 ##Adding site type improves model
 
 ## 
@@ -94,7 +94,7 @@ m3 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Park),
 summary(m3)
 confint(m3)
 m3$Theta
-m3$info[,c('nobs','AIC')] #AIC 5963.3 
+m3$info[,c('nobs','AIC')] #nobs 3433 AIC 5963.3 
 ##m2 is best - Site RE, plus site type fixed
 
 ## 
@@ -108,9 +108,35 @@ m4 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|
 summary(m4)
 confint(m4)
 m4$Theta
-m4$info[,c('nobs','AIC')] #AIC 5882
+m4$info[,c('nobs','AIC')] #nobs 3433 AIC 5882
 ##m4 is best - Site RE, plus site type fixed plus PTAudAllAC
 
+## 
+# m5(LeqAllAC instead of PTAuddAllAC + SELAllAC)
+m5 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
+           data = dAll,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
 
+# m5 summary
+summary(m5)
+confint(m5)
+m5$Theta
+m5$info[,c('nobs','AIC')] #nobs 3400 AIC 5813
+##m5 is best - Site RE, plus site type fixed with LeqAllAC dose
+
+## 
+# m6(log(PTAudAllAC) instead of PTAuddAllAC)
+m6 <- clmm(Annoy3 ~ SELAllAC + lg10.PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
+           data = dAll,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m6 summary
+summary(m6)
+confint(m6)
+m6$Theta
+m6$info[,c('nobs','AIC')] #nobs 3429 AIC 5869.2
+##m5 is still best - Site RE, plus site type fixed with LeqAllAC dose
 
 
