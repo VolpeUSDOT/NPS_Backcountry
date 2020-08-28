@@ -54,20 +54,10 @@ res_vars = c('Annoy3', 'IntWithNQ3')
 ## QUestions:
 # clmm v clmm2?
 # SiteType as random (can't pick it as category in tool if it's random)?
+# confirm link = 'logit'
 
-#Base
-m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
-     data = dAll,
-     Hess = T,
-     link = "logit") # for proportional odds mixed model
-
-# Extract confidence intervals for plotting
-summary(m1)
-confint(m1)
-m1$Theta
-exp(confint(m1)) #?
-
-#Base (Site random)
+##
+#Base (Site random - need random effect in model?)
 m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
            data = dAll,
            Hess = T,
@@ -77,9 +67,9 @@ m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
 summary(m1)
 confint(m1)
 m1$Theta
-m1$info[,c('nobs','AIC')]
+m1$info[,c('nobs','AIC')] #AIC 5898.2
 
-
+##
 # m2(site type - fixed)
 m2 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
            data = dAll,
@@ -90,9 +80,37 @@ m2 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
 summary(m2)
 confint(m2)
 m2$Theta
-m2$info[,c('nobs','AIC')]
+m2$info[,c('nobs','AIC')] #AIC 5890.2
+##Adding site type improves model
 
-#Adding site type improves model
+## 
+# m3(park instead of site)
+m3 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Park),
+           data = dAll,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m3 summary
+summary(m3)
+confint(m3)
+m3$Theta
+m3$info[,c('nobs','AIC')] #AIC 5963.3 
+##m2 is best - Site RE, plus site type fixed
+
+## 
+# m4(add PTAuddAllAC)
+m4 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
+           data = dAll,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m4 summary
+summary(m4)
+confint(m4)
+m4$Theta
+m4$info[,c('nobs','AIC')] #AIC 5882
+##m4 is best - Site RE, plus site type fixed plus PTAudAllAC
+
 
 
 
