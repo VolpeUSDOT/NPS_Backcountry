@@ -51,7 +51,7 @@ res_vars = c('Annoy3', 'IntWithNQ3')
 
 #### Manual model runs to compare features ####
 
-## QUestions:
+## Questions:
 # clmm v clmm2?
 # SiteType as random (can't pick it as category in tool if it's random)?
 # confirm link = 'logit'

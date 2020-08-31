@@ -248,7 +248,7 @@ ggsave(filename = 'Annoyance_response_by_SEL_by_SiteType.jpeg',
 
 ```{r}
 
-hist(dAll$le)
+#hist(dAll$le)
 
 ```
 
