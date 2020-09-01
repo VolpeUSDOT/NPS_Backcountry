@@ -66,6 +66,9 @@ dC = dAll[complete.cases(dAll[,c('Annoy3',
                                  'SiteType',
                                  'Site')]),]
 
+#which sites are missing which variables?
+table(dC$SiteType)
+table(dC$Site)
 
 #### Manual model runs to compare features ####
 
