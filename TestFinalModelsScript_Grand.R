@@ -48,6 +48,24 @@ dat_vars = c('Site', 'SiteType', 'Park', 'Survey')
 med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit', 'DurVisitMinutes', 'AdultsOnly')
 res_vars = c('Annoy3', 'IntWithNQ3')
 
+##Get complete cases for AIC values
+
+dC = dAll[complete.cases(dAll[,c('Annoy3',
+                                 'LeqAllAC',
+                                 'SELAllAC',
+                                 'PTAudAllAC', 
+                                 'lg10.PTAudAllAC',
+                                 'PEnProps',
+                                 'PEnHelos',
+                                 'ImpHistCult_VorMore',
+                                 'ImpNQ_VorMore',
+                                 'SiteFirstVisit', 
+                                 'DurVisitMinutes', 
+                                 'AdultsOnly',
+                                 'Dataset',
+                                 'SiteType',
+                                 'Site')]),]
+
 
 #### Manual model runs to compare features ####
 
