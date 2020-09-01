@@ -54,7 +54,7 @@ dC = dAll[complete.cases(dAll[,c('Annoy3',
                                  'LeqAllAC',
                                  'SELAllAC',
                                  'PTAudAllAC', 
-                                 'lg10.PTAudAllAC',
+                                 #'lg10.PTAudAllAC',
                                  'PEnProps',
                                  'PEnHelos',
                                  'ImpHistCult_VorMore',
@@ -62,13 +62,18 @@ dC = dAll[complete.cases(dAll[,c('Annoy3',
                                  'SiteFirstVisit', 
                                  'DurVisitMinutes', 
                                  'AdultsOnly',
-                                 'Dataset',
+                                 #'Dataset',
                                  'SiteType',
                                  'Site')]),]
 
+dim(dC)
 #which sites are missing which variables?
-table(dC$SiteType)
+table(dC$SiteType, dC$Site)
 table(dC$Site)
+
+table(dAll$SiteType, dAll$Site)
+
+RnBowPt <- dAll[which(dAll$Site == "RnBowPt"),]
 
 #### Manual model runs to compare features ####
 
