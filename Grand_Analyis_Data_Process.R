@@ -67,6 +67,8 @@ write.csv(var_presence, file = 'Vars_Compare_Grand.csv', row.names = F)
 # 'Hier' was a hierarchical method for if multiple sources available at the same time
 # Clean log10 values, use NA if 0
 
+# Fill NA with 0s for PEnHelos and PEnProps
+
 d90 <- d90 %>%
   mutate(AdultsOnly = ifelse(NumbChildren < 1, TRUE, FALSE),
          Survey = 'HR0',
@@ -74,9 +76,17 @@ d90 <- d90 %>%
          PEnHelos	= 100*((10^(SELHelos/10))/(10^(SELAllAC/10))),
          PEnProps	= 100*((10^(SELProps/10))/(10^(SELAllAC/10)))
          )  %>%
-   mutate(PEnHelos = ifelse(is.na(SELHelos) & SELAllAC > 0, 0, PEnHelos),
-          PEnHelos = ifelse(is.na(SELProps) & SELAllAC > 0, 0, PEnProps)
+   mutate(PEnHelos = ifelse(is.na(SELHelos), 0, PEnHelos),
+          PEnProps = ifelse(is.na(SELProps), 0, PEnProps)
           ) 
+
+# Check -- the sum(is.na) should all be 0:
+d90 %>% 
+  group_by(Site) %>%
+  summarize(sum(is.na(PEnHelos)),
+            sum(is.na(PEnProps)),
+            mean(PEnHelos),
+            mean(PEnProps))
 
 # Filter out BackCty and PimaTr from 90s
 
@@ -117,7 +127,7 @@ gp <- ggplot(d90, aes(x = LeqAllAC)) +
 print(gp)
 
 
-gp <- ggplot(d00, aes(x = LeqTresp)) +
+gp <- ggplot(d00, aes(x = LeqAllAC)) +
   geom_histogram() +
   facet_wrap(~SiteType) +
   ggtitle('2000s - LeqTresp histogram by SiteType')
@@ -134,7 +144,7 @@ gp <- ggplot(d90 %>% filter(!is.na(Annoy_SorMore)), aes(y = LeqAllAC,
 
 print(gp)
 
-gp <- ggplot(d00 %>% filter(!is.na(Annoy_SorMore)), aes(y = LeqTresp,
+gp <- ggplot(d00 %>% filter(!is.na(Annoy_SorMore)), aes(y = LeqAllAC,
                 x = Annoy_SorMore)) +
   geom_boxplot() +
   facet_wrap(~SiteType) +
@@ -151,7 +161,7 @@ gp <- ggplot(d90, aes(y = LeqAllAC,
 print(gp)
 
 
-gp <- ggplot(d00, aes(y = LeqTresp,
+gp <- ggplot(d00, aes(y = LeqAllAC,
                       x = DurVisitMinutes)) +
   geom_point() +
   facet_wrap(~SiteType, scales = 'free_x') +
