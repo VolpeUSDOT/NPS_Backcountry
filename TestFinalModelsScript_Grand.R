@@ -83,7 +83,7 @@ RnBowPt <- dAll[which(dAll$Site == "RnBowPt"),]
 # confirm link = 'logit'
 
 ##
-#Base (Site random - need random effect in model?)
+# Base (Site random - need random effect in model?)
 m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
            data = dAll,
            Hess = T,
@@ -107,7 +107,7 @@ summary(m2)
 confint(m2)
 m2$Theta
 m2$info[,c('nobs','AIC')] #nobs 3433 AIC 5890.2
-##Adding site type improves model
+## Adding site type improves model
 
 ## 
 # m3(park instead of site)
@@ -120,7 +120,7 @@ m3 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Park),
 summary(m3)
 confint(m3)
 m3$Theta
-m3$info[,c('nobs','AIC')] #nobs 3433 AIC 5963.3 
+m3$info[,c('nobs','AIC')] #nobs 4265 AIC 7578 
 ##m2 is best - Site RE, plus site type fixed
 
 ## 
@@ -212,3 +212,44 @@ confint(m9)
 m9$Theta
 m9$info[,c('nobs','AIC')] #nobs 3351 AIC 5718.1
 ##m9 is better than m7 BUT LOWER N (subset and retest)
+
+# Compile coefs; compile AIC and N ----
+# Two tables to output
+
+# Look in the environment for R objects which are of class 'clmm', these are the model objects to use
+# Search by pattern 'm' followed by one or two digits. Then confirm these are class clmm
+mod_list <- ls()[grep('^m\\d{1,2}', ls())] 
+
+coef_table <- aic_table <- vector()
+
+for(m in mod_list){
+  # m = mod_list[1]
+  mx <- get(m)
+  
+  stopifnot(class(mx) == 'clmm')
+  
+  # Coefficient table
+  
+  coefx <- data.frame('Value' = exp(coef(mx)))
+  coefx$Variable = rownames(coefx)
+  coefx$Model = m
+  rownames(coefx) = 1:nrow(coefx)
+  
+  coef_table <- rbind(coef_table, coefx[c('Model', 'Variable', 'Value')])
+  
+  # AIC table
+  
+  model_formula = paste(as.character(mx$formula)[2], as.character(mx$formula)[3], sep = " ~ ")
+  
+  aicx <- data.frame(ModelNo = m,
+                     'AIC' = AIC(mx),
+                     'N' = mx$info[,c('nobs')],
+                     'Model' = model_formula)
+  
+  aic_table <- rbind(aic_table, aicx)
+  }
+
+write.csv(aic_table,
+          file.path(output, 'Annoy_AIC.csv'), row.names = F)
+write.csv(coef_table,
+          file.path(output, 'Annoy_Coef.csv'), row.names = F)
