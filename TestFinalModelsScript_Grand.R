@@ -260,3 +260,190 @@ write.csv(coef_table,
           file.path(output, 'Annoy_Coef.csv'), row.names = F)
 
 
+#### Interfere analysis ####
+
+#### Manual model runs to compare features ####
+## Interfere analysis
+# Site as random
+#Use complete dataset
+
+##
+# Base (m11) (Site random - need random effect in model)
+m11 <- clmm(IntWithNQ3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m11 summary
+summary(m11)
+confint(m11)
+m11$Theta
+m11$info[,c('nobs','AIC')] #nobs 4117 AIC 8100.76 
+
+##
+# m12(site type - fixed)
+m12 <- clmm(IntWithNQ3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m12 summary
+summary(m12)
+confint(m12)
+m12$Theta
+m12$info[,c('nobs','AIC')] #nobs 4117 AIC 8090.27 
+## Adding site type improves model
+
+## 
+# m13(park instead of site)
+m13 <- clmm(IntWithNQ3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Park),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m13 summary
+summary(m13)
+confint(m13)
+m13$Theta
+m13$info[,c('nobs','AIC')] #nobs 4117 AIC 8209.13 
+##m12 is best - Site RE, plus site type fixed
+
+## 
+# m14(add PTAuddAllAC)
+m14 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+            + SiteType + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m14 summary
+summary(m14)
+confint(m14)
+m14$Theta
+m14$info[,c('nobs','AIC')] #nobs 4117 AIC 8063.62
+##m14 is best - Site RE, plus site type fixed plus PTAudAllAC
+
+## 
+# m15(LeqAllAC instead of PTAuddAllAC + SELAllAC)
+m15 <- clmm(IntWithNQ3 ~ LeqAllAC + PEnHelos + PEnProps 
+            + SiteType + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m15 summary
+summary(m15)
+confint(m15)
+m15$Theta
+m15$info[,c('nobs','AIC')] #nobs 4117 AIC 8085.82
+##m14 is best (SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site)) 
+
+## 
+# m16(log(PTAudAllAC) instead of PTAuddAllAC)
+m16 <- clmm(IntWithNQ3 ~ SELAllAC + lg10.PTAudAllAC + PEnHelos + PEnProps 
+            + SiteType + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m16 summary
+summary(m16)
+confint(m16)
+m16$Theta
+m16$info[,c('nobs','AIC')] #nobs 4117 AIC 8071.44
+##m14 is best by a small amount (SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site)) 
+
+## 
+# m17(Add durvisit)
+m17 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+            + DurVisitMinutes + SiteType + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m17 summary
+summary(m17)
+confint(m17)
+m17$Theta
+m17$info[,c('nobs','AIC')] #nobs 4117 AIC 8065.32
+##m14 is still best by ~ 2 units, but perhaps keep durvisit for consistency with annoy3 models
+
+## 
+# m14(+ Adults only or + SiteFirstVisit)
+m18 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+           + SiteType 
+           #+ DurVisitMinutes 
+           + AdultsOnly 
+           #+ SiteFirstVisit
+           + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m18 summary
+summary(m18)
+confint(m18)
+m18$Theta
+m18$info[,c('nobs','AIC')] #nobs 4117 AIC 8064.32
+##m14 is still best by ~ .5 units; m18 with AdultsOnly is much worse if DurVisitMinutes is included
+
+## 
+# m14 (+ ImpHist or + ImpNQ)
+m19 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+           + SiteType 
+           #+ DurVisitMinutes 
+           #+ AdultsOnly 
+           #+ ImpHistCult_VorMore 
+           + ImpNQ_VorMore
+           + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m19 summary
+summary(m19)
+confint(m19)
+m19$Theta
+m19$info[,c('nobs','AIC')] #nobs 4117 AIC  7135.48
+##m9 with ImpNQ_VorMore is better than m8 by ~25 units. Best model includes Adults only and ImpNQ
+
+# Compile coefs; compile AIC and N ----
+# Two tables to output
+
+# Look in the environment for R objects which are of class 'clmm', these are the model objects to use
+# Search by pattern 'm' followed by one or two digits. Then confirm these are class clmm
+mod_list <- ls()[grep('^m\\d{1,2}', ls())] 
+
+coef_table <- aic_table <- vector()
+
+for(m in mod_list){
+  # m = mod_list[1]
+  mx <- get(m)
+  
+  stopifnot(class(mx) == 'clmm')
+  
+  # Coefficient table
+  
+  coefx <- data.frame('Value' = exp(coef(mx)))
+  coefx$Variable = rownames(coefx)
+  coefx$Model = m
+  rownames(coefx) = 1:nrow(coefx)
+  
+  coef_table <- rbind(coef_table, coefx[c('Model', 'Variable', 'Value')])
+  
+  # AIC table
+  
+  model_formula = paste(as.character(mx$formula)[2], as.character(mx$formula)[3], sep = " ~ ")
+  
+  aicx <- data.frame(ModelNo = m,
+                     'AIC' = AIC(mx),
+                     'N' = mx$info[,c('nobs')],
+                     'Model' = model_formula)
+  
+  aic_table <- rbind(aic_table, aicx)
+}
+
+write.csv(aic_table,
+          file.path(output, 'Annoy_AIC.csv'), row.names = F)
+write.csv(coef_table,
+          file.path(output, 'Annoy_Coef.csv'), row.names = F)
