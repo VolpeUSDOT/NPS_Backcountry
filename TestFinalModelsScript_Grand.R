@@ -37,7 +37,7 @@ output = file.path(project_shared_drive,
 
 if(!dir.exists(output)){ dir.create(output) }
 
-# For dAll data frame, 5233 observations and 31 variables
+# For dAll data frame, 4850 observations and 32 variables
 load(file.path(project_shared_drive,
           '2020 Grand Analysis',
           'GrandAnalysis_CompleteDoseVars.RData'))
@@ -51,24 +51,26 @@ res_vars = c('Annoy3', 'IntWithNQ3')
 ##Get complete cases for AIC values
 
 dC = dAll[complete.cases(dAll[,c('Annoy3',
-                                 'LeqAllAC',
-                                 'SELAllAC',
-                                 'PTAudAllAC', 
-                                 #'lg10.PTAudAllAC',
-                                 'PEnProps',
-                                 'PEnHelos',
-                                 'ImpHistCult_VorMore',
-                                 'ImpNQ_VorMore',
-                                 'SiteFirstVisit', 
+                                 'LeqAllAC', #missing ~580: mostly from overlook and short hike (Fairyland, LipPt, PimaPt, PtImpl...)
+                                 'SELAllAC',  #missing ~580; Same as Leq (correct - these should be NA)
+                                 'PTAudAllAC',  #none missing 
+                                 'lg10.PTAudAllAC', #missing ~90
+                                 'PEnProps', #missing ~12
+                                 'PEnHelos',  #missing ~12
+                                 'ImpHistCult_VorMore', #missing ~50 #a few from several sites
+                                 'ImpNQ_VorMore', #missing ~40
+                                 'SiteFirstVisit', #missing ~15 
                                  'DurVisitMinutes', 
-                                 'AdultsOnly',
-                                 #'Dataset',
-                                 'SiteType',
+                                 'AdultsOnly',  #none missing
+                                 'Dataset', #none missing
+                                 'SiteType', #none missing
                                  'Site')]),]
 
 dim(dC)
+
 #which sites are missing which variables?
 table(dC$SiteType, dC$Site)
+table(dAll$SiteType, dAll$Site)
 table(dC$Site)
 
 table(dAll$SiteType, dAll$Site)
@@ -76,16 +78,14 @@ table(dAll$SiteType, dAll$Site)
 RnBowPt <- dAll[which(dAll$Site == "RnBowPt"),]
 
 #### Manual model runs to compare features ####
-
-## Questions:
-# clmm v clmm2?
-# SiteType as random (can't pick it as category in tool if it's random)?
-# confirm link = 'logit'
+## Annoy analysis
+# Site as random - random effect for clmm (can use clm to run as not random, but makes sense for site to be random)
+#Use complete dataset
 
 ##
-# Base (Site random - need random effect in model?)
+# Base (Site random - need random effect in model)
 m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -93,12 +93,12 @@ m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
 summary(m1)
 confint(m1)
 m1$Theta
-m1$info[,c('nobs','AIC')] #nobs 3433 AIC 5898.2 
+m1$info[,c('nobs','AIC')] #nobs 4117 AIC 7197.1 
 
 ##
 # m2(site type - fixed)
 m2 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -106,13 +106,13 @@ m2 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
 summary(m2)
 confint(m2)
 m2$Theta
-m2$info[,c('nobs','AIC')] #nobs 3433 AIC 5890.2
+m2$info[,c('nobs','AIC')] #nobs 4117 AIC 7180.8 
 ## Adding site type improves model
 
 ## 
 # m3(park instead of site)
 m3 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Park),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -120,13 +120,13 @@ m3 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Park),
 summary(m3)
 confint(m3)
 m3$Theta
-m3$info[,c('nobs','AIC')] #nobs 4265 AIC 7578 
+m3$info[,c('nobs','AIC')] #nobs 4117 AIC 7287.6 
 ##m2 is best - Site RE, plus site type fixed
 
 ## 
 # m4(add PTAuddAllAC)
 m4 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -134,13 +134,13 @@ m4 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|
 summary(m4)
 confint(m4)
 m4$Theta
-m4$info[,c('nobs','AIC')] #nobs 3433 AIC 5882
+m4$info[,c('nobs','AIC')] #nobs 4117 AIC 7167.02
 ##m4 is best - Site RE, plus site type fixed plus PTAudAllAC
 
 ## 
 # m5(LeqAllAC instead of PTAuddAllAC + SELAllAC)
 m5 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -148,13 +148,13 @@ m5 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
 summary(m5)
 confint(m5)
 m5$Theta
-m5$info[,c('nobs','AIC')] #nobs 3400 AIC 5813
-##m5 is best BUT LOWER N (subset and retest) - Site RE, plus site type fixed with LeqAllAC dose
+m5$info[,c('nobs','AIC')] #nobs 4117 AIC 7169.74
+##m4 is best by a small amount (SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site)) 
 
 ## 
 # m6(log(PTAudAllAC) instead of PTAuddAllAC)
 m6 <- clmm(Annoy3 ~ SELAllAC + lg10.PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -162,13 +162,13 @@ m6 <- clmm(Annoy3 ~ SELAllAC + lg10.PTAudAllAC + PEnHelos + PEnProps + SiteType 
 summary(m6)
 confint(m6)
 m6$Theta
-m6$info[,c('nobs','AIC')] #nobs 3429 AIC 5869.2
-##m5 is still best BUT LOWER N (subset and retest) - Site RE, plus site type fixed with LeqAllAC dose
+m6$info[,c('nobs','AIC')] #nobs 4117 AIC 7169.53
+##m4 is best by a small amount (SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site)) 
 
 ## 
 # m7(Add durvisit)
-m7 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType + DurVisitMinutes +(1|Site),
-           data = dAll,
+m7 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + DurVisitMinutes + SiteType + (1|Site),
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -176,16 +176,18 @@ m7 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType + DurVisitMinutes 
 summary(m7)
 confint(m7)
 m7$Theta
-m7$info[,c('nobs','AIC')] #nobs 3400 AIC 5808.8
-##m7 is best BUT LOWER N (subset and retest) - Site RE, plus site type fixed with LeqAllAC dose
+m7$info[,c('nobs','AIC')] #nobs 4117 AIC 7164.92
+##m7 is best by ~3 units
 
 ## 
-# m8(+ Adults only + SiteFirstVisit)
-m8 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType 
+# m7(+ Adults only or + SiteFirstVisit)
+m8 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+           + SiteType 
            + DurVisitMinutes 
-           + AdultsOnly + SiteFirstVisit
+           + AdultsOnly 
+           #+ SiteFirstVisit
            + (1|Site),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -193,16 +195,19 @@ m8 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType
 summary(m8)
 confint(m8)
 m8$Theta
-m8$info[,c('nobs','AIC')] #nobs 3393 AIC 5820.8
-##m8 is worse than m7, even with lower n
+m8$info[,c('nobs','AIC')] #nobs 4117 AIC 7162.34
+##m8 with AdultsOnly is better than m7 (slightly)
 
 ## 
-# m9(+ ImpHist + ImpNQ)
-m9 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType 
+# m8 with Adults Only (+ ImpHist or + ImpNQ)
+m9 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+           + SiteType 
            + DurVisitMinutes 
-           + ImpHistCult_VorMore + ImpNQ_VorMore
+           + AdultsOnly 
+           #+ ImpHistCult_VorMore 
+           + ImpNQ_VorMore
            + (1|Site),
-           data = dAll,
+           data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
 
@@ -210,8 +215,8 @@ m9 <- clmm(Annoy3 ~ LeqAllAC + PEnHelos + PEnProps + SiteType
 summary(m9)
 confint(m9)
 m9$Theta
-m9$info[,c('nobs','AIC')] #nobs 3351 AIC 5718.1
-##m9 is better than m7 BUT LOWER N (subset and retest)
+m9$info[,c('nobs','AIC')] #nobs 4117 AIC  7135.48
+##m9 with ImpNQ_VorMore is better than m8 by ~25 units. Best model includes Adults only and ImpNQ
 
 # Compile coefs; compile AIC and N ----
 # Two tables to output
@@ -253,3 +258,5 @@ write.csv(aic_table,
           file.path(output, 'Annoy_AIC.csv'), row.names = F)
 write.csv(coef_table,
           file.path(output, 'Annoy_Coef.csv'), row.names = F)
+
+
