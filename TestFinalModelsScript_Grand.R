@@ -404,15 +404,15 @@ m19 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps
 summary(m19)
 confint(m19)
 m19$Theta
-m19$info[,c('nobs','AIC')] #nobs 4117 AIC  7135.48
-##m9 with ImpNQ_VorMore is better than m8 by ~25 units. Best model includes Adults only and ImpNQ
+m19$info[,c('nobs','AIC')] #nobs 4117 AIC  8034.26
+##m19 with ImpNQ_VorMore is better than m14 by ~25 units. Best model includes dose plus ImpNQ
 
 # Compile coefs; compile AIC and N ----
 # Two tables to output
 
 # Look in the environment for R objects which are of class 'clmm', these are the model objects to use
 # Search by pattern 'm' followed by one or two digits. Then confirm these are class clmm
-mod_list <- ls()[grep('^m\\d{1,2}', ls())] 
+mod_list <- ls()[grep('^m1\\d{1,2}', ls())] 
 
 coef_table <- aic_table <- vector()
 
@@ -444,6 +444,6 @@ for(m in mod_list){
 }
 
 write.csv(aic_table,
-          file.path(output, 'Annoy_AIC.csv'), row.names = F)
+          file.path(output, 'Interfere_AIC.csv'), row.names = F)
 write.csv(coef_table,
-          file.path(output, 'Annoy_Coef.csv'), row.names = F)
+          file.path(output, 'Interfere_Coef.csv'), row.names = F)
