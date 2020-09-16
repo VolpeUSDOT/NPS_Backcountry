@@ -25,10 +25,7 @@ source("get_packages.R")
 
 source("Plot_Predicted_Curves_CLMM.R")
 
-library(lme4)   # for glmer() generalized linear mixed effects models
-library(sjPlot) # for summary tables using sjt.glmer and summary plots using sjp.glmer
 library(scales) # for alpha() and muted()
-library(MASS) # for polr
 library(ordinal) # for clmm
 
 project_shared_drive = "//vntscex/DFS/Projects/PROJ-VXK600/MLB48"
@@ -99,6 +96,8 @@ m1$info[,c('nobs','AIC')] #nobs 4117 AIC 7197.1
 
 plot_curves('m1')
 
+plot_curves('m1', plot_se = F)
+
 ##
 # m2(site type - fixed)
 m2 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
@@ -112,6 +111,10 @@ confint(m2)
 m2$Theta
 m2$info[,c('nobs','AIC')] #nobs 4117 AIC 7180.8 
 ## Adding site type improves model
+
+plot_curves('m2')
+
+plot_curves('m2', plot_se = F)
 
 ## 
 # m3(park instead of site)
@@ -127,6 +130,10 @@ m3$Theta
 m3$info[,c('nobs','AIC')] #nobs 4117 AIC 7287.6 
 ##m2 is best - Site RE, plus site type fixed
 
+plot_curves('m3')
+
+plot_curves('m3', plot_se = F)
+
 ## 
 # m4(add PTAuddAllAC)
 m4 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
@@ -140,6 +147,10 @@ confint(m4)
 m4$Theta
 m4$info[,c('nobs','AIC')] #nobs 4117 AIC 7167.02
 ##m4 is best - Site RE, plus site type fixed plus PTAudAllAC
+
+plot_curves('m4')
+plot_curves('m4', plot_se = F)
+
 
 ## 
 # m5(LeqAllAC instead of PTAuddAllAC + SELAllAC)
@@ -155,6 +166,10 @@ m5$Theta
 m5$info[,c('nobs','AIC')] #nobs 4117 AIC 7169.74
 ##m4 is best by a small amount (SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site)) 
 
+plot_curves('m5')
+plot_curves('m5', plot_se = F)
+
+
 ## 
 # m6(log(PTAudAllAC) instead of PTAuddAllAC)
 m6 <- clmm(Annoy3 ~ SELAllAC + lg10.PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
@@ -169,6 +184,10 @@ m6$Theta
 m6$info[,c('nobs','AIC')] #nobs 4117 AIC 7169.53
 ##m4 is best by a small amount (SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site)) 
 
+plot_curves('m6')
+plot_curves('m6', plot_se = F)
+
+
 ## 
 # m7(Add durvisit)
 m7 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + DurVisitMinutes + SiteType + (1|Site),
@@ -182,6 +201,10 @@ confint(m7)
 m7$Theta
 m7$info[,c('nobs','AIC')] #nobs 4117 AIC 7164.92
 ##m7 is best by ~3 units
+
+plot_curves('m7')
+plot_curves('m7', plot_se = F)
+
 
 ## 
 # m7(+ Adults only or + SiteFirstVisit)
@@ -315,6 +338,9 @@ m13$Theta
 m13$info[,c('nobs','AIC')] #nobs 4117 AIC 8209.13 
 ##m12 is best - Site RE, plus site type fixed
 
+plot_curves('m13')
+
+
 ## 
 # m14(add PTAuddAllAC)
 m14 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
@@ -344,6 +370,8 @@ confint(m15)
 m15$Theta
 m15$info[,c('nobs','AIC')] #nobs 4117 AIC 8085.82
 ##m14 is best (SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + (1|Site)) 
+
+plot_curves('m15')
 
 ## 
 # m16(log(PTAudAllAC) instead of PTAuddAllAC)
