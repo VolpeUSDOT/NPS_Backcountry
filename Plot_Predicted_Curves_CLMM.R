@@ -39,8 +39,11 @@ plot_curves = function(model_object_name, plot_se = TRUE){
   has_AdultsONly = 'AdultsOnly' %in% names(model_object$model)
   has_ImpNQ_VorMore = 'ImpNQ_VorMore' %in% names(model_object$model)
   
-  if(has_AdultsONly | has_ImpNQ_VorMore) { stop('AdultsOnly and ImpNQ_VorMore not yet implemented')}
+  if(has_AdultsONly | has_ImpNQ_VorMore) { 
+    warning('AdultsOnly and ImpNQ_VorMore not yet implemented')
+    }
   
+    
   if(sound_var == 'SELAllAC'){
     sound_vals = seq(35, 100, by = 1)
   }
@@ -243,10 +246,12 @@ plot_curves = function(model_object_name, plot_se = TRUE){
     fill = pred_long$Level,
     alpha = 0.1)
     
-    g1 = g1 + geom_ribbon(aes(ymin = Annoy3_lo, 
-                              ymax = Annoy3_hi), alpha = 0.05)
+    g1 = g1 + geom_ribbon(aes(ymin = get(paste0(resp_name, '_lo')), 
+                              ymax = get(paste0(resp_name, '_hi'))), alpha = 0.05)
     
   }
   
-  print(g1)
+  if(!has_AdultsONly & !has_ImpNQ_VorMore) { 
+    print(g1)
+  }
 }

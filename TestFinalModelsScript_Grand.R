@@ -482,3 +482,13 @@ write.csv(aic_table,
           file.path(output, 'Interfere_AIC.csv'), row.names = F)
 write.csv(coef_table,
           file.path(output, 'Interfere_Coef.csv'), row.names = F)
+
+
+# Make all plots -----
+
+pdf(file.path(output, 'All_CLMM_Curves.pdf'), width = 8, height = 8)
+for(m in mod_list){
+  plot_curves(m)
+  plot_curves(m, plot_se = F)
+}
+dev.off()
