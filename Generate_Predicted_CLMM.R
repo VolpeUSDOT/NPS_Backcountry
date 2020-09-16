@@ -1,5 +1,6 @@
 # clmm2 tutorial 
 
+library(tidyverse)
 library(ordinal)
 data(wine)
 head(wine)
@@ -85,8 +86,6 @@ rownames(mat) = 1:nrow(mat)
 
 pred.mat <- pred_clmm(eta = rowSums(mat), theta = annoy_01.2$Theta)
 
-data.frame(pred.mat,
-           rep(SELvals, each = 4)
 
 # Plot probabilities for 5th, average, and 95th percentile sites, 
 # For each site type
@@ -107,4 +106,107 @@ for(k in c(1, 5, 9, 13)) {
          title = 'SEL',
          legend = SELvals,
          lty=1:3, bty="n")
+}
+
+
+# Re-organized the prediction matrix, so that lines are for annoyace categories,
+# and the x-axis is the sound exposure levels 
+
+# Base (Site random - need random effect in model)
+m1 <- clmm(Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m1 summary
+summary(m1)
+confint(m1)
+m1$Theta
+m1$info[,c('nobs','AIC')] #nobs 4117 AIC 7197.1 
+
+# Function scratch ----
+
+library(tidyverse)
+library(ordinal)
+
+# Arugument: model name
+model_object_name = 'm1'
+
+# Dependency: pred_clmm function
+pred_clmm <- function(eta, theta, cat = 1:(length(theta)+1), inv.link = plogis) {
+  Theta <- c(-1e3, theta, 1e3)
+  sapply(cat, function(j)
+    inv.link(Theta[j+1] - eta) - inv.link(Theta[j] - eta) )
+}
+
+# Function content
+
+plot_curves = function(model_object_name){
+
+  model_object = get(model_object_name)
+  
+  stopifnot(class(model_object) %in% 'clmm')
+  
+  # Name of response?
+  resp_name = names(model_object$model)[1]
+  
+  # Has sitetype?
+  
+  # Name of sound variable (leq vs SEL)
+  has_SEL = grep('SELAllAC', names(model_object$model))
+  has_Leq = grep('LeqAllAC', names(model_object$model))
+  
+  sound_var = ifelse(has_SEL, 'SELAllAC',
+                     ifelse(has_Leq, 'LeqAllAC', NA))
+  
+  # Has lg10.PTAudAllAC
+  
+  #  DurVisitMinutes 
+  #  AdultsOnly  
+  # ImpNQ_VorMore
+  
+  if(resp_name == 'SEL')
+  SELvals = seq(35, 125, by = 1)
+  
+  coef_names = coef(model_object)
+  
+  model_object$beta
+  
+  mat = expand.grid(Site = sd(summary(m1)$ranef),
+                   SELAllAC = model_object$beta[1] * SELvals,
+                   PEnProps = model_object$beta[2] * median(dC$PEnProps),
+                   PEnHelos = model_object$beta[3] * median(dC$PEnHelos))
+  
+  # thetas: transition thresholds
+  
+  pred.mat <- pred_clmm(eta = rowSums(mat), theta = model_object$Theta)
+  
+  # Plot
+  
+  pred.df <- as.data.frame(pred.mat)
+  colnames(pred.df) = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+')  
+  pred.df$SELAllAC = SELvals
+  
+  # Reformat long
+  pred_long = pred.df %>%
+    pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+'),
+                 names_to = 'Level',
+                 values_to = resp_name)
+  
+  ggplot(pred_long,
+         aes(x = SELAllAC,
+             y = Annoy3,
+             col = Level)) + 
+    geom_line()
+  
+  g1 <- ggplot(pred_long,
+               aes(x = get(sound_var),
+                   y = get(resp_name),
+                   col = Level)) + 
+    geom_line(size = 2) + 
+    theme_bw() +
+    xlab(sound_var) + ylab(resp_name) +
+    ggtitle(paste(model_object_name, resp_name, sound_var))
+  
+  g1
 }

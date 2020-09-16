@@ -23,6 +23,8 @@ rm(list = ls())
 
 source("get_packages.R")
 
+source("Plot_Predicted_Curves_CLMM.R")
+
 library(lme4)   # for glmer() generalized linear mixed effects models
 library(sjPlot) # for summary tables using sjt.glmer and summary plots using sjp.glmer
 library(scales) # for alpha() and muted()
@@ -94,6 +96,8 @@ summary(m1)
 confint(m1)
 m1$Theta
 m1$info[,c('nobs','AIC')] #nobs 4117 AIC 7197.1 
+
+plot_curves('m1')
 
 ##
 # m2(site type - fixed)
@@ -280,6 +284,9 @@ confint(m11)
 m11$Theta
 m11$info[,c('nobs','AIC')] #nobs 4117 AIC 8100.76 
 
+plot_curves('m11')
+
+
 ##
 # m12(site type - fixed)
 m12 <- clmm(IntWithNQ3 ~ SELAllAC + PEnHelos + PEnProps + SiteType + (1|Site),
@@ -412,7 +419,7 @@ m19$info[,c('nobs','AIC')] #nobs 4117 AIC  8034.26
 
 # Look in the environment for R objects which are of class 'clmm', these are the model objects to use
 # Search by pattern 'm' followed by one or two digits. Then confirm these are class clmm
-mod_list <- ls()[grep('^m1\\d{1,2}', ls())] 
+mod_list <- ls()[grep('^m\\d{1,2}', ls())] 
 
 coef_table <- aic_table <- vector()
 
