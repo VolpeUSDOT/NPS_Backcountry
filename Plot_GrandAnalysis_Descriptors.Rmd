@@ -99,6 +99,8 @@ datatable(Mediators_table,
           rownames = F) %>%
       formatPercentage(columns = ~ ImpNQ_VorMore + SiteFirstVisit + AdultsOnly + ImpHistCult_VorMore, digits = 1)
 
+# kable(Mediators_table, format = 'simple')
+
 ```
 
 ## Overview of variables
@@ -118,6 +120,9 @@ kable(overview_df,
        row.names = F,
        caption = "Overview of RDR Scenario Inputs to test. For factor variables, most frequent value is shown." ) %>% 
     kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+# kable(overview_df, format = 'simple')
+
 ```
 
 # Descriptive figures
@@ -126,15 +131,16 @@ kable(overview_df,
 
 Showing dayhike, overnight, and shorthike distributions of LAE and percent of time audible.
 
-```{r hists}
+```{r hists, fig.width= 8, fig.height= 6}
 colzbar = c("deepskyblue","deepskyblue4",
             "dodgerblue","dodgerblue4",
-            "violetred4","violet")
+            "violetred4","slategrey")
 
 colzbar[3] = alpha(colzbar[3], 0.3)
 colzbar[4] = alpha(colzbar[4], 0.9)
-colzbar[5] = alpha(colzbar[5], 0.2)
-colzbar[6] = alpha(colzbar[6], 0.2)
+colzbar[5] = alpha(colzbar[5], 0.4)
+colzbar[6] = alpha(colzbar[6], 0.3)
+
 
 
 par(mfrow = c(1, 2))
@@ -158,7 +164,16 @@ with(d[d$SiteType == "ShortHike",], hist(SELAllAC,
                                          add = TRUE,
                                          breaks = 35,
                                          col = colzbar[5],
-                                         border = colzbar[4]))
+                                         border = colzbar[5]))
+
+
+
+with(d[d$SiteType == "Overlook",], hist(SELAllAC,
+                                         add = TRUE,
+                                         breaks = 35,
+                                         col = colzbar[6],
+                                         border = colzbar[6]))
+
 
 
 with(d[d$SiteType == "DayHike",], hist(PTAudAllAC,
@@ -182,10 +197,17 @@ with(d[d$SiteType == "ShortHike",], hist(PTAudAllAC,
                                          border = colzbar[4]))
 
 
+with(d[d$SiteType == "Overlook",], hist(PTAudAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[6],
+                                         border = colzbar[6]))
+
+
 legend("topright",
        bty = "n",
-       fill = c(colzbar[3], colzbar[4], colzbar[5]),
-       legend = c("Dayhike", "Overnight", "Shorthike")
+       fill = c(colzbar[3], colzbar[4], colzbar[5], colzbar[6]),
+       legend = c("Dayhike", "Overnight", "Shorthike", "Overlook")
 )
 
 # fill_cols =  c(scales::alpha("dodgerblue", 0.5),
@@ -197,7 +219,75 @@ legend("topright",
 #   geom_histogram(color = 'black') +
 #   theme_bw() +
 #   scale_fill_manual(values = fill_cols)
+jpeg(file.path(output, 'Figure_1_Sound_Histograms.jpeg'), width = 10, height = 8, units = 'in', res = 150)
+par(mfrow = c(1, 2))
 
+with(d[d$SiteType == "DayHike",], hist(SELAllAC,
+                                       xlab = "LAE",
+                                       breaks = 25, 
+                                       xlim = c(40, 125),
+                                       col = colzbar[3],
+                                       border = colzbar[3],
+                                       main = ""))
+
+with(d[d$SiteType == "Overnight",], hist(SELAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[4],
+                                         border = colzbar[4]))
+
+
+with(d[d$SiteType == "ShortHike",], hist(SELAllAC,
+                                         add = TRUE,
+                                         breaks = 35,
+                                         col = colzbar[5],
+                                         border = colzbar[5]))
+
+
+
+with(d[d$SiteType == "Overlook",], hist(SELAllAC,
+                                         add = TRUE,
+                                         breaks = 35,
+                                         col = colzbar[6],
+                                         border = colzbar[6]))
+
+
+
+with(d[d$SiteType == "DayHike",], hist(PTAudAllAC,
+                                       xlab = "% Time Audible",
+                                       breaks = 25, 
+                                       xlim = c(0, 100),
+                                       col = colzbar[3],
+                                       border = colzbar[3],
+                                       main = ""))
+
+with(d[d$SiteType == "Overnight",], hist(PTAudAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[4],
+                                         border = colzbar[4]))
+
+with(d[d$SiteType == "ShortHike",], hist(PTAudAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[5],
+                                         border = colzbar[4]))
+
+
+with(d[d$SiteType == "Overlook",], hist(PTAudAllAC,
+                                         add = TRUE,
+                                         breaks = 15,
+                                         col = colzbar[6],
+                                         border = colzbar[6]))
+
+
+legend("topright",
+       bty = "n",
+       fill = c(colzbar[3], colzbar[4], colzbar[5], colzbar[6]),
+       legend = c("Dayhike", "Overnight", "Shorthike", "Overlook")
+)
+
+dev.off()
 
 ```
 
@@ -234,7 +324,7 @@ ggplotly(gp_a)
 ggplotly(gp_i)
 
 gp_a
-ggsave(filename = 'Annoyance_response_by_SEL_by_SiteType.jpeg',
+ggsave(filename = file.path(output, 'Figure_2_Annoyance_response_by_SEL_by_SiteType.jpeg'),
        width = 6, height = 4.5)
 
 ```

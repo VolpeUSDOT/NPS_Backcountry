@@ -13,6 +13,7 @@ library(tidyverse)
 library(readxl)
 library(tidyselect)
 
+DOPAIRPLOTS = FALSE # Set to True to recreate the pairwise plots
 
 project_shared_drive = "//vntscex/DFS/Projects/PROJ-VXK600/MLB48"
 
@@ -38,6 +39,11 @@ park_info = read_xlsx(file.path(project_shared_drive, site_park),
 
 d90 <- d90[-1,] # Remove first non-header row, column numbers manually entered.
 
+
+
+cat('\n', rep('<<>>', 5), '\n', 
+    sum(nrow(d90), nrow(d00), nrow(dRB)), 'Total Surveys across all three sources', 
+    '\n', rep('<<>>', 5), '\n')
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Merge ----
 
@@ -236,6 +242,10 @@ dAll <- rbind(dAll, dRB_use)
 dAll <- dAll %>%
   left_join(park_info %>% dplyr::select(Site, Park), by = 'Site')
 
+cat('\n', rep('<<>>', 5), '\n', 
+    nrow(dAll), 'Surveys after filtering out BackCty and Rim Site Types from 90s, BigDunTrl from 00s, and non-Rainbow Bridge sites from RB', 
+    '\n', rep('<<>>', 5), '\n')
+
 # Clean up Site names
 dAll <- dAll %>%
   mutate(Site = ifelse(dAll$Site == 'FryLnd', 'Fairyland', dAll$Site))
@@ -251,6 +261,11 @@ dAll <- dAll %>%
          Annoy_SorMore = as.numeric(as.factor(Annoy_SorMore)) - 1,
          Annoy_MorMore = as.numeric(as.factor(Annoy_MorMore)) - 1,
          Annoy_VorMore = as.numeric(as.factor(Annoy_VorMore)) - 1)
+
+cat('\n', rep('<<>>', 5), '\n', 
+    nrow(dAll), 'Surveys after filtering out NA responses to Annoy or Interfere', 
+    '\n', rep('<<>>', 5), '\n')
+
 
 # Make ordered factor out of the sum of Annoy and sum of IntWithNQ
 dAll <- dAll %>%
@@ -280,37 +295,45 @@ dat_vars = c('Dataset', 'Site', 'SiteType', 'Park')
 med_vars = c('ImpHistCult_VorMore','ImpNQ_VorMore','SiteFirstVisit','Survey', 'DurVisitMinutes')
 res_vars = c('Annoy3', 'IntWithNQ3')
 
-gp <- GGally::ggpairs(dAll[,c(dos_vars, res_vars)]) 
-gp + ggtitle('Dose + Response variables for grand analysis')
-ggsave(filename = file.path(project_shared_drive,
-                            '2020 Grand Analysis',
-                            'Dose_Response_Variables.jpg'),
-       height = 8, width = 9)
-                                  
-
-gp <- GGally::ggpairs(dAll[,c(dat_vars[!dat_vars %in% 'Site'], res_vars)]) 
-gp + ggtitle('Dataset + Response variables for grand analysis')
-ggsave(filename = file.path(project_shared_drive,
-                            '2020 Grand Analysis',
-                            'Data_Response_Variables.jpg'),
-       height = 8, width = 9)
-
-gp <- GGally::ggpairs(dAll[,c('Park', res_vars)]) 
-gp + ggtitle('Dataset (Park only) + Response variables for grand analysis')
-ggsave(filename = file.path(project_shared_drive,
-                            '2020 Grand Analysis',
-                            'Park_Response_Variables.jpg'),
-       height = 8, width = 9)
-
-
-gp <- GGally::ggpairs(dAll[,c(med_vars, res_vars)]) 
-gp + ggtitle('Mediator + Response variables for grand analysis')
-ggsave(filename = file.path(project_shared_drive,
-                            '2020 Grand Analysis',
-                            'Mediator_Response_Variables.jpg'),
-       height = 8, width = 9)
+if(DOPAIRPLOTS){
+  gp <- GGally::ggpairs(dAll[,c(dos_vars, res_vars)]) 
+  gp + ggtitle('Dose + Response variables for grand analysis')
+  ggsave(filename = file.path(project_shared_drive,
+                              '2020 Grand Analysis',
+                              'Dose_Response_Variables.jpg'),
+         height = 8, width = 9)
+                                    
+  
+  gp <- GGally::ggpairs(dAll[,c(dat_vars[!dat_vars %in% 'Site'], res_vars)]) 
+  gp + ggtitle('Dataset + Response variables for grand analysis')
+  ggsave(filename = file.path(project_shared_drive,
+                              '2020 Grand Analysis',
+                              'Data_Response_Variables.jpg'),
+         height = 8, width = 9)
+  
+  gp <- GGally::ggpairs(dAll[,c('Park', res_vars)]) 
+  gp + ggtitle('Dataset (Park only) + Response variables for grand analysis')
+  ggsave(filename = file.path(project_shared_drive,
+                              '2020 Grand Analysis',
+                              'Park_Response_Variables.jpg'),
+         height = 8, width = 9)
+  
+  
+  gp <- GGally::ggpairs(dAll[,c(med_vars, res_vars)]) 
+  gp + ggtitle('Mediator + Response variables for grand analysis')
+  ggsave(filename = file.path(project_shared_drive,
+                              '2020 Grand Analysis',
+                              'Mediator_Response_Variables.jpg'),
+         height = 8, width = 9)
+} # end DOPAIRPLOTS
 
 # Save ----
+
+
+cat(rep('<<>>', 5), '\n', 
+    nrow(dAll), 'Total Surveys in output CompleteDoseVars data', 
+    '\n', rep('<<>>', 5), '\n')
+
 
 save(list = 'dAll',
      file = file.path(project_shared_drive,
