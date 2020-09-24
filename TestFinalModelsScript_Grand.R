@@ -68,6 +68,7 @@ dC = dAll[complete.cases(dAll[,c('Annoy3',
 dim(dC)
 
 #which sites are missing which variables?
+table(dC$Park, dC$Site)
 table(dC$SiteType, dC$Site)
 table(dAll$SiteType, dAll$Site)
 table(dC$Site)
@@ -75,6 +76,17 @@ table(dC$Site)
 table(dAll$SiteType, dAll$Site)
 
 RnBowPt <- dAll[which(dAll$Site == "RnBowPt"),]
+
+##Summary tables
+
+VarMeans <- dC %>%
+  group_by(Park, Site, SiteType) %>%
+  summarize(n_Site = n(),
+            mean_duration_hrs = round(mean(DurVisitMinutes/60, na.rm=T),2),
+           mean_SELAllAC = round(mean(SELAllAC, na.rm=T),2)
+  )
+
+write.csv(VarMeans, file.path(output, 'ParkSiteSound_Summary.csv'), row.names = F)
 
 #### Manual model runs to compare features ####
 ## Annoy analysis
