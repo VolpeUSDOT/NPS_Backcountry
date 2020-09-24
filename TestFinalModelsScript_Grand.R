@@ -190,7 +190,9 @@ plot_curves('m6', plot_se = F)
 
 ## 
 # m7(Add durvisit)
-m7 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + DurVisitMinutes + SiteType + (1|Site),
+m7 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+           + DurVisitMinutes 
+           + SiteType + (1|Site),
            data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
@@ -229,7 +231,7 @@ m8$info[,c('nobs','AIC')] #nobs 4117 AIC 7162.34
 # m8 with Adults Only (+ ImpHist or + ImpNQ)
 m9 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
            + SiteType 
-           + DurVisitMinutes 
+           #+ DurVisitMinutes 
            + AdultsOnly 
            #+ ImpHistCult_VorMore 
            + ImpNQ_VorMore
@@ -244,6 +246,13 @@ confint(m9)
 m9$Theta
 m9$info[,c('nobs','AIC')] #nobs 4117 AIC  7135.48
 ##m9 with ImpNQ_VorMore is better than m8 by ~25 units. Best model includes Adults only and ImpNQ
+
+#model 9 summary
+coef9 <- data.frame('Value' = exp(coef(m9)), 'CI' = exp(confint(m9)), 'Pval' = summary(m9)$coefficients[,4])
+coef9
+
+write.csv(coef9,
+          file.path(output, 'Annoy_M9_Coef.csv'), row.names = F)
 
 # Compile coefs; compile AIC and N ----
 # Two tables to output
@@ -441,6 +450,14 @@ confint(m19)
 m19$Theta
 m19$info[,c('nobs','AIC')] #nobs 4117 AIC  8034.26
 ##m19 with ImpNQ_VorMore is better than m14 by ~25 units. Best model includes dose plus ImpNQ
+
+#model 19 summary
+coef19 <- data.frame('Value' = exp(coef(m19)), 'CI' = exp(confint(m19)), 'Pval' = summary(m19)$coefficients[,4])
+coef19
+
+write.csv(coef19,
+          file.path(output, 'Annoy_M19_Coef.csv'), row.names = F)
+
 
 # Compile coefs; compile AIC and N ----
 # Two tables to output
