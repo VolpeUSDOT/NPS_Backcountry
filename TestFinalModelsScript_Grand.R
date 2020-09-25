@@ -201,9 +201,9 @@ plot_curves('m6', plot_se = F)
 
 
 ## 
-# m7(Add durvisit)
+# m7(Add durvisit - does not converge, do not use)
 m7 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
-           + DurVisitMinutes 
+           #+ DurVisitMinutes 
            + SiteType + (1|Site),
            data = dC,
            Hess = T,
@@ -214,7 +214,7 @@ summary(m7)
 confint(m7)
 m7$Theta
 m7$info[,c('nobs','AIC')] #nobs 4117 AIC 7164.92
-##m7 is best by ~3 units
+##Keep m4
 
 plot_curves('m7')
 plot_curves('m7', plot_se = F)
@@ -224,7 +224,7 @@ plot_curves('m7', plot_se = F)
 # m7(+ Adults only or + SiteFirstVisit)
 m8 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
            + SiteType 
-           + DurVisitMinutes 
+           #+ DurVisitMinutes 
            + AdultsOnly 
            #+ SiteFirstVisit
            + (1|Site),
@@ -412,7 +412,8 @@ m16$info[,c('nobs','AIC')] #nobs 4117 AIC 8071.44
 ## 
 # m17(Add durvisit)
 m17 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
-            + DurVisitMinutes + SiteType + (1|Site),
+            + DurVisitMinutes 
+            + SiteType + (1|Site),
            data = dC,
            Hess = T,
            link = "logit") # for proportional odds mixed model
@@ -468,7 +469,7 @@ coef19 <- data.frame('Value' = exp(coef(m19)), 'CI' = exp(confint(m19)), 'Pval' 
 coef19
 
 write.csv(coef19,
-          file.path(output, 'Annoy_M19_Coef.csv'), row.names = F)
+          file.path(output, 'Interfere_M19_Coef.csv'), row.names = F)
 
 
 # Compile coefs; compile AIC and N ----
