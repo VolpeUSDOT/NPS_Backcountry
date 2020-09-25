@@ -327,6 +327,34 @@ gp_a
 ggsave(filename = file.path(output, 'Figure_2_Annoyance_response_by_SEL_by_SiteType.jpeg'),
        width = 6, height = 4.5)
 
+write.csv(int_LAE, file.path(output, 'Int_LAE_fig_as_table.csv'), row.names = F)
+write.csv(annoy_LAE, file.path(output, 'Annoy_LAE_fig_as_table.csv'), row.names = F)
+
+annoy_pct_by_type = annoy_LAE %>% 
+  group_by(SiteType) %>% 
+  mutate(n_by_type = sum(n_respond)) %>%
+  ungroup() %>%
+  group_by(SiteType, Annoy3) %>%
+  summarize(pct_annoy = n_respond / n_by_type) %>%
+  pivot_wider(names_from = SiteType,
+              values_from = pct_annoy)
+
+int_pct_by_type = int_LAE %>% 
+  group_by(SiteType) %>% 
+  mutate(n_by_type = sum(n_respond)) %>%
+  ungroup() %>%
+  group_by(SiteType, IntWithNQ3) %>%
+  summarize(pct_int = n_respond / n_by_type) %>%
+  pivot_wider(names_from = SiteType,
+              values_from = pct_int)
+
+# Overlook, ShortHike, DayHike, Overnight
+# Format as percent
+# add names for levels
+# do for interfere too
+write.csv(annoy_pct_by_type, file = file.path(output, 'Annoy_Pct_by_Type.csv'), row.names = F)
+write.csv(int_pct_by_type, file = file.path(output, 'Int_Pct_by_Type.csv'), row.names = F)
+
 ```
 
 ### Compare Leq variables
