@@ -255,3 +255,230 @@ plot_curves = function(model_object_name, plot_se = TRUE){
     print(g1)
   }
 }
+
+# New function: 
+# Make large table of all possible combinations for the confidence interval plotting
+# Build this for models 1, 9, 11, and 19
+# 1: Annoy3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site),
+# 9: Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + AdultsOnly + ImpNQ_VorMore + (1|Site)
+#11: IntWithNQ3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site)
+#19: IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + ImpNQ_VorMore + (1|Site)
+
+plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = TRUE, ...){
+  # model_object_name = 'm19'
+  model_object = get(model_object_name)
+  
+  stopifnot(class(model_object) %in% 'clmm')
+  
+  # Name of response?
+  resp_name = names(model_object$model)[1]
+  
+  # Has sitetype?
+  has_sitetype = 'SiteType' %in% names(model_object$model)
+  
+  # Name of sound variable (leq vs SEL)
+  has_SEL = 'SELAllAC' %in% names(model_object$model)
+  has_Leq = 'LeqAllAC' %in% names(model_object$model)
+  
+  sound_var = ifelse(has_SEL, 'SELAllAC',
+                     ifelse(has_Leq, 'LeqAllAC', NA))
+  
+  # Has PTAudAllAC, lg10.PTAudAllAC, or DurVisitMinutes: continuous  
+  has_PTAudAllAC = 'PTAudAllAC' %in% names(model_object$model)
+  has_lg10.PTAudAllAC = 'lg10.PTAudAllAC' %in% names(model_object$model)
+  has_DurVisitMinutes = 'DurVisitMinutes' %in% names(model_object$model)
+  
+  # AdultsOnly or ImpNQ_VorMore: factor
+  has_AdultsOnly = 'AdultsOnly' %in% names(model_object$model)
+  has_ImpNQ_VorMore = 'ImpNQ_VorMore' %in% names(model_object$model)
+  
+  if(sound_var == 'SELAllAC'){
+    sound_vals = seq(35, 100, by = 1)
+  }
+  if(sound_var == 'LeqAllAC'){
+    sound_vals = seq(-1, 65, by = 1)
+  }
+  
+  if(!has_sitetype){
+    # for models 1 and 11
+    mat = expand.grid(Site = sd(summary(model_object)$ranef),
+                      sound_var_temp = model_object$beta[1] * sound_vals,
+                      
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 50, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 50, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)))
+    
+  }
+  
+  if(all(has_sitetype & has_AdultsOnly & has_ImpNQ_VorMore)){
+    # for model 9 
+    
+    mat = expand.grid(Site = sd(summary(model_object)$ranef),
+                      sound_var_temp = model_object$beta[1] * sound_vals,
+                      
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 25, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 25, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
+                      SiteTypeDayHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeDayHike']),
+                      SiteTypeOverlook = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeOverlook']),
+                      SiteTypeShortHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeShortHike']),
+                      AdultsOnlyYes = c(0, model_object$beta[names(model_object$beta) == 'AdultsOnly1']),
+                      ImpNQ_VorMoreYes =  c(0, model_object$beta[names(model_object$beta) == 'ImpNQ_VorMore1']))
+
+    # only keep rows where one site type is included
+    keep <- apply(mat[,c("SiteTypeDayHike", "SiteTypeOverlook", "SiteTypeShortHike")],
+                  1,
+                  function(x) sum(x == 0) >= 2)
+    
+    mat <- mat[keep,]
+    rownames(mat) = 1:nrow(mat)
+  
+  }
+
+  if(all(has_sitetype & !has_AdultsOnly & has_ImpNQ_VorMore)){
+    # for model 19 
+    
+    mat = expand.grid(Site = sd(summary(model_object)$ranef),
+                      sound_var_temp = model_object$beta[1] * sound_vals,
+                      
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 25, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 25, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
+                      SiteTypeDayHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeDayHike']),
+                      SiteTypeOverlook = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeOverlook']),
+                      SiteTypeShortHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeShortHike']),
+                      ImpNQ_VorMoreYes =  c(0, model_object$beta[names(model_object$beta) == 'ImpNQ_VorMore1']))
+    
+    # only keep rows where one site type is included
+    keep <- apply(mat[,c("SiteTypeDayHike", "SiteTypeOverlook", "SiteTypeShortHike")],
+                  1,
+                  function(x) sum(x == 0) >= 2)
+    
+    mat <- mat[keep,]
+    rownames(mat) = 1:nrow(mat)
+    
+  }
+  
+    
+  names(mat)[names(mat) == 'sound_var_temp'] = sound_var
+
+  # thetas: transition thresholds
+  
+  pred.mat <- pred_clmm(eta = rowSums(mat), theta = model_object$Theta)
+  
+  # Plot
+  
+  pred.df <- as.data.frame(pred.mat)
+  colnames(pred.df) = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+')  
+  pred.df$sound_var_temp = sound_vals
+  names(pred.df)[names(pred.df) == 'sound_var_temp'] = 'SELAllAC'
+  
+  # Group by sound variables, get median and 95% CI, and reformat long
+  if(!has_sitetype){
+    pred_long = pred.df %>%
+      group_by(SELAllAC) %>%
+      summarize(NotAtAll = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(NotAtAll), sd = sd(NotAtAll)),
+                Somewhat = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Somewhat), sd = sd(Somewhat)),
+                Moderately = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Moderately), sd = sd(Moderately)),
+                Very = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(`Very+`), sd = sd(`Very+`))) %>%
+      mutate(probs = c('loCI', 'median', 'hiCI')) %>%
+      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very'),
+                 names_to = 'Level',
+                 values_to = resp_name) %>%
+      pivot_wider(names_from = probs,
+                  values_from = resp_name)
+    
+      ylab_name = ifelse(resp_name == 'Annoy3', 'Probability of Annoyance',
+                         'Probability of Interference with Enjoyment of Natural Quiet')
+      
+      xlab_name = ifelse(sound_var == 'SELAllAC', 'LAE',
+                         'Leq')
+      
+      pred_long$Level = as.factor(pred_long$Level)
+      if(identical(levels(pred_long$Level), c('Moderately', 'NotAtAll', 'Somewhat', 'Very'))){
+        levels(pred_long$Level) = c('2_Moderately', '0_NotAtAll', '1_Somewhat', '3_Very')
+        pred_long$Level = as.factor(as.character(pred_long$Level))
+      }
+      
+      if(!plot_Not_at_all){
+        pred_long = pred_long %>%
+          filter(Level != '0_NotAtAll') %>%
+          mutate(Level = as.factor(as.character(Level)))
+        
+      }
+      
+      g1 <- ggplot(pred_long,
+                 aes(x = SELAllAC,
+                     y = median,
+                     col = Level)) + 
+      geom_line(size = 2) + 
+      theme_bw() +
+      xlab(xlab_name) + ylab(ylab_name) +
+      ggtitle(paste(model_object_name, resp_name, sound_var)) +
+      scale_color_brewer(type = 'qual', palette = 'Dark2')
+      
+      
+    
+  }
+  if(has_sitetype){
+
+    site_type_name <- apply(mat[,c("SiteTypeDayHike", "SiteTypeOverlook", "SiteTypeShortHike")], 1, 
+                            function(x) ifelse(x[1] != 0, 'DayHike',
+                                               ifelse(x[2] != 0, 'Overlook',
+                                                      ifelse(x[3] != 0, 'ShortHike',
+                                                             'Overnight'))) )
+    
+      pred_long = pred.df %>%
+        mutate(SiteType = site_type_name) %>%
+        group_by(SELAllAC, SiteType) %>%
+        summarize(NotAtAll = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(NotAtAll), sd = sd(NotAtAll)),
+                  Somewhat = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Somewhat), sd = sd(Somewhat)),
+                  Moderately = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Moderately), sd = sd(Moderately)),
+                  Very = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(`Very+`), sd = sd(`Very+`))) %>%
+        mutate(probs = c('loCI', 'median', 'hiCI')) %>%
+        pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very'),
+                     names_to = 'Level',
+                     values_to = resp_name) %>%
+        pivot_wider(names_from = probs,
+                    values_from = resp_name)
+      
+      ylab_name = ifelse(resp_name == 'Annoy3', 'Probability of Annoyance',
+                         'Probability of Interference with Enjoyment of Natural Quiet')
+      
+      xlab_name = ifelse(sound_var == 'SELAllAC', 'LAE',
+                         'Leq')
+      
+      pred_long$Level = as.factor(pred_long$Level)
+      if(identical(levels(pred_long$Level), c('Moderately', 'NotAtAll', 'Somewhat', 'Very'))){
+        levels(pred_long$Level) = c('2_Moderately', '0_NotAtAll', '1_Somewhat', '3_Very+')
+        pred_long$Level = as.factor(as.character(pred_long$Level))
+      }
+      
+      if(!plot_Not_at_all){
+        pred_long = pred_long %>%
+          filter(Level != '0_NotAtAll') %>%
+          mutate(Level = as.factor(as.character(Level)))
+        
+      }
+      
+      g1 <- ggplot(pred_long,
+                   aes(x = SELAllAC,
+                       y = median,
+                       col = Level)) + 
+        geom_line(size = 2) + 
+        theme_bw() +
+        xlab(xlab_name) + ylab(ylab_name) +
+        ggtitle(paste(model_object_name, resp_name, sound_var)) +
+        scale_color_brewer(type = 'qual', palette = 'Dark2') +
+        facet_wrap(~SiteType)
+      
+  }
+  
+  if(plot_CI) {
+    g1 = g1 + geom_ribbon(aes(ymin = pred_long$loCI, 
+                         ymax = pred_long$hiCI), alpha = 0.2,
+                     linetype = 0,
+                     show.legend = FALSE,
+                     fill = 'grey') + geom_line(size = 2) 
+    
+  }
+  
+  print(g1)
+}

@@ -516,9 +516,17 @@ write.csv(coef_table,
 
 # Make all plots -----
 
-pdf(file.path(output, 'All_CLMM_Curves.pdf'), width = 8, height = 8)
-for(m in mod_list){
-  plot_curves(m)
-  plot_curves(m, plot_se = F)
+# pdf(file.path(output, 'All_CLMM_Curves.pdf'), width = 8, height = 8)
+# for(m in mod_list){
+#   plot_curves(m)
+#   plot_curves(m, plot_se = F)
+# }
+# dev.off()
+
+pdf(file.path(output, 'Final_CLMM_Curves.pdf'), width = 8, height = 8)
+for(m in c('m1', 'm9', 'm11', 'm19')){
+  plot_curves_95(m, plot_Not_at_all = F)
+  plot_curves_95(m)
+  plot_curves_95(m, plot_CI = F)
 }
 dev.off()
