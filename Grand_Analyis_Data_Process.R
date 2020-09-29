@@ -2,6 +2,8 @@
 ## Also include Rainbow Bridge
 ## Modified from ATMP_2011DataProcess_Dprime.R
 
+# Verify that in 1990s vs 2000s dataset we are keeping track of the right variable: sitefirstvisit vs visited before.
+
 
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Setup ---- 
@@ -233,6 +235,12 @@ d90 %>% filter(is.na(Annoy_VorMore)) %>% group_by(Site) %>% summarize(n())
 
 d90 %>% filter(is.na(Annoy_VorMore)) %>% dplyr::select(Annoy)
 
+# Compare SiteFirstVisit response by dataset ----
+table(d90$SiteFirstVisit)
+
+table(d00$SiteFirstVisit)
+
+table(dRB$SiteFirstVisit)
 
 # Compile ---
 dAll <- rbind(d90_use, d00_use)
