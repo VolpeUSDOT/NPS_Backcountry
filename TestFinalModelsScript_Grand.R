@@ -505,7 +505,7 @@ m18.1 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps
             Hess = T,
             link = "logit") # for proportional odds mixed model
 
-AIC(m14, m18, m18.1) # m18.1 substantially better, keep SiteFirstVisit
+AIC(m14, m18, m18.1) # m18.1 substantially better, keep SiteFirstVisit. AdultsOnly makes mode worse
 # df      AIC
 # m14   11 8063.624
 # m18   12 8064.322
@@ -552,6 +552,25 @@ AIC(m14, m18, m18.1, m19, m19.1) # m19.1 by far the best
 # m18.1 12 8048.729
 # m19   12 8034.255
 # m19.1 13 8019.949
+# 
+# # Test Adding AdultsOnly
+# m19.2 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+#               + SiteType 
+#               #+ DurVisitMinutes 
+#               + AdultsOnly 
+#               #+ ImpHistCult_VorMore 
+#               + SiteFirstVisit
+#               + ImpNQ_VorMore
+#               + (1|Site),
+#               data = dC,
+#               Hess = T,
+#               link = "logit") # for proportional odds mixed model
+# 
+# AIC(m19, m19.1, m19.2) # m19.1 Still Better, don't use AdultsOnly. DurVistMinutes doesn't converge.
+# # df      AIC
+# m19   12 8034.255
+# m19.1 13 8019.949
+# m19.2 14 8021.033
 
 # model 19 summary
 coef19 <- data.frame('Value' = exp(coef(m19)), 'CI' = exp(confint(m19)), 'Pval' = summary(m19)$coefficients[,4])
