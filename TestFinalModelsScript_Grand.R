@@ -307,6 +307,14 @@ coef9
 write.csv(coef9,
           file.path(output, 'Annoy_M9_Coef.csv'), row.names = F)
 
+# Model 9.1 summary
+coef9 <- data.frame('Value' = exp(coef(m9.1)), 'CI' = exp(confint(m9.1)), 'Pval' = summary(m9.1)$coefficients[,4])
+coef9
+
+write.csv(coef9,
+          file.path(output, 'Annoy_M9-1_Coef.csv'), row.names = F)
+
+
 # Compile coefs; compile AIC and N ----
 # Two tables to output
 
@@ -485,6 +493,24 @@ m18$Theta
 m18$info[,c('nobs','AIC')] #nobs 4117 AIC 8064.32
 ##m14 is still best by ~ .5 units; m18 with AdultsOnly is much worse if DurVisitMinutes is included
 
+# Add sitefirstvisit as m18.1
+# m14(+ Adults only or + SiteFirstVisit)
+m18.1 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+            + SiteType 
+            #+ DurVisitMinutes 
+            #+ AdultsOnly 
+            + SiteFirstVisit
+            + (1|Site),
+            data = dC,
+            Hess = T,
+            link = "logit") # for proportional odds mixed model
+
+AIC(m14, m18, m18.1) # m18.1 substantially better, keep SiteFirstVisit
+# df      AIC
+# m14   11 8063.624
+# m18   12 8064.322
+# m18.1 12 8048.729
+
 ## 
 # m14 (+ ImpHist or + ImpNQ)
 m19 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
@@ -505,12 +531,40 @@ m19$Theta
 m19$info[,c('nobs','AIC')] #nobs 4117 AIC  8034.26
 ##m19 with ImpNQ_VorMore is better than m14 by ~25 units. Best model includes dose plus ImpNQ
 
-#model 19 summary
+# Add SiteFirstVisit as m19.1
+m19.1 <- clmm(IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+            + SiteType 
+            #+ DurVisitMinutes 
+            #+ AdultsOnly 
+            #+ ImpHistCult_VorMore 
+            + SiteFirstVisit
+            + ImpNQ_VorMore
+            + (1|Site),
+            data = dC,
+            Hess = T,
+            link = "logit") # for proportional odds mixed model
+
+AIC(m14, m18, m18.1, m19, m19.1) # m19.1 by far the best
+
+# df      AIC
+# m14   11 8063.624
+# m18   12 8064.322
+# m18.1 12 8048.729
+# m19   12 8034.255
+# m19.1 13 8019.949
+
+# model 19 summary
 coef19 <- data.frame('Value' = exp(coef(m19)), 'CI' = exp(confint(m19)), 'Pval' = summary(m19)$coefficients[,4])
 coef19
 
 write.csv(coef19,
           file.path(output, 'Interfere_M19_Coef.csv'), row.names = F)
+
+
+coef19 <- data.frame('Value' = exp(coef(m19.1)), 'CI' = exp(confint(m19.1)), 'Pval' = summary(m19.1)$coefficients[,4])
+
+write.csv(coef19,
+          file.path(output, 'Interfere_M19-1_Coef.csv'), row.names = F)
 
 
 # Compile coefs; compile AIC and N ----
@@ -563,9 +617,10 @@ write.csv(coef_table,
 #   plot_curves(m, plot_se = F)
 # }
 # dev.off()
+# TODO: update plot_curves_95 to include sitefirstvisit variable for new best models, m9.1 and m19.1
 
-pdf(file.path(output, 'Final_CLMM_Curves.pdf'), width = 8, height = 8)
-for(m in c('m1', 'm9', 'm11', 'm19')){
+pdf(file.path(output, 'Final_CLMM_Curves_withSiteFirstVisit.pdf'), width = 8, height = 8)
+for(m in c('m1', 'm9.1', 'm11', 'm19.1')){
   plot_curves_95(m, plot_Not_at_all = F)
   plot_curves_95(m)
   plot_curves_95(m, plot_CI = F)

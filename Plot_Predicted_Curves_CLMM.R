@@ -265,7 +265,7 @@ plot_curves = function(model_object_name, plot_se = TRUE){
 #19: IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + ImpNQ_VorMore + (1|Site)
 
 plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = TRUE, ...){
-  # model_object_name = 'm19'
+  # model_object_name = 'm9.1'
   model_object = get(model_object_name)
   
   stopifnot(class(model_object) %in% 'clmm')
@@ -292,6 +292,8 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
   has_AdultsOnly = 'AdultsOnly' %in% names(model_object$model)
   has_ImpNQ_VorMore = 'ImpNQ_VorMore' %in% names(model_object$model)
   
+  has_SiteFirstVisit = 'SiteFirstVisit' %in% names(model_object$model)
+  
   if(sound_var == 'SELAllAC'){
     sound_vals = seq(35, 100, by = 1)
   }
@@ -304,19 +306,19 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
     mat = expand.grid(Site = sd(summary(model_object)$ranef),
                       sound_var_temp = model_object$beta[1] * sound_vals,
                       
-                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 50, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
-                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 50, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)))
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 30, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 30, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)))
     
   }
   
-  if(all(has_sitetype & has_AdultsOnly & has_ImpNQ_VorMore)){
+  if(all(has_sitetype & has_AdultsOnly & has_ImpNQ_VorMore & !has_SiteFirstVisit)){
     # for model 9 
     
     mat = expand.grid(Site = sd(summary(model_object)$ranef),
                       sound_var_temp = model_object$beta[1] * sound_vals,
                       
-                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 25, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
-                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 25, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 30, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 30, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
                       SiteTypeDayHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeDayHike']),
                       SiteTypeOverlook = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeOverlook']),
                       SiteTypeShortHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeShortHike']),
@@ -333,18 +335,69 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
   
   }
 
-  if(all(has_sitetype & !has_AdultsOnly & has_ImpNQ_VorMore)){
+  if(all(has_sitetype & !has_AdultsOnly & has_ImpNQ_VorMore & !has_SiteFirstVisit)){
     # for model 19 
     
     mat = expand.grid(Site = sd(summary(model_object)$ranef),
                       sound_var_temp = model_object$beta[1] * sound_vals,
                       
-                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 25, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
-                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 25, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 30, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 30, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
                       SiteTypeDayHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeDayHike']),
                       SiteTypeOverlook = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeOverlook']),
                       SiteTypeShortHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeShortHike']),
                       ImpNQ_VorMoreYes =  c(0, model_object$beta[names(model_object$beta) == 'ImpNQ_VorMore1']))
+    
+    # only keep rows where one site type is included
+    keep <- apply(mat[,c("SiteTypeDayHike", "SiteTypeOverlook", "SiteTypeShortHike")],
+                  1,
+                  function(x) sum(x == 0) >= 2)
+    
+    mat <- mat[keep,]
+    rownames(mat) = 1:nrow(mat)
+    
+  }
+  
+  
+  if(all(has_sitetype & has_AdultsOnly & has_ImpNQ_VorMore & has_SiteFirstVisit)){
+    # for model 9.1 
+    
+    mat = expand.grid(Site = sd(summary(model_object)$ranef),
+                      sound_var_temp = model_object$beta[1] * sound_vals,
+                      
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 30, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 30, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
+                      SiteTypeDayHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeDayHike']),
+                      SiteTypeOverlook = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeOverlook']),
+                      SiteTypeShortHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeShortHike']),
+                      ImpNQ_VorMoreYes =  c(0, model_object$beta[names(model_object$beta) == 'ImpNQ_VorMore1']),
+                      AdultsOnlyYes = c(0, model_object$beta[names(model_object$beta) == 'AdultsOnly1']),
+                      SiteFirstVisitYes = c(0, model_object$beta[names(model_object$beta) == 'SiteFirstVisitYes']))
+    
+    # only keep rows where one site type is included
+    keep <- apply(mat[,c("SiteTypeDayHike", "SiteTypeOverlook", "SiteTypeShortHike")],
+                  1,
+                  function(x) sum(x == 0) >= 2)
+    
+    mat <- mat[keep,]
+    rownames(mat) = 1:nrow(mat)
+    
+  }
+  
+  
+  if(all(has_sitetype & !has_AdultsOnly & has_ImpNQ_VorMore & has_SiteFirstVisit)){
+    # for model 19.1 
+    
+    mat = expand.grid(Site = sd(summary(model_object)$ranef),
+                      sound_var_temp = model_object$beta[1] * sound_vals,
+                      
+                      PEnProps = model_object$beta[names(model_object$beta) == 'PEnProps'] * rnorm(n = 50, mean = mean(dC$PEnProps), sd = sd(dC$PEnProps)),
+                      PEnHelos = model_object$beta[names(model_object$beta) == 'PEnHelos'] *rnorm(n = 50, mean = mean(dC$PEnHelos), sd = sd(dC$PEnHelos)),
+                      SiteTypeDayHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeDayHike']),
+                      SiteTypeOverlook = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeOverlook']),
+                      SiteTypeShortHike = c(0, model_object$beta[names(model_object$beta) == 'SiteTypeShortHike']),
+                      ImpNQ_VorMoreYes =  c(0, model_object$beta[names(model_object$beta) == 'ImpNQ_VorMore1']),
+                      SiteFirstVisitYes = c(0, model_object$beta[names(model_object$beta) == 'SiteFirstVisitYes']))
     
     # only keep rows where one site type is included
     keep <- apply(mat[,c("SiteTypeDayHike", "SiteTypeOverlook", "SiteTypeShortHike")],
@@ -453,6 +506,7 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
       
       if(!plot_Not_at_all){
         pred_long = pred_long %>%
+          ungroup %>%
           filter(Level != '0_NotAtAll') %>%
           mutate(Level = as.factor(as.character(Level)))
         
@@ -472,8 +526,8 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
   }
   
   if(plot_CI) {
-    g1 = g1 + geom_ribbon(aes(ymin = pred_long$loCI, 
-                         ymax = pred_long$hiCI), alpha = 0.2,
+    g1 = g1 + geom_ribbon(aes(ymin = loCI, 
+                         ymax = hiCI), alpha = 0.2,
                      linetype = 0,
                      show.legend = FALSE,
                      fill = 'grey') + geom_line(size = 2) 
