@@ -239,6 +239,26 @@ m8$Theta
 m8$info[,c('nobs','AIC')] #nobs 4117 AIC 7162.34
 ##m8 with AdultsOnly is better than m7 (slightly)
 
+# m8.1 now with SiteFirstVisit 
+m8.1 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+           + SiteType 
+           #+ DurVisitMinutes 
+           #+ AdultsOnly 
+           + SiteFirstVisit
+           + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m8 summary
+summary(m8.1)
+confint(m8.1)
+m8.1$Theta
+m8.1$info[,c('nobs','AIC')] #nobs 4117 AIC 7141.14
+##m8 with AdultsOnly is better than m7 (slightly)
+
+AIC(m7, m8, m8.1) # New m8.1 better than m7
+
 ## 
 # m8 with Adults Only (+ ImpHist or + ImpNQ)
 m9 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
@@ -259,7 +279,28 @@ m9$Theta
 m9$info[,c('nobs','AIC')] #nobs 4117 AIC  7135.48
 ##m9 with ImpNQ_VorMore is better than m8 by ~25 units. Best model includes Adults only and ImpNQ
 
-#model 9 summary
+# With SiteFirstVisit 
+m9.1 <- clmm(Annoy3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps 
+           + SiteType 
+           #+ DurVisitMinutes 
+           + AdultsOnly 
+           + SiteFirstVisit 
+           + ImpNQ_VorMore
+           + (1|Site),
+           data = dC,
+           Hess = T,
+           link = "logit") # for proportional odds mixed model
+
+# m9 summary
+summary(m9.1)
+confint(m9.1)
+m9.1$Theta
+m9.1$info[,c('nobs','AIC')] #nobs 4117 AIC  7111.80
+
+AIC(m7, m9, m9.1) # m9.1 is new best model
+
+
+# model 9 summary
 coef9 <- data.frame('Value' = exp(coef(m9)), 'CI' = exp(confint(m9)), 'Pval' = summary(m9)$coefficients[,4])
 coef9
 

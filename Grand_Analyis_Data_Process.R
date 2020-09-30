@@ -120,6 +120,31 @@ dRB <- dRB %>%
 d00 <- d00 %>%
   rename(LeqAllAC = LeqTresp)
 
+
+# Compare SiteFirstVisit response by dataset ----
+
+# !!! This needs to be flipped. Use the meaning of 2000's data, which is a question 'is this your first visit?' rather than 'have you visited before?'
+
+table(d90$SiteFirstVisit,
+      d90$SiteType)
+
+table(d00$SiteFirstVisit,
+      d00$SiteType)
+
+table(dRB$SiteFirstVisit,
+      dRB$SiteType)
+
+# change 1990s SiteFirstVisit to match 2000s definition
+d90$SiteFirstVisit[d90$SiteFirstVisit == 'No'] = 1
+d90$SiteFirstVisit[d90$SiteFirstVisit == 'Yes'] = 0
+
+d90$SiteFirstVisit[d90$SiteFirstVisit == 1] = 'Yes'
+d90$SiteFirstVisit[d90$SiteFirstVisit == 0] = 'No'
+
+
+table(d90$SiteFirstVisit,
+      d90$SiteType) # correct, now the 'Yes' answers are the majority for all Site Types in 1990s, as expected.
+
 # <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 # Examine Leq vars
 
@@ -234,13 +259,6 @@ d90 %>% filter(is.na(IntWithNQ_VorMore)) %>% group_by(Site) %>% summarize(n())
 d90 %>% filter(is.na(Annoy_VorMore)) %>% group_by(Site) %>% summarize(n())
 
 d90 %>% filter(is.na(Annoy_VorMore)) %>% dplyr::select(Annoy)
-
-# Compare SiteFirstVisit response by dataset ----
-table(d90$SiteFirstVisit)
-
-table(d00$SiteFirstVisit)
-
-table(dRB$SiteFirstVisit)
 
 # Compile ---
 dAll <- rbind(d90_use, d00_use)

@@ -111,7 +111,7 @@ d = d[, names(d) %in%
 
 overview_df = data.frame(Variables = names(d),
                          Class = sapply(d, function(x) class(x)[1]),
-                         N_unique = sapply(d, function(x) length(unique(x))),
+                         N_unique = sapply(d, function(x) length(unique(x[!is.na(x)]))),
                          Levels = sapply(d, function(x) ifelse(is.factor(x), paste(names(sort(table(x), dec=T)), collapse = ", "), "")),
                          Min_numeric = sapply(d, function(x) ifelse(is.numeric(x), round(min(x, na.rm=T), 2), "")),
                          Max_numeric = sapply(d, function(x) ifelse(is.numeric(x), round(max(x, na.rm=T), 2), ""))
