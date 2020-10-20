@@ -638,10 +638,14 @@ write.csv(coef_table,
 # dev.off()
 # TODO: update plot_curves_95 to include sitefirstvisit variable for new best models, m9.1 and m19.1
 
-pdf(file.path(output, 'Final_CLMM_Curves_withSiteFirstVisit.pdf'), width = 8, height = 8)
+pdf(file.path(output, 'Final_CLMM_Curves_withSiteFirstVisit_withSingleLevels.pdf'), width = 8, height = 8)
 for(m in c('m1', 'm9.1', 'm11', 'm19.1')){
   plot_curves_95(m, plot_Not_at_all = F)
-  plot_curves_95(m)
-  plot_curves_95(m, plot_CI = F)
+  #plot_curves_95(m)
+  #plot_curves_95(m, plot_CI = F)
+  plot_curves_95(m, plot_level = '1_Slightly')
+  plot_curves_95(m, plot_level = '2_Moderately')
+  plot_curves_95(m, plot_level = '3_Very+')
+  
 }
 dev.off()

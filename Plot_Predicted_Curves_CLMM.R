@@ -153,17 +153,17 @@ plot_curves = function(model_object_name, plot_se = TRUE){
   # Plot
   
   pred.df <- as.data.frame(pred.mat)
-  colnames(pred.df) = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+')  
+  colnames(pred.df) = c('NotAtAll', 'Slightly', 'Moderately', 'Very+')  
   pred.df$sound_var_temp = sound_vals
   names(pred.df)[names(pred.df) == 'sound_var_temp'] = sound_var
   
   pred.df.lo <- as.data.frame(pred.mat.lo)
-  colnames(pred.df.lo) = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+')  
+  colnames(pred.df.lo) = c('NotAtAll', 'Slightly', 'Moderately', 'Very+')  
   pred.df.lo$sound_var_temp = sound_vals
   names(pred.df.lo)[names(pred.df.lo) == 'sound_var_temp'] = sound_var
   
   pred.df.hi <- as.data.frame(pred.mat.hi)
-  colnames(pred.df.hi) = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+')  
+  colnames(pred.df.hi) = c('NotAtAll', 'Slightly', 'Moderately', 'Very+')  
   pred.df.hi$sound_var_temp = sound_vals
   names(pred.df.hi)[names(pred.df.hi) == 'sound_var_temp'] = sound_var
   
@@ -171,18 +171,18 @@ plot_curves = function(model_object_name, plot_se = TRUE){
   # Reformat long
   if(!has_sitetype){
     pred_long = pred.df %>%
-      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+'),
+      pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very+'),
                    names_to = 'Level',
                    values_to = resp_name)
     
     pred_long_lo = pred.df.lo %>%
-      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+'),
+      pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very+'),
                    names_to = 'Level',
                    values_to = paste0(resp_name, '_lo'))
     
     
     pred_long_hi = pred.df.hi %>%
-      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+'),
+      pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very+'),
                    names_to = 'Level',
                    values_to = paste0(resp_name, '_hi'))
     
@@ -206,21 +206,21 @@ plot_curves = function(model_object_name, plot_se = TRUE){
   if(has_sitetype){
     pred_long = pred.df %>%
       mutate(SiteType = rep(c('Backcountry', 'DayHike', 'Overlook', 'ShortHike'), each = length(sound_vals))) %>%
-      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+'),
+      pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very+'),
                    names_to = 'Level',
                    values_to = resp_name)
     
     
     pred_long_lo = pred.df.lo %>%
       mutate(SiteType = rep(c('Backcountry', 'DayHike', 'Overlook', 'ShortHike'), each = length(sound_vals))) %>%
-      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+'),
+      pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very+'),
                    names_to = 'Level',
                    values_to = paste0(resp_name, '_lo'))
     
     
     pred_long_hi = pred.df.hi %>%
       mutate(SiteType = rep(c('Backcountry', 'DayHike', 'Overlook', 'ShortHike'), each = length(sound_vals))) %>%
-      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+'),
+      pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very+'),
                    names_to = 'Level',
                    values_to = paste0(resp_name, '_hi'))
     
@@ -264,7 +264,14 @@ plot_curves = function(model_object_name, plot_se = TRUE){
 #11: IntWithNQ3 ~ SELAllAC + PEnHelos + PEnProps + (1|Site)
 #19: IntWithNQ3 ~ SELAllAC + PTAudAllAC + PEnHelos + PEnProps + SiteType + ImpNQ_VorMore + (1|Site)
 
-plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = TRUE, ...){
+# If SiteType included, plot a 4-panel figure in this order, left-right and top-bottom:
+# Overlook, ShortHike, Day Hike, Multi-Day
+
+# In addition, have option for additional figures, for a given level (slightly, moderately, very+),
+# and the lines are the site types. Moderately figures will go in main text (so don't make a 3 panel figure).
+# This is the plot_level argument; provide the name of a level like '1_Slightly' to make a plot for just that level across site types.
+
+plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = TRUE, plot_level = NULL, ...){
   # model_object_name = 'm9.1'
   model_object = get(model_object_name)
   
@@ -419,7 +426,7 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
   # Plot
   
   pred.df <- as.data.frame(pred.mat)
-  colnames(pred.df) = c('NotAtAll', 'Somewhat', 'Moderately', 'Very+')  
+  colnames(pred.df) = c('NotAtAll', 'Slightly', 'Moderately', 'Very+')  
   pred.df$sound_var_temp = sound_vals
   names(pred.df)[names(pred.df) == 'sound_var_temp'] = 'SELAllAC'
   
@@ -428,11 +435,11 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
     pred_long = pred.df %>%
       group_by(SELAllAC) %>%
       summarize(NotAtAll = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(NotAtAll), sd = sd(NotAtAll)),
-                Somewhat = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Somewhat), sd = sd(Somewhat)),
+                Slightly = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Slightly), sd = sd(Slightly)),
                 Moderately = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Moderately), sd = sd(Moderately)),
                 Very = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(`Very+`), sd = sd(`Very+`))) %>%
       mutate(probs = c('loCI', 'median', 'hiCI')) %>%
-      pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very'),
+      pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very'),
                  names_to = 'Level',
                  values_to = resp_name) %>%
       pivot_wider(names_from = probs,
@@ -445,8 +452,8 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
                          'Leq')
       
       pred_long$Level = as.factor(pred_long$Level)
-      if(identical(levels(pred_long$Level), c('Moderately', 'NotAtAll', 'Somewhat', 'Very'))){
-        levels(pred_long$Level) = c('2_Moderately', '0_NotAtAll', '1_Somewhat', '3_Very')
+      if(identical(levels(pred_long$Level), c('Moderately', 'NotAtAll', 'Slightly', 'Very'))){
+        levels(pred_long$Level) = c('2_Moderately', '0_NotAtAll', '1_Slightly', '3_Very')
         pred_long$Level = as.factor(as.character(pred_long$Level))
       }
       
@@ -465,32 +472,35 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
       theme_bw() +
       xlab(xlab_name) + ylab(ylab_name) +
       ggtitle(paste(model_object_name, resp_name, sound_var)) +
-      scale_color_brewer(type = 'qual', palette = 'Dark2')
+      scale_color_brewer(type = 'qual', palette = 'Dark2', labels = c('Slightly', 'Moderately', 'Very or more'))
       
       
     
   }
   if(has_sitetype){
-
+    
+    # Create the Site Type variable from the prediction matrix. Look to see which variables are filled in.
     site_type_name <- apply(mat[,c("SiteTypeDayHike", "SiteTypeOverlook", "SiteTypeShortHike")], 1, 
-                            function(x) ifelse(x[1] != 0, 'DayHike',
-                                               ifelse(x[2] != 0, 'Overlook',
-                                                      ifelse(x[3] != 0, 'ShortHike',
-                                                             'Overnight'))) )
+                            function(x) ifelse(x[1] != 0, '3_DayHike',
+                                               ifelse(x[2] != 0, '1_Overlook',
+                                                      ifelse(x[3] != 0, '2_ShortHike',
+                                                             '4_Overnight'))) )
+    
+    
     
       pred_long = pred.df %>%
         mutate(SiteType = site_type_name) %>%
         group_by(SELAllAC, SiteType) %>%
         summarize(NotAtAll = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(NotAtAll), sd = sd(NotAtAll)),
-                  Somewhat = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Somewhat), sd = sd(Somewhat)),
+                  Slightly = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Slightly), sd = sd(Slightly)),
                   Moderately = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(Moderately), sd = sd(Moderately)),
                   Very = qnorm(p = c(0.05, 0.5, 0.95), mean = mean(`Very+`), sd = sd(`Very+`))) %>%
         mutate(probs = c('loCI', 'median', 'hiCI')) %>%
-        pivot_longer(cols = c('NotAtAll', 'Somewhat', 'Moderately', 'Very'),
+        pivot_longer(cols = c('NotAtAll', 'Slightly', 'Moderately', 'Very'),
                      names_to = 'Level',
-                     values_to = resp_name) %>%
+                     values_to = all_of(resp_name)) %>%
         pivot_wider(names_from = probs,
-                    values_from = resp_name)
+                    values_from = all_of(resp_name))
       
       ylab_name = ifelse(resp_name == 'Annoy3', 'Probability of Annoyance',
                          'Probability of Interference with Enjoyment of Natural Quiet')
@@ -499,8 +509,8 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
                          'Leq')
       
       pred_long$Level = as.factor(pred_long$Level)
-      if(identical(levels(pred_long$Level), c('Moderately', 'NotAtAll', 'Somewhat', 'Very'))){
-        levels(pred_long$Level) = c('2_Moderately', '0_NotAtAll', '1_Somewhat', '3_Very+')
+      if(identical(levels(pred_long$Level), c('Moderately', 'NotAtAll', 'Slightly', 'Very'))){
+        levels(pred_long$Level) = c('2_Moderately', '0_NotAtAll', '1_Slightly', '3_Very+')
         pred_long$Level = as.factor(as.character(pred_long$Level))
       }
       
@@ -512,6 +522,13 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
         
       }
       
+      site_type_relabel = c(
+        `1_Overlook` = 'Overlook',
+        `2_ShortHike` = 'Short Hike',
+        `3_DayHike` = 'Day Hike',
+        `4_Overnight` = 'Multi-Day'
+      )
+      
       g1 <- ggplot(pred_long,
                    aes(x = SELAllAC,
                        y = median,
@@ -520,10 +537,33 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
         theme_bw() +
         xlab(xlab_name) + ylab(ylab_name) +
         ggtitle(paste(model_object_name, resp_name, sound_var)) +
-        scale_color_brewer(type = 'qual', palette = 'Dark2') +
-        facet_wrap(~SiteType)
+        scale_color_brewer(type = 'qual', palette = 'Dark2', labels = c('Slightly', 'Moderately', 'Very or more')) +
+        facet_wrap(~SiteType, labeller = labeller(SiteType = site_type_relabel))
       
   }
+  
+  
+  # Optional: if provide a plot_level like 1_Slightly, then make a single-panel figure for just that level, across site types.
+  if(!is.null(plot_level)){
+    if(!'SiteType' %in% names(pred_long)){
+      stop('plot_level only implemented for models with the SiteType variable included')
+    }
+    
+    
+    g1 <- ggplot(pred_long %>% filter(Level == plot_level),
+                 aes(x = SELAllAC,
+                     y = median,
+                     col = SiteType)) + 
+      geom_line(size = 2) + 
+      theme_bw() +
+      xlab(xlab_name) + ylab(ylab_name) +
+      ggtitle(paste(model_object_name, resp_name, sound_var, plot_level)) +
+      scale_color_hue(h = c(200, 320),
+                      labels = c('Overlook', 'Short Hike', 'Day Hike', 'Multi-Day'))
+    
+    
+  }
+  
   
   if(plot_CI) {
     g1 = g1 + geom_ribbon(aes(ymin = loCI, 
@@ -534,5 +574,7 @@ plot_curves_95 = function(model_object_name, plot_CI = TRUE, plot_Not_at_all = T
     
   }
   
+  
   print(g1)
+
 }
