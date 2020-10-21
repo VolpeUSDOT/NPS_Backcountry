@@ -643,9 +643,10 @@ for(m in c('m1', 'm9.1', 'm11', 'm19.1')){
   plot_curves_95(m, plot_Not_at_all = F)
   #plot_curves_95(m)
   #plot_curves_95(m, plot_CI = F)
-  plot_curves_95(m, plot_level = '1_Slightly')
-  plot_curves_95(m, plot_level = '2_Moderately')
-  plot_curves_95(m, plot_level = '3_Very+')
-  
+  if(m %in% c('m9.1', 'm19.1')){
+    plot_curves_95(m, plot_level = '1_Slightly')
+    plot_curves_95(m, plot_level = '2_Moderately')
+    plot_curves_95(m, plot_level = '3_Very+')
+  }
 }
 dev.off()
